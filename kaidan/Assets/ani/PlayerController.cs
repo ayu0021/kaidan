@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
-public class PlayerController3D_FreeMove : MonoBehaviour
+public class PlayerController3D_NoIdleFlip : MonoBehaviour
 {
     [Header("移動速度")]
     public float moveSpeed = 3f;
@@ -18,41 +18,40 @@ public class PlayerController3D_FreeMove : MonoBehaviour
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         rb = GetComponent<Rigidbody>();
 
-        // Rigidbody 設定
         if (rb != null)
-        {
-            rb.constraints = RigidbodyConstraints.FreezeRotation; // 防止旋轉
-        }
+            rb.constraints = RigidbodyConstraints.FreezeRotation;
     }
 
     void Update()
     {
-        // 取得水平與垂直輸入
+        // 取得輸入
         float moveX = Input.GetAxisRaw("Horizontal");
         float moveZ = Input.GetAxisRaw("Vertical");
 
-        // 建立移動向量
         moveInput = new Vector3(moveX, 0f, moveZ).normalized;
 
-        // 設定 Animator 參數
+        // 設定 Animator Speed
         animator.SetFloat("Speed", moveInput.magnitude);
 
-        // 左右翻轉（只根據 X 軸移動判斷）
-        if (moveX > 0) spriteRenderer.flipX = false;
-        else if (moveX < 0) spriteRenderer.flipX = true;
+        // 只在 Walk 狀態才翻轉
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        if (stateInfo.IsName("Walk"))
+        {
+            if (moveX > 0) spriteRenderer.flipX = true;     // 朝右翻轉
+            else if (moveX < 0) spriteRenderer.flipX = false; // 朝左不翻轉
+        }
+        // Idle 狀態或其他動畫完全不改 flipX → 保持預設方向
     }
 
     void FixedUpdate()
     {
         if (rb != null)
         {
-            // 使用 Rigidbody 移動，避免 Transform.Translate 與 Animation 衝突
             Vector3 newPosition = rb.position + moveInput * moveSpeed * Time.fixedDeltaTime;
             rb.MovePosition(newPosition);
         }
         else
         {
-            // 如果沒有 Rigidbody，回退到 Transform 移動
             transform.position += moveInput * moveSpeed * Time.fixedDeltaTime;
         }
     }
