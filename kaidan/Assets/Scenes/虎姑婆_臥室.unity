@@ -20,12 +20,12 @@ RenderSettings:
   m_FogDensity: 0.01
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
+  m_AmbientSkyColor: {r: 0, g: 0, b: 0, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
-  m_AmbientMode: 0
-  m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
+  m_AmbientMode: 3
+  m_SubtractiveShadowColor: {r: 0, g: 0, b: 0, a: 1}
   m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -239,6 +239,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: "\u6728\u5730\u677F_final"
       objectReference: {fileID: 0}
+    - target: {fileID: -1519851590527873371, guid: 51aba9133dea79240bc0466ae2cd8410, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 3932e1082223caf4799fb243f6da4900, type: 2}
     - target: {fileID: -1415269832768068833, guid: 51aba9133dea79240bc0466ae2cd8410, type: 3}
       propertyPath: m_Name
       value: "\u6728\u5730\u677F_final"
@@ -287,6 +291,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: "\u6BDB\u7DDA\u74032"
       objectReference: {fileID: 0}
+    - target: {fileID: 4370149641862919513, guid: 51aba9133dea79240bc0466ae2cd8410, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: f80ab8ee5c67a7844a6f03989e6c35e8, type: 2}
     - target: {fileID: 4654749682879939098, guid: 51aba9133dea79240bc0466ae2cd8410, type: 3}
       propertyPath: m_Name
       value: "\u6728\u5730\u677F_final"
@@ -299,6 +307,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 1cb0aef7ad7c3ce4f99e9681e4f79d8a, type: 2}
+    - target: {fileID: 5294312293668197097, guid: 51aba9133dea79240bc0466ae2cd8410, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: d4e8364cd0c07e648bb9354faedca743, type: 2}
     - target: {fileID: 5472781241510470066, guid: 51aba9133dea79240bc0466ae2cd8410, type: 3}
       propertyPath: m_Name
       value: "\u6BDB\u7DDA\u74031"
@@ -315,6 +327,14 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 2c6ffa9a5260c5d40a56d77d18c6aae8, type: 2}
+    - target: {fileID: 8345547411788429813, guid: 51aba9133dea79240bc0466ae2cd8410, type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8345547411788429813, guid: 51aba9133dea79240bc0466ae2cd8410, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 6bd5b73b8edbff246a6b7dca80b0816e, type: 2}
     - target: {fileID: 8356567482706913325, guid: 51aba9133dea79240bc0466ae2cd8410, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -356,7 +376,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d281762d0a2863a4cae35be1e35a32f3, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 132.6
+      value: 314.8
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d281762d0a2863a4cae35be1e35a32f3, type: 3}
       propertyPath: m_LocalRotation.w
@@ -438,8 +458,8 @@ Camera:
   m_GameObject: {fileID: 474050251}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.011658944, g: 0.014462431, b: 0.01886791, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -511,7 +531,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!108 &1555537869
 Light:
   m_ObjectHideFlags: 0
@@ -519,11 +539,11 @@ Light:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1555537868}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
