@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
-public class PlayerController3D_NoIdleFlip : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     [Header("移動速度")]
     public float moveSpeed = 3f;

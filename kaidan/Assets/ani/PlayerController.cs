@@ -12,7 +12,7 @@ public class PlayerController3D_NoIdleFlip : MonoBehaviour
 
     private Vector3 moveInput;
 
-    // Idle 要保持的初始方向
+    // Idle 時要維持的初始方向
     private bool initialFlipX;
 
     void Start()
@@ -22,43 +22,53 @@ public class PlayerController3D_NoIdleFlip : MonoBehaviour
         rb = GetComponent<Rigidbody>();
 
         if (rb != null)
+        {
+            // 防止物理把角色轉歪
             rb.constraints = RigidbodyConstraints.FreezeRotation;
+        }
 
-        // ★ 記住一開始的朝向（在 Inspector 裡調到你要的 Idle 方向）
+        // 記住一開始在 Inspector 設好的方向
         if (spriteRenderer != null)
+        {
             initialFlipX = spriteRenderer.flipX;
+        }
     }
 
     void Update()
     {
+        // 取得輸入
         float moveX = Input.GetAxisRaw("Horizontal");
         float moveZ = Input.GetAxisRaw("Vertical");
 
         moveInput = new Vector3(moveX, 0f, moveZ).normalized;
-
         bool isMoving = moveInput.sqrMagnitude > 0.0001f;
 
-        // 給 Animator 用的 Speed 參數（如果你有做走路／待機切換）
-        animator.SetFloat("Speed", isMoving ? 1f : 0f);
+        // 用 Speed 讓 Animator 切換 Idle / Walk
+        if (animator != null)
+        {
+            animator.SetFloat("Speed", isMoving ? 1f : 0f);
+        }
+
+        if (spriteRenderer == null) return;
 
         if (isMoving)
         {
-            // ===== Walk 狀態：依左右決定方向 =====
-            if (moveX > 0f)
+            // ★ 只有在移動時依左右改方向
+            if (moveX > 0.01f)
             {
-                // 往「世界右邊」走的時候要長怎樣
-                spriteRenderer.flipX = true;   // 如果這樣翅膀在錯邊，就改成 false
+                // 往右走時的方向（如果畫面反了，就把 true / false 對調）
+                spriteRenderer.flipX = true;
             }
-            else if (moveX < 0f)
+            else if (moveX < -0.01f)
             {
-                // 往「世界左邊」走的時候要長怎樣
-                spriteRenderer.flipX = false;  // 如果這樣錯，就改成 true
+                // 往左走時的方向
+                spriteRenderer.flipX = false;
             }
-            // moveX == 0 例如只前後走，就不改方向
+            // moveX == 0（只前/後走）就不要改方向
         }
         else
         {
-            // ===== Idle 狀態：永遠回到初始設定 =====
+            // ★ 完全沒在移動 → 一律回到初始 Idle 方向
             spriteRenderer.flipX = initialFlipX;
         }
     }
