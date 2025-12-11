@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/FirstWoods.unity
     guid: 5a2ce9d2865f8584fa29bdd6b6aa803c
+  - enabled: 1
+    path: "Assets/Scenes/\u864E\u59D1\u5A46_\u81E5\u5BA4.unity"
+    guid: 5788b6377f3f89543971e3eb9f48e86c
   m_configObjects: {}
