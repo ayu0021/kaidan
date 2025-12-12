@@ -69,7 +69,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 1
   moveLimits: {x: 5, y: 5}
-  planeY: 0
+  planeY: 1
 --- !u!1 &5078296737316420724
 GameObject:
   m_ObjectHideFlags: 0
