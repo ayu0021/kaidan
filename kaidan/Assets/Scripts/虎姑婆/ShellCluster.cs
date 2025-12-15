@@ -10,6 +10,9 @@ public class ShellCluster : MonoBehaviour
     [Header("Layers")]
     public LayerMask shellMask;
 
+    [Tooltip("掉落碎片會切到這個 Layer，避免再被當作 Shell 目標")]
+    public string debrisLayerName = "Debris";
+
     [Header("Adjacency Build (碰到就算鄰居)")]
     [Tooltip("鄰居判定的外擴距離，越大越容易連在一起（建議 0.01~0.05）")]
     public float neighborPadding = 0.02f;
@@ -20,18 +23,22 @@ public class ShellCluster : MonoBehaviour
 
     [Header("Cut Behavior (命中那片)")]
     public bool cutPieceFalls = true;
-    public bool cutPieceDisableCollider = true;
+    [Tooltip("✅ 建議關掉：命中那片若關 collider，你會覺得「剪完兩片就不會剪了」")]
+    public bool cutPieceDisableCollider = false;
     public float cutDetachImpulse = 1.2f;
     public float cutFlashTime = 0.15f;
-    public float cutHideDelay = 0.2f;      // 0 = 不隱藏（只掉落）
-    public float cutAutoDestroyAfter = 0f; // >0 才自動刪
+    [Tooltip("0 = 不隱藏（只掉落）；>0 = 延遲後隱藏 renderer")]
+    public float cutHideDelay = 0.0f;
+    [Tooltip(">0 才會自動刪除命中那片")]
+    public float cutAutoDestroyAfter = 0f;
 
     [Header("Detach Effect (for disconnected chunks)")]
     public float detachImpulse = 1.5f;
-    public float autoDestroyAfter = 0f; // >0 才自動刪
+    [Tooltip(">0 才自動刪除斷鏈整串")]
+    public float autoDestroyAfter = 0f;
 
     [Header("Safety")]
-    [Tooltip("避免一開始 anchors 判不到導致整坨崩壞：只有「剪過一次」才允許斷開塊掉落")]
+    [Tooltip("避免開場 anchors 判不到導致整坨崩壞：只有「剪過一次」才允許斷開塊掉落")]
     public bool onlyDetachAfterFirstCut = true;
 
     private readonly List<ShellPiece> _pieces = new();
@@ -42,12 +49,18 @@ public class ShellCluster : MonoBehaviour
 
     public bool AllShellDestroyed { get; private set; }
 
+    int _shellLayer;
+    int _debrisLayer;
+
     void Awake()
     {
+        _shellLayer = LayerMask.NameToLayer("Shell");
+        _debrisLayer = LayerMask.NameToLayer(debrisLayerName); // 可能是 -1
+
         CachePieces();
         BuildAdjacency();
 
-        // 開場只算連通性、不做掉落（避免你說的「突然整塊消失」）
+        // 開場只算連通性、不做掉落（避免突然整塊崩壞）
         RecomputeConnectivity(null, allowDetachDisconnected: !onlyDetachAfterFirstCut);
     }
 
@@ -66,6 +79,10 @@ public class ShellCluster : MonoBehaviour
 
             _pieces.Add(p);
             if (p.col) _col2piece[p.col] = p;
+
+            // 確保還活著的 piece 在 Shell layer（避免你手動調亂）
+            if (p.alive && _shellLayer >= 0)
+                p.gameObject.layer = _shellLayer;
         }
     }
 
@@ -127,46 +144,59 @@ public class ShellCluster : MonoBehaviour
         if (!piece || !piece.alive) return;
         _hasEverCut = true;
 
-        // 先標記「不算連通殼」(但先不要立刻隱藏，讓你看得到亮/掉)
-        piece.alive = false;
-
-        // 命中高亮
+        // 命中先亮一下（你才看得到）
         piece.Flash();
 
-        // 命中那片：掉落/禁碰撞
+        // 這片從「殼連通性」移除
+        piece.alive = false;
+
+        // 變 Debris layer：避免再次被 Player hover/cut
+        SetToDebris(piece);
+
+        // 命中那片：掉落（建議保留 collider，才會真的是「碎片」）
         if (cutPieceDisableCollider) piece.SetCollidable(false);
 
         if (cutPieceFalls)
         {
-            Vector3 dir = (piece.transform.position - (weakPoint ? weakPoint.position : hitPoint));
+            Vector3 from = weakPoint ? weakPoint.position : hitPoint;
+            Vector3 dir = (piece.transform.position - from);
             if (dir.sqrMagnitude < 1e-6f) dir = Vector3.up;
-            piece.Detach(dir + Vector3.up * 0.2f, cutDetachImpulse, enableGravity: true);
+
+            piece.Detach(dir.normalized + Vector3.up * 0.2f, cutDetachImpulse, enableGravity: true);
         }
 
-        // 讓你看得到亮一下，再決定要不要隱藏 / 刪掉
         StartCoroutine(CoAfterCut(piece, hitPoint));
     }
 
     IEnumerator CoAfterCut(ShellPiece piece, Vector3 hitPoint)
     {
+        // 留時間給 Flash 表現
         yield return new WaitForSeconds(Mathf.Max(0.01f, cutFlashTime));
 
         if (cutHideDelay > 0f)
         {
             yield return new WaitForSeconds(cutHideDelay);
-            piece.SetVisible(false);
+            if (piece) piece.SetVisible(false);
         }
 
-        if (cutAutoDestroyAfter > 0f)
+        if (cutAutoDestroyAfter > 0f && piece)
             Destroy(piece.gameObject, cutAutoDestroyAfter);
 
-        // 再算一次連通性：剪掉後，連不到核心的整串崩壞
+        // 剪掉後，重新算連通性：斷鏈整串崩壞/掉落
         RecomputeConnectivity(hitPoint, allowDetachDisconnected: true);
+    }
+
+    void SetToDebris(ShellPiece p)
+    {
+        if (!p) return;
+
+        // Debris layer 不存在就退回 Default
+        int layer = _debrisLayer >= 0 ? _debrisLayer : 0;
+        p.gameObject.layer = layer;
     }
 
     public void RecomputeConnectivity(Vector3? cutPoint, bool allowDetachDisconnected)
     {
-        // BFS：從 anchors 出發，標記所有「還連得到核心」的碎片
         var anchors = GetAnchors();
         var visited = new HashSet<ShellPiece>();
         var q = new Queue<ShellPiece>();
@@ -190,24 +220,31 @@ public class ShellCluster : MonoBehaviour
             }
         }
 
-        int aliveCount = 0;
-
-        // 沒被 visited 的 => 代表「已經連不到核心」
-        if (onlyDetachAfterFirstCut && !_hasEverCut) allowDetachDisconnected = false;
+        if (onlyDetachAfterFirstCut && !_hasEverCut)
+            allowDetachDisconnected = false;
 
         Vector3 impulseDir = Vector3.up;
-        if (weakPoint) impulseDir = (cutPoint ?? weakPoint.position) - weakPoint.position;
-        if (impulseDir.sqrMagnitude < 1e-6f) impulseDir = Vector3.up;
-        impulseDir = impulseDir.normalized;
+        if (weakPoint)
+        {
+            impulseDir = (cutPoint ?? weakPoint.position) - weakPoint.position;
+            if (impulseDir.sqrMagnitude < 1e-6f) impulseDir = Vector3.up;
+            impulseDir = impulseDir.normalized;
+        }
+
+        int aliveCount = 0;
 
         foreach (var p in _pieces)
         {
             if (!p.alive) continue;
             aliveCount++;
 
+            // 連不到核心的 => 掉落崩壞
             if (allowDetachDisconnected && !visited.Contains(p) && !p.detached)
             {
-                p.SetCollidable(false); // 掉落的不用再被剪
+                // 變 Debris，避免後續又被當成 Shell 目標
+                SetToDebris(p);
+
+                // 建議保留 collider，掉落才有「碎片感」
                 p.Detach(-impulseDir + Vector3.up * 0.3f, detachImpulse, enableGravity: true);
 
                 if (autoDestroyAfter > 0f)
@@ -218,4 +255,3 @@ public class ShellCluster : MonoBehaviour
         AllShellDestroyed = (aliveCount == 0);
     }
 }
-
