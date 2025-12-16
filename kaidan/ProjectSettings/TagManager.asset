@@ -1,25 +1,16 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!78 &1
-TagManager:
-  serializedVersion: 2
   tags:
   - Bullet
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Bullet
   - Water
   - UI
+  - Bullet
   - Shell
   - WeakPoint
   - CutLine
-HEAD
-  - Post
-
   - 
-a51769b (遊戲機制更新_3)
   - 
   - 
   - 
