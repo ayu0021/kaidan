@@ -530,6 +530,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: "\u6BDB\u7DDA\u740304"
       objectReference: {fileID: 0}
+    - target: {fileID: -4683669308469848369, guid: 51aba9133dea79240bc0466ae2cd8410, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: e814e34a2fd82084992a1270484eb21b, type: 2}
     - target: {fileID: -4292154010595695564, guid: 51aba9133dea79240bc0466ae2cd8410, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.92387956
@@ -1667,6 +1671,7 @@ GameObject:
   - component: {fileID: 474050253}
   - component: {fileID: 474050252}
   - component: {fileID: 474050255}
+  - component: {fileID: 474050256}
   m_Layer: 9
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1763,7 +1768,7 @@ MonoBehaviour:
   volumeTrigger: {fileID: 474050254}
   volumeLayer:
     serializedVersion: 2
-    m_Bits: 576
+    m_Bits: 2048
   stopNaNPropagation: 1
   finalBlitToCameraTarget: 0
   antialiasingMode: 2
@@ -1808,6 +1813,50 @@ MonoBehaviour:
   m_BeforeTransparentBundles: []
   m_BeforeStackBundles: []
   m_AfterStackBundles: []
+--- !u!114 &474050256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 474050251}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_Version: 2
+  m_TaaSettings:
+    quality: 3
+    frameInfluence: 0.1
+    jitterScale: 1
+    mipBias: 0
+    varianceClampScale: 0.9
+    contrastAdaptiveSharpening: 0
 --- !u!65 &495848575
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2185,6 +2234,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1185221032}
   - component: {fileID: 1185221031}
+  - component: {fileID: 1185221033}
   m_Layer: 0
   m_Name: Spot Light (2)
   m_TagString: Untagged
@@ -2269,6 +2319,29 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 165.244, y: -344.107, z: 2.953003}
+--- !u!114 &1185221033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1185221030}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_RenderingLayers: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_ShadowRenderingLayers: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
 --- !u!1001 &1309100168
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2352,7 +2425,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1506715326}
   - component: {fileID: 1506715325}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: post
   m_TagString: Untagged
   m_Icon: {fileID: 0}
