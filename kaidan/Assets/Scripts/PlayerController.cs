@@ -75,4 +75,6 @@ public class PlayerController : MonoBehaviour
             transform.position += moveInput * moveSpeed * Time.fixedDeltaTime;
         }
     }
+
+   
 }
