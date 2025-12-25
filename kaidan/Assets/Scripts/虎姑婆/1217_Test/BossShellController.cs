@@ -1,11 +1,12 @@
+using System.Collections;
 using UnityEngine;
 
 public class BossShellController : MonoBehaviour
 {
     [Header("Refs")]
-    public Transform shellPiecesRoot;   // 例如：WeakShell 或 ShellPieces
-    public InnerShield innerShield;     // InnerShield 物件上的腳本
-    public WeakPoint weakPoint;         // WeakPoint 物件上的腳本
+    public Transform shellPiecesRoot;          // 指到 WeakShell
+    public InnerShieldBarrier innerShield;     // 指到半圓護罩 InnerShield(掛此腳本)
+    public WeakPoint weakPoint;               // 指到 WeakPoint(掛WeakPoint腳本)
 
     int _remaining;
 
@@ -16,7 +17,7 @@ public class BossShellController : MonoBehaviour
         _remaining = shellPiecesRoot.GetComponentsInChildren<ShellShard>(true).Length;
 
         if (weakPoint) weakPoint.SetDamageEnabled(false);
-        if (innerShield) innerShield.SetUnlocked(false);
+        if (innerShield) innerShield.SetLocked(true);
     }
 
     public void OnShardDetached(ShellShard shard)
@@ -25,14 +26,26 @@ public class BossShellController : MonoBehaviour
 
         if (_remaining == 0)
         {
-            if (innerShield) innerShield.SetUnlocked(true);
+            StartCoroutine(ClearInnerShieldThenUnlock());
         }
     }
 
+    IEnumerator ClearInnerShieldThenUnlock()
+    {
+        if (innerShield)
+            yield return innerShield.Vanish();  // 半圓護罩消失（含粒子/淡出）
+
+        if (weakPoint)
+            weakPoint.SetDamageEnabled(true);
+    }
+
+    public bool ShellCleared => _remaining == 0;
+
+    // 相容舊版：避免你專案裡有東西還在呼叫它造成編譯錯
     public void OnInnerShieldBroken()
     {
         if (weakPoint) weakPoint.SetDamageEnabled(true);
     }
-
-    public bool ShellCleared => _remaining == 0;
 }
+
+
