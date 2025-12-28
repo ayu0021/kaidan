@@ -1,16 +1,23 @@
 using UnityEngine;
 
-// 強制要求有 Rigidbody，避免程式碼報錯
 [RequireComponent(typeof(Animator))]
-[RequireComponent(typeof(Rigidbody))] 
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(CapsuleCollider))]
 public class PlayerController : MonoBehaviour
 {
     [Header("移動速度")]
-    public float moveSpeed = 5f; // 稍微調高一點，3f 有時體感較慢
+    public float moveSpeed = 5f;
+
+    [Header("防穿模：留一點皮膚距離")]
+    public float skinWidth = 0.02f;
+
+    [Header("要阻擋的層（家具/牆壁）")]
+    public LayerMask obstacleMask = ~0; // 預設全部都算（你也可以只勾 Obstacles）
 
     private Animator animator;
     private SpriteRenderer spriteRenderer;
     private Rigidbody rb;
+    private CapsuleCollider capsule;
 
     private Vector3 moveInput;
     private bool initialFlipX;
@@ -18,17 +25,19 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         animator = GetComponent<Animator>();
-        // 如果 SpriteRenderer 在子物件，用 GetComponentInChildren；如果在同物件用 GetComponent
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-        rb = GetComponent<Rigidbody>();
 
-        if (rb != null)
-        {
-            // 凍結旋轉，防止角色因為碰撞而倒地
-            rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
-            // 確保物理運動不會因為摩擦力而卡住
-            rb.useGravity = false; 
-        }
+        rb = GetComponent<Rigidbody>();
+        capsule = GetComponent<CapsuleCollider>();
+
+        // 物理設定：穩定、不穿模、不卡
+        rb.useGravity = false;
+        rb.constraints = RigidbodyConstraints.FreezeRotationX |
+                         RigidbodyConstraints.FreezeRotationY |
+                         RigidbodyConstraints.FreezeRotationZ;
+
+        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
 
         if (spriteRenderer != null)
             initialFlipX = spriteRenderer.flipX;
@@ -36,22 +45,16 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        // 取得輸入
         float moveX = Input.GetAxisRaw("Horizontal");
         float moveZ = Input.GetAxisRaw("Vertical");
 
-        // 計算移動向量並正規化（防止斜向移動變快）
         moveInput = new Vector3(moveX, 0f, moveZ).normalized;
 
         bool isMoving = moveInput.sqrMagnitude > 0.001f;
 
-        // 設定動畫參數
         if (animator != null)
-        {
             animator.SetFloat("Speed", isMoving ? 1f : 0f);
-        }
 
-        // 處理翻轉邏輯
         HandleSpriteFlip(moveX, isMoving);
     }
 
@@ -60,25 +63,40 @@ public class PlayerController : MonoBehaviour
         if (spriteRenderer == null) return;
 
         if (isMoving && Mathf.Abs(moveX) > 0.1f)
-        {
-            // 往右走 (moveX > 0) 設為 true，往左走 (moveX < 0) 設為 false
-            // 如果方向反了，請自行調換這兩個 true/false
             spriteRenderer.flipX = (moveX > 0f);
-        }
         else if (!isMoving)
-        {
-            // 待機時回到初始朝向
             spriteRenderer.flipX = initialFlipX;
-        }
     }
 
     void FixedUpdate()
     {
-        // 使用 MovePosition 是最平滑的物理移動方式
-        if (rb != null)
+        if (rb == null) return;
+
+        Vector3 desiredMove = moveInput * moveSpeed * Time.fixedDeltaTime;
+        if (desiredMove.sqrMagnitude < 0.000001f) return;
+
+        // 取得膠囊在世界座標的兩端點
+        Vector3 center = rb.position + capsule.center;
+        float radius = Mathf.Max(0.0001f, capsule.radius * Mathf.Max(transform.localScale.x, transform.localScale.z));
+        float height = Mathf.Max(radius * 2f, capsule.height * transform.localScale.y);
+
+        // 膠囊上下端點（Y軸）
+        float half = Mathf.Max(0f, (height * 0.5f) - radius);
+        Vector3 p1 = center + Vector3.up * half;
+        Vector3 p2 = center - Vector3.up * half;
+
+        Vector3 dir = desiredMove.normalized;
+        float dist = desiredMove.magnitude;
+
+        // 先掃掠，看看前方會不會撞到（忽略 Trigger）
+        if (Physics.CapsuleCast(p1, p2, radius, dir, out RaycastHit hit, dist + skinWidth, obstacleMask, QueryTriggerInteraction.Ignore))
         {
-            Vector3 targetPosition = rb.position + moveInput * moveSpeed * Time.fixedDeltaTime;
-            rb.MovePosition(targetPosition);
+            float safeDist = Mathf.Max(0f, hit.distance - skinWidth);
+            rb.MovePosition(rb.position + dir * safeDist);
+        }
+        else
+        {
+            rb.MovePosition(rb.position + desiredMove);
         }
     }
 }

@@ -272,15 +272,15 @@ PrefabInstance:
     - target: {fileID: -8183477518598872076, guid: 3cc4eb382c7e44a5a88770555f1ae239, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+      objectReference: {fileID: -8614899719022246337, guid: 51aba9133dea79240bc0466ae2cd8410, type: 3}
     - target: {fileID: -8182600018747729221, guid: 3cc4eb382c7e44a5a88770555f1ae239, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+      objectReference: {fileID: -8614899719022246337, guid: 51aba9133dea79240bc0466ae2cd8410, type: 3}
     - target: {fileID: -7597863765593025245, guid: 3cc4eb382c7e44a5a88770555f1ae239, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+      objectReference: {fileID: -8614899719022246337, guid: 51aba9133dea79240bc0466ae2cd8410, type: 3}
     - target: {fileID: -7384630043469504300, guid: 3cc4eb382c7e44a5a88770555f1ae239, type: 3}
       propertyPath: m_Layer
       value: 6
@@ -288,11 +288,11 @@ PrefabInstance:
     - target: {fileID: -5349225775546046574, guid: 3cc4eb382c7e44a5a88770555f1ae239, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+      objectReference: {fileID: -8614899719022246337, guid: 51aba9133dea79240bc0466ae2cd8410, type: 3}
     - target: {fileID: -5317269497232388731, guid: 3cc4eb382c7e44a5a88770555f1ae239, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+      objectReference: {fileID: -8614899719022246337, guid: 51aba9133dea79240bc0466ae2cd8410, type: 3}
     - target: {fileID: -5186252173712109353, guid: 3cc4eb382c7e44a5a88770555f1ae239, type: 3}
       propertyPath: m_Layer
       value: 6
@@ -312,11 +312,11 @@ PrefabInstance:
     - target: {fileID: 1690650730248078122, guid: 3cc4eb382c7e44a5a88770555f1ae239, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+      objectReference: {fileID: -8614899719022246337, guid: 51aba9133dea79240bc0466ae2cd8410, type: 3}
     - target: {fileID: 2310652789801305447, guid: 3cc4eb382c7e44a5a88770555f1ae239, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+      objectReference: {fileID: -8614899719022246337, guid: 51aba9133dea79240bc0466ae2cd8410, type: 3}
     - target: {fileID: 3505069773877680178, guid: 3cc4eb382c7e44a5a88770555f1ae239, type: 3}
       propertyPath: m_Layer
       value: 6
@@ -332,11 +332,11 @@ PrefabInstance:
     - target: {fileID: 7571874903987955940, guid: 3cc4eb382c7e44a5a88770555f1ae239, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+      objectReference: {fileID: -8614899719022246337, guid: 51aba9133dea79240bc0466ae2cd8410, type: 3}
     - target: {fileID: 7903558241583454389, guid: 3cc4eb382c7e44a5a88770555f1ae239, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+      objectReference: {fileID: -8614899719022246337, guid: 51aba9133dea79240bc0466ae2cd8410, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -610,6 +610,7 @@ GameObject:
   - component: {fileID: 257749972}
   - component: {fileID: 257749971}
   - component: {fileID: 257749970}
+  - component: {fileID: 257749973}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -691,6 +692,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 21.6, y: 0, z: 0}
+--- !u!114 &257749973
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 257749969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_Version: 2
+  m_TaaSettings:
+    quality: 3
+    frameInfluence: 0.1
+    jitterScale: 1
+    mipBias: 0
+    varianceClampScale: 0.9
+    contrastAdaptiveSharpening: 0
 --- !u!1 &387090185
 GameObject:
   m_ObjectHideFlags: 0
@@ -2515,7 +2560,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: ff212b9c41d80490fa6bb258c8dc9f13, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 9a7da2ac663274a72b8b000223d83ed4, type: 2}
+      objectReference: {fileID: -5283346526411061797, guid: 51aba9133dea79240bc0466ae2cd8410, type: 3}
     - target: {fileID: 919132149155446097, guid: ff212b9c41d80490fa6bb258c8dc9f13, type: 3}
       propertyPath: m_Name
       value: InnerShield
@@ -3413,6 +3458,7 @@ GameObject:
   - component: {fileID: 1790794830}
   - component: {fileID: 1790794829}
   - component: {fileID: 1790794831}
+  - component: {fileID: 1790794832}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -3515,6 +3561,29 @@ MonoBehaviour:
   glitchChance: 0.05
   glitchOffTimeMin: 3
   glitchOffTimeMax: 5
+--- !u!114 &1790794832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1790794828}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_RenderingLayers: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_ShadowRenderingLayers: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
 --- !u!1 &1809267749
 GameObject:
   m_ObjectHideFlags: 0
@@ -3897,7 +3966,7 @@ MonoBehaviour:
     m_Bits: 64
   weakPointMask:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 0
   range: 1.6
   castRadius: 0.18
   halfAngle: 120
