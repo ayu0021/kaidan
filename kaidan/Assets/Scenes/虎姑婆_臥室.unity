@@ -188,7 +188,7 @@ Transform:
   m_GameObject: {fileID: 50760075}
   serializedVersion: 2
   m_LocalRotation: {x: 0.13052616, y: 0, z: 0, w: 0.9914449}
-  m_LocalPosition: {x: -385.42184, y: 310.1, z: -3376.9763}
+  m_LocalPosition: {x: -548.6, y: 310.1, z: -3376.9763}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -577,6 +577,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3ec9dd58d68fb4a4ab935bfaff76e913, type: 3}
       insertIndex: -1
       addedObject: {fileID: 314698017}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3ec9dd58d68fb4a4ab935bfaff76e913, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 314698021}
   m_SourcePrefab: {fileID: 100100000, guid: 3ec9dd58d68fb4a4ab935bfaff76e913, type: 3}
 --- !u!1 &314698016 stripped
 GameObject:
@@ -604,6 +607,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 29.243528, y: 4.246356, z: 8.472109}
   m_Center: {x: -0.4516388, y: -0.4623921, z: -1.8181294}
+--- !u!114 &314698021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 314698016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e47453ccca4434840920f7d6028ef72f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &378269270
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1183,7 +1198,7 @@ Transform:
   m_GameObject: {fileID: 474050251}
   serializedVersion: 2
   m_LocalRotation: {x: 0.13052616, y: 0, z: 0, w: 0.9914449}
-  m_LocalPosition: {x: -385.42184, y: 310.1, z: -3376.9763}
+  m_LocalPosition: {x: -548.6, y: 310.1, z: -3376.9763}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2247,7 +2262,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5977213568871214249, guid: a724f2d9eaf6e4b7098e7cf0d114ae5a, type: 3}
       propertyPath: moveSpeed
-      value: 60
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: 6041616886737400431, guid: a724f2d9eaf6e4b7098e7cf0d114ae5a, type: 3}
       propertyPath: m_LocalScale.x
@@ -2263,7 +2278,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6041616886737400431, guid: a724f2d9eaf6e4b7098e7cf0d114ae5a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -391.92184
+      value: -555.1
       objectReference: {fileID: 0}
     - target: {fileID: 6041616886737400431, guid: a724f2d9eaf6e4b7098e7cf0d114ae5a, type: 3}
       propertyPath: m_LocalPosition.y
