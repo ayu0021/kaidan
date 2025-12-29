@@ -559,8 +559,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   videoPlayer: {fileID: 2096401816}
-  nextSceneName: "\u8F49\u5834\u5E03\u5E55_"
-  defaultNextSceneName: "\u8F49\u5834\u5E03\u5E55_"
+  nextSceneName: "\u864E\u59D1\u5A46_\u5BA2\u5EF3"
+  defaultNextSceneName: "\u864E\u59D1\u5A46_\u5BA2\u5EF3"
   allowKeyboardSkip: 1
   allowSpaceToSkip: 1
   allowEscToSkip: 0

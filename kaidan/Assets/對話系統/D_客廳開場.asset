@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6eb164e84b2684214b0f5b91cef19344, type: 3}
+  m_Name: "D_\u5BA2\u5EF3\u958B\u5834"
+  m_EditorClassIdentifier: 
+  assetTitle: "D_\u5BA2\u5EF3\u958B\u5834"
+  loadSceneOnEnd: 
+  lines:
+  - uiSkin: {fileID: 11400000, guid: 8c93a4721c27a4ae48927033c0db960c, type: 2}
+    character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
+    variant: 0
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: "\u9019\u88E1\u662F..."
+    hintMode: 1
+    hintCustom: "\u6309\u7A7A\u767D\u9375\u7E7C\u7E8C"
+  - uiSkin: {fileID: 11400000, guid: 8c93a4721c27a4ae48927033c0db960c, type: 2}
+    character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
+    variant: 1
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: "\u662F\u525B\u525B\u6545\u4E8B\u88E1\u63D0\u5230\u7684\u5996\u602A\u7684\u5BB6\u5427\u3002"
+    hintMode: 1
+    hintCustom: "\u6309\u7A7A\u767D\u9375\u7E7C\u7E8C"
+  - uiSkin: {fileID: 11400000, guid: e9db15f6c9d184f07b3063c973ceb20c, type: 2}
+    character: {fileID: 11400000, guid: 28a2afca7dbf84227b76f55483dfc5b3, type: 2}
+    variant: 0
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: "\u6211\u5011\u8981\u627E\u5230\u65B9\u6CD5\u96E2\u958B\u624D\u884C\u3002"
+    hintMode: 1
+    hintCustom: "\u6309\u7A7A\u767D\u9375\u7E7C\u7E8C"
+  - uiSkin: {fileID: 11400000, guid: e9db15f6c9d184f07b3063c973ceb20c, type: 2}
+    character: {fileID: 11400000, guid: 28a2afca7dbf84227b76f55483dfc5b3, type: 2}
+    variant: 0
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: "\u63A5\u4E0B\u4F86\u5C31\u5206\u982D\u5C0B\u627E\u7DDA\u7D22\u5427\uFF01"
+    hintMode: 1
+    hintCustom: "\u6309\u7A7A\u767D\u9375\u7E7C\u7E8C"
