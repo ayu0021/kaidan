@@ -1,31 +1,47 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections; // ← 這行一定要加！
+using System.Collections;
 
-public class MenuManager : MonoBehaviour
+public class FadeManager : MonoBehaviour
 {
-    public Animator fadeAnimator; // 指向 FadePanel 的 Animator
+    public static FadeManager Instance;
 
-    public void StartGame()
+    [Header("FadePanel 的 Animator")]
+    public Animator fadeAnimator;
+
+    [Header("FadeOut 動畫時間（秒）")]
+    public float fadeDuration = 1f;
+
+    private bool isFading = false;
+
+    private void Awake()
     {
-        StartCoroutine(FadeAndLoad());
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
-    private IEnumerator FadeAndLoad()
+    public void FadeToScene(string sceneName)
     {
+        if (isFading) return;
+        StartCoroutine(FadeAndLoad(sceneName));
+    }
+
+    private IEnumerator FadeAndLoad(string sceneName)
+    {
+        isFading = true;
+
         fadeAnimator.SetTrigger("FadeOut");
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(fadeDuration);
 
-        SceneManager.LoadScene("FirstWoods");
-    }
+        SceneManager.LoadScene(sceneName);
 
-    public void QuitGame()
-    {
-        Application.Quit();
-
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#endif
+        isFading = false;
     }
 }
