@@ -11,6 +11,7 @@ public class LevelPortal : MonoBehaviour
     // --- 3D 物理觸發 ---
     private void OnTriggerEnter(Collider other)
     {
+        // 確保碰撞體標籤為 Player
         if (other.CompareTag("Player") && !isTransitioning)
         {
             ExecuteSceneChange();
@@ -28,17 +29,19 @@ public class LevelPortal : MonoBehaviour
 
     private void ExecuteSceneChange()
     {
-        // 尋找場景中的 SceneLoader 腳本
-        SceneLoader loader = Object.FindFirstObjectByType<SceneLoader>();
-
-        if (loader != null)
+        // 直接呼叫我們剛才建立的 SceneFader 單例
+        if (SceneFader.Instance != null)
         {
             isTransitioning = true;
-            loader.LoadNextLevel(targetSceneName);
+            Debug.Log("開始轉場至: " + targetSceneName);
+
+            // 執行漸暗與換場邏輯
+            SceneFader.Instance.TransitionToScene(targetSceneName);
         }
         else
         {
-            Debug.LogError("錯誤：場景中找不到 SceneLoader 腳本！請確保 Canvas 上有掛載 SceneLoader。");
+            // 如果報這個錯，代表你場景中沒有放 SceneTransitionManager 物件
+            Debug.LogError("錯誤：場景中找不到 SceneFader 實例！請確保場景中有 SceneTransitionManager 物件且掛載了 SceneFader 腳本。");
         }
     }
 }
