@@ -16,5 +16,5 @@ MonoBehaviour:
   normal: {fileID: 21300000, guid: a58ea820d27ea495bbdb3b93630448ec, type: 3}
   alt: {fileID: 0}
   uiScale: {x: 1, y: 1, z: 1}
-  uiOffset: {x: 0, y: -0.66}
-  flipX: 0
+  uiOffset: {x: 0, y: 0}
+  flipX: 1

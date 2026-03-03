@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class DialogueManager : MonoBehaviour
 {
-    [Header("Skin")]
+    [Header("Skins")]
     public DialogueUISkin defaultSkin;
+    public DialogueUISkin secondarySkin;
+
     [Tooltip("UI 生成後要掛在哪個父物件下（通常是 Canvas）。可不填，不填就放在自己底下。")]
     public Transform uiParent;
 
@@ -16,12 +18,13 @@ public class DialogueManager : MonoBehaviour
 
     [Header("Typewriter")]
     public bool useTypewriter = true;
-    [Tooltip("字/秒（當 Skin.charsPerSecond <= 0 時用這個）")]
     public float charsPerSecond = 40f;
 
     [Header("No auto text")]
-    [Tooltip("不自動帶 Character 名字；Name 欄位沒寫就顯示空")]
     public bool autoFillNameFromCharacter = false;
+
+    [Header("Debug")]
+    public bool debugLog = true;
 
     private DialogueUIRefs _ui;
     private Coroutine _routine;
@@ -29,14 +32,14 @@ public class DialogueManager : MonoBehaviour
     private bool _isTyping;
     private bool _waitingExtraClose;
     private float _activeCps;
-    private DialogueUISkin _activeSkin;
 
-    // 記住 Portrait 在 prefab 的「原始」位置/縮放，避免每句累加 or 被上一個角色污染
+    // 目前畫面上那套 UI 是用哪個 skin 建出來的
+    private DialogueUISkin _currentUISkin;
+
+    // Portrait base（每次重建 UI 都會重新抓，避免不同 prefab 互相污染）
     private bool _portraitBaseCaptured;
     private Vector3 _portraitBaseLocalScale;
     private Vector2 _portraitBaseAnchoredPos;
-
-    // ===== Public API =====
 
     public void Play(DialogueAsset asset, DialogueUISkin skinOverride = null)
     {
@@ -48,20 +51,21 @@ public class DialogueManager : MonoBehaviour
 
         Stop();
 
-        _activeSkin = skinOverride != null ? skinOverride : defaultSkin;
-        if (_activeSkin == null || _activeSkin.uiPrefab == null)
+        var startSkin = skinOverride != null ? skinOverride : defaultSkin;
+        if (startSkin == null) startSkin = secondarySkin;
+
+        if (startSkin == null || startSkin.uiPrefab == null)
         {
             Debug.LogError("[DialogueManager] No DialogueUISkin / uiPrefab assigned.");
             return;
         }
 
-        EnsureUIInstance(_activeSkin);
+        EnsureUIInstance(startSkin);
 
         _ui.ClearAll();
         _ui.RootGO.SetActive(true);
 
-        _activeCps = (_activeSkin.charsPerSecond > 0f) ? _activeSkin.charsPerSecond : charsPerSecond;
-        if (_activeCps <= 0f) _activeCps = 40f;
+        ApplyCpsFromSkin(startSkin);
 
         _routine = StartCoroutine(PlayRoutine(asset));
     }
@@ -78,35 +82,57 @@ public class DialogueManager : MonoBehaviour
         _isTyping = false;
         _waitingExtraClose = false;
 
-        if (_ui != null && _activeSkin != null && _activeSkin.hideRootOnClose)
+        if (_ui != null && _currentUISkin != null && _currentUISkin.hideRootOnClose)
         {
             _ui.RootGO.SetActive(false);
         }
     }
 
-    // ===== Internals =====
-
     private void EnsureUIInstance(DialogueUISkin skin)
     {
+        if (skin == null || skin.uiPrefab == null)
+        {
+            Debug.LogError("[DialogueManager] EnsureUIInstance: skin/uiPrefab is null.");
+            return;
+        }
+
+        // 已經有 UI，但 skin 不同 => Destroy 重建
+        if (_ui != null && _currentUISkin != skin)
+        {
+            if (debugLog) Debug.Log($"[DialogueManager] Rebuild UI: {_currentUISkin?.name} -> {skin.name}");
+            Destroy(_ui.gameObject);
+            _ui = null;
+            _portraitBaseCaptured = false;
+        }
+
         if (_ui != null) return;
 
         Transform parent = uiParent != null ? uiParent : transform;
         _ui = Instantiate(skin.uiPrefab, parent);
         _ui.name = $"DialogueUI({skin.name})";
+        _currentUISkin = skin;
 
         CapturePortraitBase();
+    }
+
+    private void ApplyCpsFromSkin(DialogueUISkin skin)
+    {
+        _activeCps = (skin != null && skin.charsPerSecond > 0f) ? skin.charsPerSecond : charsPerSecond;
+        if (_activeCps <= 0f) _activeCps = 40f;
     }
 
     private void CapturePortraitBase()
     {
         _portraitBaseCaptured = false;
-
         if (_ui == null || _ui.portraitImage == null) return;
 
         var rt = _ui.portraitImage.rectTransform;
         _portraitBaseLocalScale = rt.localScale;
         _portraitBaseAnchoredPos = rt.anchoredPosition;
         _portraitBaseCaptured = true;
+
+        if (debugLog)
+            Debug.Log($"[DialogueManager] CapturePortraitBase skin={_currentUISkin?.name} baseScale={_portraitBaseLocalScale}");
     }
 
     private IEnumerator PlayRoutine(DialogueAsset asset)
@@ -123,14 +149,37 @@ public class DialogueManager : MonoBehaviour
         for (int i = 0; i < asset.lines.Count; i++)
         {
             var line = asset.lines[i];
+
+            // 每句決定要用哪個 skin（line > character > default > secondary）
+            DialogueUISkin lineSkin = ResolveSkinForLine(line);
+            if (lineSkin == null) lineSkin = defaultSkin;
+            if (lineSkin == null) lineSkin = secondarySkin;
+
+            if (lineSkin != null && lineSkin.uiPrefab != null)
+            {
+                EnsureUIInstance(lineSkin);
+
+                _ui.ClearAll();
+                _ui.RootGO.SetActive(true);
+                ApplyCpsFromSkin(lineSkin);
+
+                // ✅ ✅ ✅ 把「換框框」加回來：
+                // 若你的 UI prefab 裡有 redBox / blueBox，這裡會切換。
+                // 沒有就什麼都不做（不影響你用兩套 prefab 的方式）
+                bool useBlueFrame = (lineSkin == secondarySkin);
+                _ui.ShowFrame(useBlueFrame);
+            }
+
+            if (debugLog)
+                Debug.Log($"[DialogueManager] Line {i}: skin={(lineSkin ? lineSkin.name : "null")} ui={(_ui ? _ui.name : "null")}");
+
             ApplyLineToUI(line);
 
             yield return StartCoroutine(TypeLine(GetBodyText(line)));
-
             yield return StartCoroutine(WaitForAdvance());
         }
 
-        if (_activeSkin != null && _activeSkin.requireExtraPressToClose)
+        if (_currentUISkin != null && _currentUISkin.requireExtraPressToClose)
         {
             _waitingExtraClose = true;
             yield return StartCoroutine(WaitForAdvance());
@@ -139,56 +188,74 @@ public class DialogueManager : MonoBehaviour
         CloseUI();
     }
 
+    private DialogueUISkin ResolveSkinForLine(object line)
+    {
+        var skinFromLine = TryGetObject(line, "uiSkin") as DialogueUISkin;
+        if (skinFromLine != null) return skinFromLine;
+
+        var character = TryGetObject(line, "character");
+        if (character != null)
+        {
+            var t = character.GetType();
+
+            var f = t.GetField("defaultSkin");
+            if (f != null && typeof(DialogueUISkin).IsAssignableFrom(f.FieldType))
+            {
+                var v = f.GetValue(character) as DialogueUISkin;
+                if (v != null) return v;
+            }
+
+            var p = t.GetProperty("defaultSkin");
+            if (p != null && typeof(DialogueUISkin).IsAssignableFrom(p.PropertyType))
+            {
+                var v = p.GetValue(character) as DialogueUISkin;
+                if (v != null) return v;
+            }
+        }
+
+        return defaultSkin;
+    }
+
     private void CloseUI()
     {
         _isPlaying = false;
         _isTyping = false;
         _waitingExtraClose = false;
 
-        if (_activeSkin != null && _activeSkin.hideRootOnClose && _ui != null)
+        if (_currentUISkin != null && _currentUISkin.hideRootOnClose && _ui != null)
             _ui.RootGO.SetActive(false);
     }
 
     private void ApplyLineToUI(object line)
     {
-        // ===== Name =====
         string nameOverride = TryGetString(line, "nameOverride");
         if (string.IsNullOrEmpty(nameOverride) && autoFillNameFromCharacter)
-        {
-            // 若要從 CharacterPortraitSet.displayName 自動帶，請自己決定什麼時候要帶
             nameOverride = "";
-        }
+
         if (_ui.nameText) _ui.nameText.text = nameOverride ?? "";
 
-        // ===== Hint =====
         string hintCustom = TryGetString(line, "hintCustom");
         if (_ui.hintText) _ui.hintText.text = hintCustom ?? "";
 
-        // ===== Portrait =====
         var character = TryGetObject(line, "character") as CharacterPortraitSet;
         bool keepPrev = TryGetBool(line, "keepPreviousPortrait");
-        int variantEnum = TryGetEnumInt(line, "variant"); // PortraitVariant
+        int variantEnum = TryGetEnumInt(line, "variant");
 
         if (_ui.portraitImage)
         {
             if (keepPrev)
             {
-                // 沿用上一句：Sprite/Transform 都不動
+                // keep
             }
             else if (character != null)
             {
-                // 換圖
                 var v = (PortraitVariant)variantEnum;
                 _ui.portraitImage.sprite = character.Get(v);
-
-                // 套用該角色 UI 設定（位置/縮放/翻轉），並且「重設後再套用」
                 ApplyPortraitTransform(character);
             }
             else
             {
                 _ui.portraitImage.sprite = null;
-
-                // 沒角色就回到 base（避免上一個角色留下翻轉/偏移）
                 ApplyPortraitTransform(null);
             }
         }
@@ -197,7 +264,6 @@ public class DialogueManager : MonoBehaviour
     private void ApplyPortraitTransform(CharacterPortraitSet character)
     {
         if (_ui == null || _ui.portraitImage == null) return;
-
         var rt = _ui.portraitImage.rectTransform;
 
         if (!_portraitBaseCaptured)
@@ -207,28 +273,24 @@ public class DialogueManager : MonoBehaviour
             _portraitBaseCaptured = true;
         }
 
-        // 1) 位置：base + offset
         Vector2 offset = (character != null) ? character.uiOffset : Vector2.zero;
         rt.anchoredPosition = _portraitBaseAnchoredPos + offset;
 
-        // 2) 縮放：base * uiScale
         Vector3 scaleMul = (character != null) ? character.uiScale : Vector3.one;
         Vector3 finalScale = Vector3.Scale(_portraitBaseLocalScale, scaleMul);
 
-        // 3) 翻轉：只在 flipX = true 時把 X 變成負，否則確保是正（避免污染別人）
-        if (character != null && character.flipX)
-            finalScale.x = -Mathf.Abs(finalScale.x);
-        else
-            finalScale.x = Mathf.Abs(finalScale.x);
+        // ✅ 修正：以 prefab 原本方向為基準再 flip，避免換 skin 後方向亂跳
+        float baseSign = Mathf.Sign(_portraitBaseLocalScale.x);
+        if (baseSign == 0) baseSign = 1f;
+        float sign = baseSign * ((character != null && character.flipX) ? -1f : 1f);
+        finalScale.x = Mathf.Abs(finalScale.x) * sign;
 
         rt.localScale = finalScale;
     }
 
     private IEnumerator TypeLine(string full)
     {
-        if (_ui.bodyText == null)
-            yield break;
-
+        if (_ui.bodyText == null) yield break;
         full ??= "";
 
         if (!useTypewriter)
@@ -270,11 +332,9 @@ public class DialogueManager : MonoBehaviour
     private IEnumerator WaitForAdvance()
     {
         yield return null;
-
         while (true)
         {
-            if (IsAdvancePressed())
-                yield break;
+            if (IsAdvancePressed()) yield break;
             yield return null;
         }
     }
@@ -282,19 +342,15 @@ public class DialogueManager : MonoBehaviour
     private bool IsAdvancePressed()
     {
         if (!_isPlaying) return false;
-
         if (allowMouseClick && Input.GetMouseButtonDown(0)) return true;
         if (allowSpace && Input.GetKeyDown(advanceKey)) return true;
         return false;
     }
 
-    // ===== Data helpers =====
-
     private string GetBodyText(object line)
     {
         string body = TryGetString(line, "body");
         if (!string.IsNullOrEmpty(body)) return body;
-
         return TryGetString(line, "text") ?? "";
     }
 
