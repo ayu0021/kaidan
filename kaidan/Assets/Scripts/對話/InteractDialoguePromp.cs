@@ -1,15 +1,10 @@
-using System;
-using System.Reflection;
-using TMPro;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class InteractDialoguePrompt : MonoBehaviour
 {
     [Header("Trigger")]
-    [Tooltip("玩家物件的 Tag（通常是 Player）")]
     public string playerTag = "Player";
-
-    [Tooltip("只觸發一次（觸發後就不能再互動）")]
     public bool triggerOnce = false;
 
     [Header("Input")]
@@ -18,17 +13,10 @@ public class InteractDialoguePrompt : MonoBehaviour
     [Header("Dialogue")]
     public DialogueManager dialogueManager;
     public DialogueAsset dialogueAsset;
-    [Tooltip("可不填；不填就用 DialogueManager.defaultSkin")]
     public DialogueUISkin skinOverride;
 
     [Header("World Prompt")]
-    [Tooltip("一定要從 Project 拖 Prefab 進來（不要拖 Hierarchy 的物件）")]
-    public GameObject worldPromptPrefab;
-
-    [Tooltip("提示在世界座標的位置偏移（相對於本 Trigger）")]
     public Vector3 promptOffset = new Vector3(0.25f, 1.5f, 0f);
-
-    [Tooltip("是否朝向相機（簡易 Billboard）")]
     public bool billboardToCamera = true;
 
     [Header("Prompt Text")]
@@ -37,26 +25,28 @@ public class InteractDialoguePrompt : MonoBehaviour
     [Header("Debug")]
     public bool debugLog = false;
 
-    // runtime
+    private static readonly List<InteractDialoguePrompt> s_candidates = new List<InteractDialoguePrompt>(64);
+    private static Transform s_player;
+
     private bool _playerInside;
     private bool _used;
-    private Transform _player;
-    private GameObject _promptGO;
-    private TMP_Text _promptTMP;
-
-    // cache camera
-    private Camera _cam;
 
     private void Awake()
     {
-        _cam = Camera.main;
-
-        // 保險：確保 collider 是 trigger（你也可以自己手動勾）
+        // 3D Trigger 需要 Collider.isTrigger = true
         if (TryGetComponent<Collider>(out var col) && !col.isTrigger)
-        {
-            if (debugLog) Debug.LogWarning($"[{name}] Collider is not Trigger. Auto set isTrigger=true");
             col.isTrigger = true;
-        }
+    }
+
+    private void OnDisable()
+    {
+        s_candidates.Remove(this);
+        TryHideIfOwner();
+    }
+
+    private void OnDestroy()
+    {
+        s_candidates.Remove(this);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -65,10 +55,12 @@ public class InteractDialoguePrompt : MonoBehaviour
         if (!other.CompareTag(playerTag)) return;
 
         _playerInside = true;
-        _player = other.transform;
+        s_player = other.transform;
 
-        if (debugLog) Debug.Log($"[InteractDialoguePrompt] Player entered trigger: {name}");
-        ShowPrompt();
+        if (!s_candidates.Contains(this))
+            s_candidates.Add(this);
+
+        if (debugLog) Debug.Log($"[InteractDialoguePrompt] Enter {name}");
     }
 
     private void OnTriggerExit(Collider other)
@@ -76,171 +68,107 @@ public class InteractDialoguePrompt : MonoBehaviour
         if (!other.CompareTag(playerTag)) return;
 
         _playerInside = false;
-        _player = null;
+        s_candidates.Remove(this);
 
-        if (debugLog) Debug.Log($"[InteractDialoguePrompt] Player exited trigger: {name}");
-        HidePrompt();
+        if (debugLog) Debug.Log($"[InteractDialoguePrompt] Exit {name}");
+
+        TryHideIfOwner();
     }
 
     private void Update()
     {
         if (_used && triggerOnce) return;
+        if (!_playerInside || s_player == null) return;
 
-        // 跟隨 & billboard（即使沒按鍵也要更新位置）
-        if (_promptGO != null && _promptGO.activeSelf)
+        var best = GetBestCandidate();
+        if (best != this) return;
+
+        // 取得 WorldPrompt（Instance 壞掉也會自動找）
+        var wp = GetWorldPrompt();
+        if (wp == null)
         {
-            _promptGO.transform.position = transform.position + promptOffset;
-
-            if (billboardToCamera)
-            {
-                if (_cam == null) _cam = Camera.main;
-                if (_cam != null)
-                {
-                    var fwd = _cam.transform.forward;
-                    // 若你想要完全面向相機（包含上下），就把這行註解掉
-                    fwd.y = 0f;
-
-                    if (fwd.sqrMagnitude > 0.0001f)
-                        _promptGO.transform.forward = fwd.normalized;
-                }
-            }
+            if (debugLog) Debug.LogWarning("[InteractDialoguePrompt] 找不到 InteractionPromptWorld。請在場景放一個 WorldPrompt 並掛 InteractionPromptWorld.cs");
+            return;
         }
 
-        if (!_playerInside) return;
+        // 顯示提示（靠近就顯示）
+        wp.faceCamera = billboardToCamera;
+        wp.Show(transform, promptText, promptOffset, true, transform);
 
+        // 只有「最近者」吃按鍵
         if (Input.GetKeyDown(interactKey))
         {
-            if (debugLog) Debug.Log($"[InteractDialoguePrompt] Interact pressed on: {name}");
+            if (debugLog) Debug.Log($"[InteractDialoguePrompt] Press F on {name}");
 
-            // 觸發對話
+            if (dialogueManager == null)
+                dialogueManager = FindFirstObjectByType<DialogueManager>();
+
             if (dialogueManager != null && dialogueAsset != null)
-            {
                 dialogueManager.Play(dialogueAsset, skinOverride);
-            }
             else
+                Debug.LogWarning($"[InteractDialoguePrompt] Missing DialogueManager or DialogueAsset on {name}");
+
+            if (triggerOnce)
             {
-                Debug.LogWarning($"[InteractDialoguePrompt] Missing DialogueManager or DialogueAsset on: {name}");
+                _used = true;
+                s_candidates.Remove(this);
             }
 
-            if (triggerOnce) _used = true;
-
-            // 一按就先把提示藏起來（避免遮住對話）
-            HidePrompt();
+            // 按下互動先把提示藏起來（避免遮住對話）
+            TryHideIfOwner();
         }
     }
 
-    private void ShowPrompt()
+    private static InteractDialoguePrompt GetBestCandidate()
     {
-        if (worldPromptPrefab == null)
+        if (s_player == null) return null;
+
+        // 清掉壞的/離場的
+        for (int i = s_candidates.Count - 1; i >= 0; i--)
         {
-            Debug.LogError("[InteractDialoguePrompt] worldPromptPrefab is NULL.（請從 Project 拖 WorldPrompt.prefab 進來，不要拖 Hierarchy 的物件）");
-            return;
+            var c = s_candidates[i];
+            if (c == null || !c.isActiveAndEnabled || (c._used && c.triggerOnce) || !c._playerInside)
+                s_candidates.RemoveAt(i);
         }
 
-        if (_promptGO == null)
+        InteractDialoguePrompt best = null;
+        float bestDistSq = float.PositiveInfinity;
+
+        for (int i = 0; i < s_candidates.Count; i++)
         {
-            _promptGO = Instantiate(worldPromptPrefab);
-            _promptGO.name = $"{worldPromptPrefab.name}(Prompt)";
+            var c = s_candidates[i];
+            Vector3 p = c.transform.position + c.promptOffset;
+            float d = (s_player.position - p).sqrMagnitude;
+            if (d < bestDistSq)
+            {
+                bestDistSq = d;
+                best = c;
+            }
         }
 
-        _promptGO.SetActive(true);
-
-        // 設定位址
-        _promptGO.transform.position = transform.position + promptOffset;
-
-        // 找 TMP 文字（不用依賴 WorldPromptView）
-        CacheTMP();
-        ApplyPromptText(promptText);
-
-        // 如果 prefab 上剛好有 WorldPromptView，就用反射塞 followTarget / offset / billboard
-        TryConfigureWorldPromptView();
+        return best;
     }
 
-    private void HidePrompt()
+    private static InteractionPromptWorld GetWorldPrompt()
     {
-        if (_promptGO != null)
-            _promptGO.SetActive(false);
+        // 先用 Instance
+        var wp = InteractionPromptWorld.Instance;
+
+        // Instance 不見了就找場景（包含 inactive）
+#if UNITY_2023_1_OR_NEWER
+        if (wp == null) wp = Object.FindFirstObjectByType<InteractionPromptWorld>(FindObjectsInactive.Include);
+#else
+        if (wp == null) wp = Object.FindObjectOfType<InteractionPromptWorld>(true);
+#endif
+
+        // 強制補回 Instance，避免下一次又 NULL
+        InteractionPromptWorld.Instance = wp;
+        return wp;
     }
 
-    private void CacheTMP()
+    private void TryHideIfOwner()
     {
-        if (_promptGO == null) return;
-        if (_promptTMP != null) return;
-
-        _promptTMP = _promptGO.GetComponentInChildren<TMP_Text>(true);
-        if (debugLog && _promptTMP == null)
-            Debug.LogWarning("[InteractDialoguePrompt] No TMP_Text found under worldPromptPrefab. Prompt text may not show.");
-    }
-
-    private void ApplyPromptText(string text)
-    {
-        if (_promptTMP != null)
-            _promptTMP.text = text ?? "";
-    }
-
-    /// <summary>
-    /// 不引用 WorldPromptView 型別，避免 CS0246。
-    /// 但如果 prefab 上真的有 WorldPromptView，就用反射把欄位塞進去。
-    /// </summary>
-    private void TryConfigureWorldPromptView()
-    {
-        if (_promptGO == null) return;
-
-        MonoBehaviour wpv = FindMonoBehaviourByTypeName(_promptGO, "WorldPromptView");
-        if (wpv == null) return;
-
-        // 依你之前 WorldPromptView 的欄位名稱：followTarget / worldOffset / billboardToCamera / textTMP
-        SetFieldIfPossible(wpv, "followTarget", transform);
-        SetFieldIfPossible(wpv, "worldOffset", promptOffset);
-        SetFieldIfPossible(wpv, "billboardToCamera", billboardToCamera);
-
-        // 若 WorldPromptView 有 textTMP 欄位，也一起同步（可選）
-        var textTMPObj = GetFieldValue(wpv, "textTMP");
-        if (textTMPObj is TMP_Text tmp)
-        {
-            tmp.text = promptText ?? "";
-        }
-    }
-
-    private static MonoBehaviour FindMonoBehaviourByTypeName(GameObject root, string typeName)
-    {
-        var mbs = root.GetComponentsInChildren<MonoBehaviour>(true);
-        for (int i = 0; i < mbs.Length; i++)
-        {
-            var mb = mbs[i];
-            if (mb == null) continue;
-
-            Type t = mb.GetType();
-            if (t.Name == typeName) return mb;
-        }
-        return null;
-    }
-
-    private static void SetFieldIfPossible(object target, string fieldName, object value)
-    {
-        if (target == null) return;
-
-        var t = target.GetType();
-        var f = t.GetField(fieldName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-        if (f == null) return;
-
-        // 型別可相容才賦值
-        if (value == null)
-        {
-            if (!f.FieldType.IsValueType) f.SetValue(target, null);
-            return;
-        }
-
-        if (f.FieldType.IsAssignableFrom(value.GetType()))
-            f.SetValue(target, value);
-    }
-
-    private static object GetFieldValue(object target, string fieldName)
-    {
-        if (target == null) return null;
-
-        var t = target.GetType();
-        var f = t.GetField(fieldName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-        return f != null ? f.GetValue(target) : null;
+        var wp = GetWorldPrompt();
+        if (wp != null) wp.Hide(transform);
     }
 }

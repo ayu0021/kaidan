@@ -3,77 +3,102 @@ using UnityEngine;
 
 public class InteractionPromptWorld : MonoBehaviour
 {
-    public static InteractionPromptWorld Instance { get; private set; }
+    // 用欄位而不是 Property，方便外部強制補回
+    public static InteractionPromptWorld Instance;
 
     [Header("Refs")]
     public Transform root;                 // 可留空，會用自己
     public SpriteRenderer eyeRenderer;     // Eye 的 SpriteRenderer
-    public Animator eyeAnimator;           // Eye 的 Animator
+    public Animator eyeAnimator;           // Eye 的 Animator（眨眼 loop）
     public TextMeshPro text3D;             // 3D TMP
 
     [Header("Follow")]
     public bool faceCamera = true;
     public Vector3 defaultOffset = new Vector3(0.6f, 1.2f, 0f);
 
-    Transform target;
-    Vector3 offset;
+    // runtime
+    private Transform _target;
+    private Vector3 _offset;
+    private Transform _owner;
 
-    void Awake()
+    private void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
         Instance = this;
 
         if (root == null) root = transform;
+
+        // 「靠近就一直眨」：Animator 開著，預設 state 播 loop clip 即可
+        if (eyeAnimator != null) eyeAnimator.enabled = true;
+
+        // 保險：refs 沒接就自動抓（避免你忘了拖）
+        AutoWireRefsIfMissing();
+
         HideImmediate();
+        Debug.Log($"[InteractionPromptWorld] Awake OK: {name}", this);
     }
 
-    void LateUpdate()
+    private void LateUpdate()
     {
-        if (target == null) return;
+        if (_target == null) return;
 
-        root.position = target.position + offset;
+        root.position = _target.position + _offset;
 
         if (faceCamera && Camera.main != null)
-        {
-            // 讓提示永遠面向鏡頭（Billboard）
-            var cam = Camera.main.transform;
-            root.forward = cam.forward;
-        }
+            root.forward = Camera.main.transform.forward;
     }
 
-    public void Show(Transform followTarget, string message, Vector3? worldOffset = null, bool playEye = true)
+    public void Show(Transform followTarget, string message, Vector3? worldOffset = null, bool showEye = true, Transform owner = null)
     {
-        target = followTarget;
-        offset = worldOffset ?? defaultOffset;
+        if (followTarget == null) return;
 
-        if (text3D != null)
-            text3D.text = message ?? "";
+        _target = followTarget;
+        _offset = worldOffset ?? defaultOffset;
+        _owner = owner != null ? owner : followTarget;
 
-        if (eyeRenderer != null)
-            eyeRenderer.enabled = playEye;
+        if (text3D != null) text3D.text = message ?? "";
 
-        if (eyeAnimator != null)
-            eyeAnimator.enabled = playEye;
+        if (eyeRenderer != null) eyeRenderer.enabled = showEye;
+        if (eyeAnimator != null) eyeAnimator.enabled = showEye;
 
-        root.gameObject.SetActive(true);
+        if (root != null) root.gameObject.SetActive(true);
     }
 
     public void Hide(Transform requestFrom = null)
     {
-        // 只有「目前跟隨的物件」才可以把它關掉，避免多物件搶 UI 時亂關
-        if (requestFrom != null && requestFrom != target) return;
+        if (requestFrom != null && requestFrom != _owner) return;
 
-        target = null;
-        root.gameObject.SetActive(false);
+        _target = null;
+        _owner = null;
+
+        if (root != null) root.gameObject.SetActive(false);
     }
 
-    void HideImmediate()
+    private void HideImmediate()
     {
-        target = null;
+        _target = null;
+        _owner = null;
         if (root != null) root.gameObject.SetActive(false);
+    }
+
+    private void AutoWireRefsIfMissing()
+    {
+        // 只在沒接的時候抓，避免覆蓋你手動指定
+        if (eyeRenderer == null)
+        {
+            var sr = GetComponentInChildren<SpriteRenderer>(true);
+            if (sr != null && sr.gameObject.name.ToLower().Contains("eye")) eyeRenderer = sr;
+        }
+
+        if (eyeAnimator == null)
+        {
+            var an = GetComponentInChildren<Animator>(true);
+            if (an != null && an.gameObject.name.ToLower().Contains("eye")) eyeAnimator = an;
+        }
+
+        if (text3D == null)
+        {
+            var tmp = GetComponentInChildren<TextMeshPro>(true);
+            if (tmp != null) text3D = tmp;
+        }
     }
 }
