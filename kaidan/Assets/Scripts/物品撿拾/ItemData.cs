@@ -1,14 +1,21 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewItemData", menuName = "Inventory/Item Data")]
+/// <summary>
+/// 物品資料定義（ScriptableObject）
+/// 建立方式：Project 視窗右鍵 → Create → 談怪 → Item Data
+/// </summary>
+[CreateAssetMenu(fileName = "NewItem", menuName = "談怪/Item Data")]
 public class ItemData : ScriptableObject
 {
-    [Header("Basic Info")]
-    public string itemName;
-    [TextArea] public string description;
+    [Header("基本資訊")]
+    public string itemName = "未命名物品";
+
+    [TextArea(2, 4)]
+    public string description = "";
+
     public Sprite icon;
 
-    [Header("World Drop")]
-    [Tooltip("丟棄時要生成的世界物件 Prefab")]
-    public GameObject worldPickupPrefab;
+    [Header("堆疊")]
+    [Min(1)]
+    public int maxStack = 1;
 }

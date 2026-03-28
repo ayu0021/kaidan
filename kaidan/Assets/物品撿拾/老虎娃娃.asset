@@ -9,10 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f76120b1f8b6848b890e1d8f51f486fe, type: 3}
+  m_Script: {fileID: 11500000, guid: e81792b08b6314c429dcbd593bcd78d7, type: 3}
   m_Name: "\u8001\u864E\u5A03\u5A03"
   m_EditorClassIdentifier: 
   itemName: "\u8001\u864E\u5A03\u5A03"
-  description: "\u4E00\u96BB\u7834\u820A\u7684\u5A03\u5A03...\u4F3C\u4E4E\u662F\u7531\u8001\u864E\u5996\u89AA\u624B\u7E2B\u88FD"
+  description: "\u4E00\u500B\u7834\u820A\u7684\u5A03\u5A03"
   icon: {fileID: 21300000, guid: abb42165a665ed14c901f4484aed8a9f, type: 3}
-  worldPickupPrefab: {fileID: 0}
+  maxStack: 1
