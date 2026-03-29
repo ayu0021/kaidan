@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6eb164e84b2684214b0f5b91cef19344, type: 3}
+  m_Name: "\u767E\u8449\u6AC3"
+  m_EditorClassIdentifier: 
+  assetTitle: New Dialogue
+  loadSceneOnEnd: 
+  lines:
+  - uiSkin: {fileID: 0}
+    character: {fileID: 11400000, guid: fc71cd3288e424a9e95024ab1a761822, type: 2}
+    variant: 0
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: "\u5F88\u50CF\u963F\u7F75\u5BB6\u6703\u51FA\u73FE\u7684\u6AC3\u5B50\uFF0C\u4F3C\u4E4E\u53EF\u4EE5\u8EB2\u9032\u53BB...\uFF1F"
+    hintMode: 0
+    hintCustom: 
