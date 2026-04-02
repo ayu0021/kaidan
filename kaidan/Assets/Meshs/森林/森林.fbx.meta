@@ -3,7 +3,87 @@ guid: 0346fd507c9403e45838509881b6b2fb
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: IMG_2929
+    second: {fileID: 2100000, guid: b0b5cfda2ff59e64e8091da1c2037a85, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: IMG_2930
+    second: {fileID: 2100000, guid: ac282fc29d0944f4c8398f7b5493d8ae, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: IMG_2931
+    second: {fileID: 2100000, guid: 6b53c9caec587724c8a76b6982562f28, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: IMG_2932
+    second: {fileID: 2100000, guid: 8a2fe5422b0f4a046b7250b75ac542a9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: IMG_2933
+    second: {fileID: 2100000, guid: b392e3e9314003147b14ca859394ca72, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: IMG_2934
+    second: {fileID: 2100000, guid: dfb3f3da7dd1b0f46b248f2aaf619c29, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: IMG_2935
+    second: {fileID: 2100000, guid: 186d01e25d3d3eb4695c9e9942cdcc87, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: IMG_2936
+    second: {fileID: 2100000, guid: 11d2f79b4312ea34a87617fc911d1d76, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: IMG_2937
+    second: {fileID: 2100000, guid: 76f764a3184b7704e90346ae1b4c1f94, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: IMG_2938
+    second: {fileID: 2100000, guid: 656d9d13d8755d845a31d73fff0366cb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: IMG_2940
+    second: {fileID: 2100000, guid: 2b68889fa340d294fb680520e1063f31, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: IMG_2941
+    second: {fileID: 2100000, guid: 76be8c1b0a303e645aed084c3eb54ae0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: IMG_2942
+    second: {fileID: 2100000, guid: 7b679efa05ac6984d9997c6efbca6be5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: IMG_2943
+    second: {fileID: 2100000, guid: 6433089e9a6092443b5d18fbea124d38, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: IMG_2944
+    second: {fileID: 2100000, guid: 948e635b5030e104daf9e64bf7a60607, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: IMG_2945
+    second: {fileID: 2100000, guid: 86688affe03f1c444b2305dd92a2a730, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -52,7 +132,7 @@ ModelImporter:
     useFileUnits: 1
     keepQuads: 0
     weldVertices: 1
-    bakeAxisConversion: 0
+    bakeAxisConversion: 1
     preserveHierarchy: 0
     skinWeightsMode: 0
     maxBonesPerVertex: 4
