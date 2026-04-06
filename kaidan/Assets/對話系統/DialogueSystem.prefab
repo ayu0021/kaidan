@@ -48,11 +48,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4da28ba9366ed49ec9f4d268b27f1f51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultSkin: {fileID: 11400000, guid: 8c93a4721c27a4ae48927033c0db960c, type: 2}
+  defaultSkin: {fileID: 0}
+  secondarySkin: {fileID: 0}
   uiParent: {fileID: 6704346095294099134}
   allowSpace: 1
   allowMouseClick: 1
-  advanceKey: 32
+  advanceKey: 102
   useTypewriter: 1
   charsPerSecond: 15
   autoFillNameFromCharacter: 0
+  debugLog: 1

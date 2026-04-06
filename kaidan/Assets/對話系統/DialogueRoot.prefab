@@ -55,6 +55,17 @@ MonoBehaviour:
   bodyText: {fileID: 3470514719972840446}
   hintText: {fileID: 966029322332777000}
   portraitImage: {fileID: 4008107096262850165}
+  redBox: {fileID: 0}
+  blueBox: {fileID: 0}
+  redNameText: {fileID: 0}
+  redBodyText: {fileID: 0}
+  redHintText: {fileID: 0}
+  redPortraitImage: {fileID: 0}
+  blueNameText: {fileID: 0}
+  blueBodyText: {fileID: 0}
+  blueHintText: {fileID: 0}
+  bluePortraitImage: {fileID: 0}
+  forcePreserveAspect: 1
 --- !u!1 &3490926470065936353
 GameObject:
   m_ObjectHideFlags: 0
@@ -82,7 +93,7 @@ RectTransform:
   m_GameObject: {fileID: 3490926470065936353}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -3.1}
-  m_LocalScale: {x: 7.4, y: 7.4, z: 7.4}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2172588630681366218}

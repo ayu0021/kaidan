@@ -22,7 +22,7 @@ MonoBehaviour:
     nameOverride: 
     body: ... ...
     hintMode: 1
-    hintCustom: "\u6309\u7A7A\u767D\u9375\u7E7C\u7E8C"
+    hintCustom: "\u6309F\u9375\u7E7C\u7E8C"
   - uiSkin: {fileID: 11400000, guid: 8c93a4721c27a4ae48927033c0db960c, type: 2}
     character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
     variant: 1
@@ -30,7 +30,7 @@ MonoBehaviour:
     nameOverride: 
     body: "\u9019\u88E1\u662F..."
     hintMode: 1
-    hintCustom: "\u6309\u7A7A\u767D\u9375\u7E7C\u7E8C"
+    hintCustom: "\u6309F\u9375\u7E7C\u7E8C"
   - uiSkin: {fileID: 11400000, guid: e9db15f6c9d184f07b3063c973ceb20c, type: 2}
     character: {fileID: 11400000, guid: 28a2afca7dbf84227b76f55483dfc5b3, type: 2}
     variant: 0
@@ -38,7 +38,7 @@ MonoBehaviour:
     nameOverride: 
     body: "\u4F60\u525B\u525B\u53BB\u54EA\u5566\uFF1F\u7A81\u7136\u5C31\u4E0D\u898B\u4E86..."
     hintMode: 1
-    hintCustom: "\u6309\u7A7A\u767D\u9375\u7E7C\u7E8C"
+    hintCustom: "\u6309F\u9375\u7E7C\u7E8C"
   - uiSkin: {fileID: 11400000, guid: 8c93a4721c27a4ae48927033c0db960c, type: 2}
     character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
     variant: 0
@@ -46,15 +46,15 @@ MonoBehaviour:
     nameOverride: 
     body: "\u525B\u525B\u6709\u500B\u6232\u53F0..."
     hintMode: 1
-    hintCustom: "\u6309\u7A7A\u767D\u9375\u7E7C\u7E8C"
+    hintCustom: "\u6309F\u9375\u7E7C\u7E8C"
   - uiSkin: {fileID: 11400000, guid: e9db15f6c9d184f07b3063c973ceb20c, type: 2}
     character: {fileID: 11400000, guid: 28a2afca7dbf84227b76f55483dfc5b3, type: 2}
-    variant: 0
+    variant: 1
     keepPreviousPortrait: 0
     nameOverride: 
     body: "\u4EC0\u9EBC\u6232\u53F0\uFF1F\u4F60\u604D\u795E\u4E86\u5594\uFF1F"
     hintMode: 1
-    hintCustom: "\u6309\u7A7A\u767D\u9375\u7E7C\u7E8C"
+    hintCustom: "\u6309F\u9375\u7E7C\u7E8C"
   - uiSkin: {fileID: 11400000, guid: 8c93a4721c27a4ae48927033c0db960c, type: 2}
     character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
     variant: 0
@@ -62,7 +62,7 @@ MonoBehaviour:
     nameOverride: 
     body: ............
     hintMode: 1
-    hintCustom: "\u6309\u7A7A\u767D\u9375\u7E7C\u7E8C"
+    hintCustom: "\u6309F\u9375\u7E7C\u7E8C"
   - uiSkin: {fileID: 11400000, guid: 8c93a4721c27a4ae48927033c0db960c, type: 2}
     character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
     variant: 1
@@ -70,4 +70,4 @@ MonoBehaviour:
     nameOverride: 
     body: "\u7E3D\u4E4B\uFF0C\u6211\u5011\u5148\u627E\u5230\u51FA\u53E3\u96E2\u958B\u9019\u88E1\u5427\u3002"
     hintMode: 1
-    hintCustom: "\u6309\u7A7A\u767D\u9375\u7E7C\u7E8C"
+    hintCustom: "\u6309F\u9375\u7E7C\u7E8C"

@@ -1,5 +1,4 @@
 using System.Collections;
-using TMPro;
 using UnityEngine;
 
 public class DialogueManager : MonoBehaviour
@@ -8,13 +7,13 @@ public class DialogueManager : MonoBehaviour
     public DialogueUISkin defaultSkin;
     public DialogueUISkin secondarySkin;
 
-    [Tooltip("UI 生成後要掛在哪個父物件下（通常是 Canvas）。可不填，不填就放在自己底下。")]
+    [Tooltip("UI 生成後要掛在哪個父物件下（通常是 Canvas）。強烈建議指定。")]
     public Transform uiParent;
 
     [Header("Input")]
-    public bool allowSpace = true;
+    public bool allowSpace = true; // 保留欄位名稱，避免舊 Inspector 資料失效
     public bool allowMouseClick = true;
-    public KeyCode advanceKey = KeyCode.Space;
+    public KeyCode advanceKey = KeyCode.F;
 
     [Header("Typewriter")]
     public bool useTypewriter = true;
@@ -33,13 +32,30 @@ public class DialogueManager : MonoBehaviour
     private bool _waitingExtraClose;
     private float _activeCps;
 
-    // 目前畫面上那套 UI 是用哪個 skin 建出來的
     private DialogueUISkin _currentUISkin;
 
-    // Portrait base（每次重建 UI 都會重新抓，避免不同 prefab 互相污染）
+    // Portrait base（每次切框 / 重建 UI 都重新抓）
     private bool _portraitBaseCaptured;
     private Vector3 _portraitBaseLocalScale;
     private Vector2 _portraitBaseAnchoredPos;
+    private Vector2 _portraitBaseSizeDelta;
+    private Vector2 _portraitBaseAnchorMin;
+    private Vector2 _portraitBaseAnchorMax;
+    private Vector2 _portraitBasePivot;
+
+    private void Awake()
+    {
+        if (advanceKey == KeyCode.Space)
+            advanceKey = KeyCode.F;
+    }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        if (advanceKey == KeyCode.Space)
+            advanceKey = KeyCode.F;
+    }
+#endif
 
     public void Play(DialogueAsset asset, DialogueUISkin skinOverride = null)
     {
@@ -61,6 +77,10 @@ public class DialogueManager : MonoBehaviour
         }
 
         EnsureUIInstance(startSkin);
+
+        bool startUseBlueFrame = (startSkin == secondarySkin);
+        _ui.ShowFrame(startUseBlueFrame);
+        CapturePortraitBase();
 
         _ui.ClearAll();
         _ui.RootGO.SetActive(true);
@@ -96,7 +116,6 @@ public class DialogueManager : MonoBehaviour
             return;
         }
 
-        // 已經有 UI，但 skin 不同 => Destroy 重建
         if (_ui != null && _currentUISkin != skin)
         {
             if (debugLog) Debug.Log($"[DialogueManager] Rebuild UI: {_currentUISkin?.name} -> {skin.name}");
@@ -108,9 +127,36 @@ public class DialogueManager : MonoBehaviour
         if (_ui != null) return;
 
         Transform parent = uiParent != null ? uiParent : transform;
+
+        if (uiParent == null && debugLog)
+        {
+            Debug.LogWarning(
+                "[DialogueManager] uiParent is NULL. UI will be instantiated under DialogueManager itself. " +
+                "如果 DialogueManager 在 DontDestroyOnLoad 或其父物件 scale 不是 1，UI 可能看起來被拉伸。"
+            );
+        }
+
         _ui = Instantiate(skin.uiPrefab, parent);
         _ui.name = $"DialogueUI({skin.name})";
         _currentUISkin = skin;
+
+        RectTransform rootRt = _ui.transform as RectTransform;
+        if (rootRt != null)
+        {
+            rootRt.localScale = Vector3.one;
+            rootRt.localRotation = Quaternion.identity;
+        }
+        else
+        {
+            _ui.transform.localScale = Vector3.one;
+            _ui.transform.localRotation = Quaternion.identity;
+        }
+
+        if (debugLog)
+        {
+            Vector3 ls = parent.lossyScale;
+            Debug.Log($"[DialogueManager] Instantiate UI under parent={parent.name}, parentLossyScale={ls}");
+        }
 
         CapturePortraitBase();
     }
@@ -124,15 +170,46 @@ public class DialogueManager : MonoBehaviour
     private void CapturePortraitBase()
     {
         _portraitBaseCaptured = false;
-        if (_ui == null || _ui.portraitImage == null) return;
 
-        var rt = _ui.portraitImage.rectTransform;
-        _portraitBaseLocalScale = rt.localScale;
+        if (_ui == null || _ui.portraitImage == null)
+            return;
+
+        RectTransform rt = _ui.portraitImage.rectTransform;
+
         _portraitBaseAnchoredPos = rt.anchoredPosition;
+        _portraitBaseSizeDelta = rt.sizeDelta;
+        _portraitBaseAnchorMin = rt.anchorMin;
+        _portraitBaseAnchorMax = rt.anchorMax;
+        _portraitBasePivot = rt.pivot;
+
+        // 只保留 prefab 原始朝向，不吃殘留的大倍率
+        float baseSign = Mathf.Sign(rt.localScale.x);
+        if (baseSign == 0f) baseSign = 1f;
+
+        _portraitBaseLocalScale = new Vector3(baseSign, 1f, 1f);
+
+        // 順手把當前 Portrait scale 歸正
+        rt.localScale = _portraitBaseLocalScale;
+
         _portraitBaseCaptured = true;
 
         if (debugLog)
-            Debug.Log($"[DialogueManager] CapturePortraitBase skin={_currentUISkin?.name} baseScale={_portraitBaseLocalScale}");
+        {
+            Debug.Log(
+                $"[DialogueManager] CapturePortraitBase skin={_currentUISkin?.name} " +
+                $"portrait={_ui.portraitImage.name} baseScale={_portraitBaseLocalScale} " +
+                $"basePos={_portraitBaseAnchoredPos} size={_portraitBaseSizeDelta}"
+            );
+        }
+    }
+
+    private void RestorePortraitRect(RectTransform rt)
+    {
+        rt.anchorMin = _portraitBaseAnchorMin;
+        rt.anchorMax = _portraitBaseAnchorMax;
+        rt.pivot = _portraitBasePivot;
+        rt.sizeDelta = _portraitBaseSizeDelta;
+        rt.anchoredPosition = _portraitBaseAnchoredPos;
     }
 
     private IEnumerator PlayRoutine(DialogueAsset asset)
@@ -150,7 +227,6 @@ public class DialogueManager : MonoBehaviour
         {
             var line = asset.lines[i];
 
-            // 每句決定要用哪個 skin（line > character > default > secondary）
             DialogueUISkin lineSkin = ResolveSkinForLine(line);
             if (lineSkin == null) lineSkin = defaultSkin;
             if (lineSkin == null) lineSkin = secondarySkin;
@@ -159,19 +235,22 @@ public class DialogueManager : MonoBehaviour
             {
                 EnsureUIInstance(lineSkin);
 
+                bool useBlueFrame = (lineSkin == secondarySkin);
+                _ui.ShowFrame(useBlueFrame);
+                CapturePortraitBase();
+
                 _ui.ClearAll();
                 _ui.RootGO.SetActive(true);
                 ApplyCpsFromSkin(lineSkin);
-
-                // ✅ ✅ ✅ 把「換框框」加回來：
-                // 若你的 UI prefab 裡有 redBox / blueBox，這裡會切換。
-                // 沒有就什麼都不做（不影響你用兩套 prefab 的方式）
-                bool useBlueFrame = (lineSkin == secondarySkin);
-                _ui.ShowFrame(useBlueFrame);
             }
 
             if (debugLog)
-                Debug.Log($"[DialogueManager] Line {i}: skin={(lineSkin ? lineSkin.name : "null")} ui={(_ui ? _ui.name : "null")}");
+            {
+                Debug.Log(
+                    $"[DialogueManager] Line {i}: skin={(lineSkin ? lineSkin.name : "null")} " +
+                    $"ui={(_ui ? _ui.name : "null")} portrait={(_ui && _ui.portraitImage ? _ui.portraitImage.name : "null")}"
+                );
+            }
 
             ApplyLineToUI(line);
 
@@ -264,28 +343,41 @@ public class DialogueManager : MonoBehaviour
     private void ApplyPortraitTransform(CharacterPortraitSet character)
     {
         if (_ui == null || _ui.portraitImage == null) return;
-        var rt = _ui.portraitImage.rectTransform;
+
+        RectTransform rt = _ui.portraitImage.rectTransform;
 
         if (!_portraitBaseCaptured)
+            CapturePortraitBase();
+
+        if (!_portraitBaseCaptured)
+            return;
+
+        // 先回到 prefab 裡 Portrait 的基準狀態
+        RestorePortraitRect(rt);
+
+        Vector2 offset = Vector2.zero;
+        Vector3 charScale = Vector3.one;
+        bool flipX = false;
+
+        if (character != null)
         {
-            _portraitBaseLocalScale = rt.localScale;
-            _portraitBaseAnchoredPos = rt.anchoredPosition;
-            _portraitBaseCaptured = true;
+            offset = character.uiOffset;
+            charScale = character.uiScale;
+            flipX = character.flipX;
         }
 
-        Vector2 offset = (character != null) ? character.uiOffset : Vector2.zero;
         rt.anchoredPosition = _portraitBaseAnchoredPos + offset;
 
-        Vector3 scaleMul = (character != null) ? character.uiScale : Vector3.one;
-        Vector3 finalScale = Vector3.Scale(_portraitBaseLocalScale, scaleMul);
-
-        // ✅ 修正：以 prefab 原本方向為基準再 flip，避免換 skin 後方向亂跳
         float baseSign = Mathf.Sign(_portraitBaseLocalScale.x);
-        if (baseSign == 0) baseSign = 1f;
-        float sign = baseSign * ((character != null && character.flipX) ? -1f : 1f);
-        finalScale.x = Mathf.Abs(finalScale.x) * sign;
+        if (baseSign == 0f) baseSign = 1f;
 
-        rt.localScale = finalScale;
+        float finalSign = flipX ? -baseSign : baseSign;
+
+        float scaleX = Mathf.Abs(charScale.x) <= 0.0001f ? 1f : Mathf.Abs(charScale.x);
+        float scaleY = Mathf.Abs(charScale.y) <= 0.0001f ? 1f : Mathf.Abs(charScale.y);
+        float scaleZ = Mathf.Abs(charScale.z) <= 0.0001f ? 1f : Mathf.Abs(charScale.z);
+
+        rt.localScale = new Vector3(finalSign * scaleX, scaleY, scaleZ);
     }
 
     private IEnumerator TypeLine(string full)

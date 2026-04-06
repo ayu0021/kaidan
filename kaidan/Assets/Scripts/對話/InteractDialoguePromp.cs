@@ -10,6 +10,9 @@ public class InteractDialoguePrompt : MonoBehaviour
     [Header("Input")]
     public KeyCode interactKey = KeyCode.F;
 
+    // 讓 DialogueManager 也能共用同一顆互動鍵
+    public static KeyCode CurrentInteractKey { get; private set; } = KeyCode.F;
+
     [Header("Dialogue")]
     public DialogueManager dialogueManager;
     public DialogueAsset dialogueAsset;
@@ -36,6 +39,18 @@ public class InteractDialoguePrompt : MonoBehaviour
         // 3D Trigger 需要 Collider.isTrigger = true
         if (TryGetComponent<Collider>(out var col) && !col.isTrigger)
             col.isTrigger = true;
+
+        CurrentInteractKey = interactKey;
+    }
+
+    private void OnEnable()
+    {
+        CurrentInteractKey = interactKey;
+    }
+
+    private void OnValidate()
+    {
+        CurrentInteractKey = interactKey;
     }
 
     private void OnDisable()
@@ -98,7 +113,7 @@ public class InteractDialoguePrompt : MonoBehaviour
         // 只有「最近者」吃按鍵
         if (Input.GetKeyDown(interactKey))
         {
-            if (debugLog) Debug.Log($"[InteractDialoguePrompt] Press F on {name}");
+            if (debugLog) Debug.Log($"[InteractDialoguePrompt] Press {interactKey} on {name}");
 
             if (dialogueManager == null)
                 dialogueManager = FindFirstObjectByType<DialogueManager>();
