@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: "\u6846\u6846\u85CD"
   m_EditorClassIdentifier: 
   uiPrefab: {fileID: -1702364036930537132, guid: 5359e1e44147242d4aa5b56ccc179ba8, type: 3}
+  useBlueFrame: 1
   charsPerSecond: 40
   hideRootOnClose: 1
   requireExtraPressToClose: 0

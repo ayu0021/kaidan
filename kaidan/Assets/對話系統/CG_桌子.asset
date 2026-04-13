@@ -1,0 +1,157 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6eb164e84b2684214b0f5b91cef19344, type: 3}
+  m_Name: "CG_\u684C\u5B50"
+  m_EditorClassIdentifier: 
+  assetTitle: New Dialogue
+  loadSceneOnEnd: 
+  lines:
+  - uiSkin: {fileID: 11400000, guid: e9db15f6c9d184f07b3063c973ceb20c, type: 2}
+    character: {fileID: 11400000, guid: 28a2afca7dbf84227b76f55483dfc5b3, type: 2}
+    variant: 1
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: "\u5641\u2026\u597D\u81ED\uFF01\u6211\u7684\u9F3B\u5B50\u8981\u721B\u6389\u4E86\uFF01"
+    hintMode: 2
+    hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
+    cgMode: 1
+    cgSprite: {fileID: 21300000, guid: 2fa01ef5be88b441f97edfe0bd81d2dd, type: 3}
+    cgFadeDuration: 1.5
+    hidePortraitWhenCg: 1
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 40
+    bodyEffects:
+    - enabled: 1
+      targetText: "\u721B\u6389\u4E86\uFF01"
+      applyToAllMatches: 0
+      occurrenceIndex: 0
+      effectType: 0
+      color: {r: 0, g: 0.56667376, b: 0.6226415, a: 1}
+      scaleMultiplier: 0.1
+      amplitude: 0.51
+      frequency: 5.51
+      speed: 7.07
+    - enabled: 1
+      targetText: "\u597D\u81ED\uFF01"
+      applyToAllMatches: 0
+      occurrenceIndex: 0
+      effectType: 2
+      color: {r: 0, g: 0, b: 0, a: 0}
+      scaleMultiplier: 1.3
+      amplitude: 2.03
+      frequency: 3.62
+      speed: 12
+  - uiSkin: {fileID: 11400000, guid: 8c93a4721c27a4ae48927033c0db960c, type: 2}
+    character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
+    variant: 0
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: "\u22EF\u22EF\u22EF\u22EF"
+    hintMode: 2
+    hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
+    cgMode: 1
+    cgSprite: {fileID: 21300000, guid: 2fa01ef5be88b441f97edfe0bd81d2dd, type: 3}
+    cgFadeDuration: 0
+    hidePortraitWhenCg: 1
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 40
+    bodyEffects: []
+  - uiSkin: {fileID: 11400000, guid: 8c93a4721c27a4ae48927033c0db960c, type: 2}
+    character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
+    variant: 0
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: "\u55EF\u22EF\u22EF\u22EF"
+    hintMode: 2
+    hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
+    cgMode: 1
+    cgSprite: {fileID: 21300000, guid: 9a61f2aacb04f462a92d3d60f17aa0d6, type: 3}
+    cgFadeDuration: 0
+    hidePortraitWhenCg: 1
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 40
+    bodyEffects:
+    - enabled: 1
+      targetText: 
+      applyToAllMatches: 0
+      occurrenceIndex: 0
+      effectType: 0
+      color: {r: 0.46226418, g: 0, b: 0, a: 1}
+      scaleMultiplier: 0
+      amplitude: 0
+      frequency: 0
+      speed: 0
+  - uiSkin: {fileID: 11400000, guid: e9db15f6c9d184f07b3063c973ceb20c, type: 2}
+    character: {fileID: 11400000, guid: 28a2afca7dbf84227b76f55483dfc5b3, type: 2}
+    variant: 0
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: "\u4F60\u5FEB\u770B\uFF01\u90A3\u4E9B\u8001\u9F20\u8EAB\u4E0A\u597D\u50CF\u6709\u4E9B\u4EC0\u9EBC\uFF1F\uFF01"
+    hintMode: 2
+    hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
+    cgMode: 1
+    cgSprite: {fileID: 21300000, guid: 9a61f2aacb04f462a92d3d60f17aa0d6, type: 3}
+    cgFadeDuration: 0
+    hidePortraitWhenCg: 1
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 40
+    bodyEffects: []
+  - uiSkin: {fileID: 11400000, guid: 8c93a4721c27a4ae48927033c0db960c, type: 2}
+    character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
+    variant: 0
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: "\u662F\u6293\u75D5\u22EF\u5F88\u6DF1\u22EF"
+    hintMode: 2
+    hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
+    cgMode: 1
+    cgSprite: {fileID: 21300000, guid: 9a61f2aacb04f462a92d3d60f17aa0d6, type: 3}
+    cgFadeDuration: 0
+    hidePortraitWhenCg: 1
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 40
+    bodyEffects:
+    - enabled: 1
+      targetText: "\u6293\u75D5"
+      applyToAllMatches: 0
+      occurrenceIndex: 0
+      effectType: 0
+      color: {r: 0.6320754, g: 0, b: 0, a: 1}
+      scaleMultiplier: 0
+      amplitude: 2.29
+      frequency: 3.31
+      speed: 5.23
+  - uiSkin: {fileID: 11400000, guid: 8c93a4721c27a4ae48927033c0db960c, type: 2}
+    character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
+    variant: 1
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: "\u6211\u5011\u6700\u597D\u9084\u662F\u5C0F\u5FC3\u9EDE\u884C\u4E8B"
+    hintMode: 2
+    hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
+    cgMode: 1
+    cgSprite: {fileID: 21300000, guid: 9a61f2aacb04f462a92d3d60f17aa0d6, type: 3}
+    cgFadeDuration: 0
+    hidePortraitWhenCg: 1
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 40
+    bodyEffects:
+    - enabled: 1
+      targetText: 
+      applyToAllMatches: 0
+      occurrenceIndex: 0
+      effectType: 0
+      color: {r: 0.46226418, g: 0, b: 0, a: 1}
+      scaleMultiplier: 0
+      amplitude: 0
+      frequency: 0
+      speed: 0

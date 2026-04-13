@@ -57,16 +57,43 @@ public class PlayerController : MonoBehaviour
         moveInput = new Vector3(moveX, 0f, moveZ).normalized;
         bool isMoving = moveInput.sqrMagnitude > 0.001f;
 
-        bool walkingFrontAnim = isMoving && moveZ < -0.1f;
-        bool walkingLR = isMoving && !walkingFrontAnim;
+        // 三種方向動畫判斷
+        bool walkingFrontAnim = isMoving && moveZ < -0.1f; // 正面
+        bool walkingBackAnim  = isMoving && moveZ >  0.1f; // 背面
+        bool walkingLR        = isMoving && !walkingFrontAnim && !walkingBackAnim; // 左右
 
         HandleSpriteFlip(moveX, isMoving);
 
         if (animator != null)
         {
             animator.SetFloat(paramSpeed, isMoving ? 1f : 0f);
-            animator.SetBool(paramIsWalkingUp, walkingFrontAnim);
-            animator.SetBool(paramIsWalking, walkingLR);
+
+            // 狀態組合：
+            // Idle      = isWalking false, isWalkingUp false
+            // Walk      = isWalking true,  isWalkingUp false
+            // 行走_正面   = isWalking false, isWalkingUp true
+            // Walk_Back = isWalking true,  isWalkingUp true
+
+            if (walkingBackAnim)
+            {
+                animator.SetBool(paramIsWalking, true);
+                animator.SetBool(paramIsWalkingUp, true);
+            }
+            else if (walkingFrontAnim)
+            {
+                animator.SetBool(paramIsWalking, false);
+                animator.SetBool(paramIsWalkingUp, true);
+            }
+            else if (walkingLR)
+            {
+                animator.SetBool(paramIsWalking, true);
+                animator.SetBool(paramIsWalkingUp, false);
+            }
+            else
+            {
+                animator.SetBool(paramIsWalking, false);
+                animator.SetBool(paramIsWalkingUp, false);
+            }
 
             if (spriteRenderer != null)
             {

@@ -6,20 +6,16 @@ using UnityEngine.UI;
 public class DialogueUIRefs : MonoBehaviour
 {
     [Header("Root (optional)")]
-    public GameObject uiRoot; // 可留空；留空就用自己 gameObject
+    public GameObject uiRoot;
 
     [Header("Active / Fallback Refs")]
-    [Tooltip("如果你只有單一套 UI，可直接填這組。若你有紅框/藍框兩套，這組會當 fallback。")]
     public TMP_Text nameText;
     public TMP_Text bodyText;
     public TMP_Text hintText;
     public Image portraitImage;
 
     [Header("Frames (optional, choose one to show)")]
-    [Tooltip("紅框容器（GameObject）。沒有就留空。")]
     public GameObject redBox;
-
-    [Tooltip("藍框容器（GameObject）。沒有就留空。")]
     public GameObject blueBox;
 
     [Header("Red Frame Refs (optional)")]
@@ -35,14 +31,18 @@ public class DialogueUIRefs : MonoBehaviour
     public Image bluePortraitImage;
 
     [Header("Portrait")]
-    [Tooltip("自動開啟 Preserve Aspect，避免不同尺寸立繪被硬拉變形。")]
     public bool forcePreserveAspect = true;
+
+    [Header("CG (optional)")]
+    public GameObject cgRoot;
+    public Image cgImage;
+    public CanvasGroup cgCanvasGroup;
+    public bool cgPreserveAspect = true;
 
     public GameObject RootGO => uiRoot != null ? uiRoot : gameObject;
 
     private bool _usingBlue;
 
-    // 保留一開始 Inspector 指到的 fallback 參考，避免 ShowFrame 後被覆蓋丟失
     private TMP_Text _fallbackNameText;
     private TMP_Text _fallbackBodyText;
     private TMP_Text _fallbackHintText;
@@ -53,17 +53,18 @@ public class DialogueUIRefs : MonoBehaviour
         CacheFallbackRefs();
         ResolveActiveRefs(_usingBlue);
         ApplyPortraitSettings();
+        ApplyCgSettings();
     }
 
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        // 編輯器下，方便你調整時就看到正確引用
         if (!Application.isPlaying)
         {
             CacheFallbackRefs(true);
             ResolveActiveRefs(_usingBlue);
             ApplyPortraitSettings();
+            ApplyCgSettings();
         }
     }
 #endif
@@ -106,6 +107,23 @@ public class DialogueUIRefs : MonoBehaviour
         if (portraitImage) portraitImage.preserveAspect = true;
     }
 
+    private void ApplyCgSettings()
+    {
+        if (cgImage != null)
+            cgImage.preserveAspect = cgPreserveAspect;
+
+        if (cgRoot == null && cgImage != null)
+            cgRoot = cgImage.gameObject;
+
+        EnsureCgBehindDialogue();
+    }
+
+    public void EnsureCgBehindDialogue()
+    {
+        if (cgRoot != null)
+            cgRoot.transform.SetAsFirstSibling();
+    }
+
     public void ClearAll()
     {
         var textSet = new HashSet<TMP_Text>();
@@ -133,13 +151,12 @@ public class DialogueUIRefs : MonoBehaviour
             t.text = "";
 
         foreach (var img in imageSet)
+        {
             img.sprite = null;
+            img.enabled = false;
+        }
     }
 
-    /// <summary>
-    /// 若你在同一個 prefab 裡同時放了紅框/藍框，就用這個切換顯示，
-    /// 並且把 name/body/hint/portrait 引用切到對應那一套。
-    /// </summary>
     public void ShowFrame(bool useBlue)
     {
         _usingBlue = useBlue;
@@ -149,6 +166,7 @@ public class DialogueUIRefs : MonoBehaviour
 
         ResolveActiveRefs(useBlue);
         ApplyPortraitSettings();
+        ApplyCgSettings();
     }
 
     private static void AddIfValid<T>(HashSet<T> set, T obj) where T : Object

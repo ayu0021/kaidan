@@ -20,6 +20,28 @@ MonoBehaviour:
     variant: 0
     keepPreviousPortrait: 0
     nameOverride: 
-    body: "\u5F88\u50CF\u963F\u7F75\u5BB6\u6703\u51FA\u73FE\u7684\u6AC3\u5B50\uFF0C\u4F3C\u4E4E\u53EF\u4EE5\u8EB2\u9032\u53BB...\uFF1F"
-    hintMode: 0
-    hintCustom: 
+    body: "\u597D\u6D88\u606F\uFF0C\u6709\u6AC3\u5B50\u3002\u58DE\u6D88\u606F..."
+    hintMode: 2
+    hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
+    cgMode: 0
+    cgSprite: {fileID: 0}
+    cgFadeDuration: 0.15
+    hidePortraitWhenCg: 1
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 40
+    bodyEffects: []
+  - uiSkin: {fileID: 0}
+    character: {fileID: 11400000, guid: fc71cd3288e424a9e95024ab1a761822, type: 2}
+    variant: 0
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: "\u5478\u5478\u5478\uFF01"
+    hintMode: 2
+    hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
+    cgMode: 0
+    cgSprite: {fileID: 0}
+    cgFadeDuration: 0.15
+    hidePortraitWhenCg: 1
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 40
+    bodyEffects: []

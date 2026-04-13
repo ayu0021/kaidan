@@ -11,7 +11,7 @@ public class DialogueManager : MonoBehaviour
     public Transform uiParent;
 
     [Header("Input")]
-    public bool allowSpace = true; // 保留欄位名稱，避免舊 Inspector 資料失效
+    public bool allowSpace = true;
     public bool allowMouseClick = true;
     public KeyCode advanceKey = KeyCode.F;
 
@@ -26,15 +26,15 @@ public class DialogueManager : MonoBehaviour
     public bool debugLog = true;
 
     private DialogueUIRefs _ui;
+    private DialogueTextAnimator _bodyAnimator;
     private Coroutine _routine;
+    private Coroutine _cgRoutine;
+
     private bool _isPlaying;
-    private bool _isTyping;
-    private bool _waitingExtraClose;
     private float _activeCps;
 
     private DialogueUISkin _currentUISkin;
 
-    // Portrait base（每次切框 / 重建 UI 都重新抓）
     private bool _portraitBaseCaptured;
     private Vector3 _portraitBaseLocalScale;
     private Vector2 _portraitBaseAnchoredPos;
@@ -42,6 +42,10 @@ public class DialogueManager : MonoBehaviour
     private Vector2 _portraitBaseAnchorMin;
     private Vector2 _portraitBaseAnchorMax;
     private Vector2 _portraitBasePivot;
+
+    private Sprite _currentCgSprite;
+    private bool _currentCgVisible;
+    private float _currentCgAlpha;
 
     private void Awake()
     {
@@ -78,8 +82,8 @@ public class DialogueManager : MonoBehaviour
 
         EnsureUIInstance(startSkin);
 
-        bool startUseBlueFrame = (startSkin == secondarySkin);
-        _ui.ShowFrame(startUseBlueFrame);
+        _ui.ShowFrame(startSkin.useBlueFrame);
+        BindRuntimeRefs();
         CapturePortraitBase();
 
         _ui.ClearAll();
@@ -98,14 +102,25 @@ public class DialogueManager : MonoBehaviour
             _routine = null;
         }
 
+        if (_cgRoutine != null)
+        {
+            StopCoroutine(_cgRoutine);
+            _cgRoutine = null;
+        }
+
         _isPlaying = false;
-        _isTyping = false;
-        _waitingExtraClose = false;
+
+        _currentCgSprite = null;
+        _currentCgVisible = false;
+        _currentCgAlpha = 0f;
+
+        if (_bodyAnimator != null)
+            _bodyAnimator.ClearEffects();
+
+        ApplyCurrentCgImmediate();
 
         if (_ui != null && _currentUISkin != null && _currentUISkin.hideRootOnClose)
-        {
             _ui.RootGO.SetActive(false);
-        }
     }
 
     private void EnsureUIInstance(DialogueUISkin skin)
@@ -121,20 +136,13 @@ public class DialogueManager : MonoBehaviour
             if (debugLog) Debug.Log($"[DialogueManager] Rebuild UI: {_currentUISkin?.name} -> {skin.name}");
             Destroy(_ui.gameObject);
             _ui = null;
+            _bodyAnimator = null;
             _portraitBaseCaptured = false;
         }
 
         if (_ui != null) return;
 
         Transform parent = uiParent != null ? uiParent : transform;
-
-        if (uiParent == null && debugLog)
-        {
-            Debug.LogWarning(
-                "[DialogueManager] uiParent is NULL. UI will be instantiated under DialogueManager itself. " +
-                "如果 DialogueManager 在 DontDestroyOnLoad 或其父物件 scale 不是 1，UI 可能看起來被拉伸。"
-            );
-        }
 
         _ui = Instantiate(skin.uiPrefab, parent);
         _ui.name = $"DialogueUI({skin.name})";
@@ -152,6 +160,8 @@ public class DialogueManager : MonoBehaviour
             _ui.transform.localRotation = Quaternion.identity;
         }
 
+        BindRuntimeRefs();
+
         if (debugLog)
         {
             Vector3 ls = parent.lossyScale;
@@ -159,12 +169,35 @@ public class DialogueManager : MonoBehaviour
         }
 
         CapturePortraitBase();
+        ApplyCurrentCgImmediate();
+    }
+
+    private void BindRuntimeRefs()
+    {
+        _bodyAnimator = null;
+
+        if (_ui != null && _ui.bodyText != null)
+        {
+            _ui.EnsureCgBehindDialogue();
+
+            _bodyAnimator = _ui.bodyText.GetComponent<DialogueTextAnimator>();
+            if (_bodyAnimator == null)
+                _bodyAnimator = _ui.bodyText.gameObject.AddComponent<DialogueTextAnimator>();
+
+            _bodyAnimator.Bind(_ui.bodyText);
+        }
     }
 
     private void ApplyCpsFromSkin(DialogueUISkin skin)
     {
         _activeCps = (skin != null && skin.charsPerSecond > 0f) ? skin.charsPerSecond : charsPerSecond;
         if (_activeCps <= 0f) _activeCps = 40f;
+    }
+
+    private void ApplyLineCpsOverride(DialogueLineData line)
+    {
+        if (line != null && line.overrideCharsPerSecond && line.charsPerSecondOverride > 0f)
+            _activeCps = line.charsPerSecondOverride;
     }
 
     private void CapturePortraitBase()
@@ -182,13 +215,10 @@ public class DialogueManager : MonoBehaviour
         _portraitBaseAnchorMax = rt.anchorMax;
         _portraitBasePivot = rt.pivot;
 
-        // 只保留 prefab 原始朝向，不吃殘留的大倍率
         float baseSign = Mathf.Sign(rt.localScale.x);
         if (baseSign == 0f) baseSign = 1f;
 
         _portraitBaseLocalScale = new Vector3(baseSign, 1f, 1f);
-
-        // 順手把當前 Portrait scale 歸正
         rt.localScale = _portraitBaseLocalScale;
 
         _portraitBaseCaptured = true;
@@ -196,9 +226,8 @@ public class DialogueManager : MonoBehaviour
         if (debugLog)
         {
             Debug.Log(
-                $"[DialogueManager] CapturePortraitBase skin={_currentUISkin?.name} " +
-                $"portrait={_ui.portraitImage.name} baseScale={_portraitBaseLocalScale} " +
-                $"basePos={_portraitBaseAnchoredPos} size={_portraitBaseSizeDelta}"
+                $"[DialogueManager] CapturePortraitBase skin={_currentUISkin?.name} portrait={_ui.portraitImage.name} " +
+                $"baseScale={_portraitBaseLocalScale} basePos={_portraitBaseAnchoredPos} size={_portraitBaseSizeDelta}"
             );
         }
     }
@@ -225,124 +254,277 @@ public class DialogueManager : MonoBehaviour
 
         for (int i = 0; i < asset.lines.Count; i++)
         {
-            var line = asset.lines[i];
-
+            DialogueLineData line = asset.lines[i];
             DialogueUISkin lineSkin = ResolveSkinForLine(line);
-            if (lineSkin == null) lineSkin = defaultSkin;
-            if (lineSkin == null) lineSkin = secondarySkin;
 
             if (lineSkin != null && lineSkin.uiPrefab != null)
             {
                 EnsureUIInstance(lineSkin);
 
-                bool useBlueFrame = (lineSkin == secondarySkin);
-                _ui.ShowFrame(useBlueFrame);
+                _ui.ShowFrame(lineSkin.useBlueFrame);
+                BindRuntimeRefs();
                 CapturePortraitBase();
 
                 _ui.ClearAll();
                 _ui.RootGO.SetActive(true);
-                ApplyCpsFromSkin(lineSkin);
-            }
 
-            if (debugLog)
-            {
-                Debug.Log(
-                    $"[DialogueManager] Line {i}: skin={(lineSkin ? lineSkin.name : "null")} " +
-                    $"ui={(_ui ? _ui.name : "null")} portrait={(_ui && _ui.portraitImage ? _ui.portraitImage.name : "null")}"
-                );
+                ApplyCpsFromSkin(lineSkin);
+                ApplyLineCpsOverride(line);
             }
 
             ApplyLineToUI(line);
 
-            yield return StartCoroutine(TypeLine(GetBodyText(line)));
+            yield return StartCoroutine(WaitUntilAdvanceReleased());
+            yield return StartCoroutine(TypeLine(line));
             yield return StartCoroutine(WaitForAdvance());
         }
 
         if (_currentUISkin != null && _currentUISkin.requireExtraPressToClose)
-        {
-            _waitingExtraClose = true;
             yield return StartCoroutine(WaitForAdvance());
-        }
 
         CloseUI();
     }
 
-    private DialogueUISkin ResolveSkinForLine(object line)
+    private DialogueUISkin ResolveSkinForLine(DialogueLineData line)
     {
-        var skinFromLine = TryGetObject(line, "uiSkin") as DialogueUISkin;
-        if (skinFromLine != null) return skinFromLine;
-
-        var character = TryGetObject(line, "character");
-        if (character != null)
-        {
-            var t = character.GetType();
-
-            var f = t.GetField("defaultSkin");
-            if (f != null && typeof(DialogueUISkin).IsAssignableFrom(f.FieldType))
-            {
-                var v = f.GetValue(character) as DialogueUISkin;
-                if (v != null) return v;
-            }
-
-            var p = t.GetProperty("defaultSkin");
-            if (p != null && typeof(DialogueUISkin).IsAssignableFrom(p.PropertyType))
-            {
-                var v = p.GetValue(character) as DialogueUISkin;
-                if (v != null) return v;
-            }
-        }
-
-        return defaultSkin;
+        if (line != null && line.uiSkin != null) return line.uiSkin;
+        if (defaultSkin != null) return defaultSkin;
+        return secondarySkin;
     }
 
     private void CloseUI()
     {
         _isPlaying = false;
-        _isTyping = false;
-        _waitingExtraClose = false;
+
+        if (_bodyAnimator != null)
+            _bodyAnimator.ClearEffects();
+
+        _currentCgSprite = null;
+        _currentCgVisible = false;
+        _currentCgAlpha = 0f;
+        ApplyCurrentCgImmediate();
 
         if (_currentUISkin != null && _currentUISkin.hideRootOnClose && _ui != null)
             _ui.RootGO.SetActive(false);
     }
 
-    private void ApplyLineToUI(object line)
+    private void ApplyLineToUI(DialogueLineData line)
     {
-        string nameOverride = TryGetString(line, "nameOverride");
-        if (string.IsNullOrEmpty(nameOverride) && autoFillNameFromCharacter)
-            nameOverride = "";
+        if (_ui == null || line == null)
+            return;
 
-        if (_ui.nameText) _ui.nameText.text = nameOverride ?? "";
+        HandleCgForLine(line);
 
-        string hintCustom = TryGetString(line, "hintCustom");
-        if (_ui.hintText) _ui.hintText.text = hintCustom ?? "";
+        string nameTextValue = line.nameOverride;
+        if (string.IsNullOrEmpty(nameTextValue) && autoFillNameFromCharacter)
+            nameTextValue = "";
 
-        var character = TryGetObject(line, "character") as CharacterPortraitSet;
-        bool keepPrev = TryGetBool(line, "keepPreviousPortrait");
-        int variantEnum = TryGetEnumInt(line, "variant");
+        if (_ui.nameText)
+            _ui.nameText.text = nameTextValue ?? "";
 
-        if (_ui.portraitImage)
+        if (_ui.hintText)
+            _ui.hintText.text = ResolveHintText(line);
+
+        ApplyPortraitForLine(line);
+        PrepareBodyForLine(line);
+    }
+
+    private void ApplyPortraitForLine(DialogueLineData line)
+    {
+        if (_ui == null || _ui.portraitImage == null)
+            return;
+
+        bool shouldHidePortrait = _currentCgVisible && line.hidePortraitWhenCg;
+
+        if (line.keepPreviousPortrait)
         {
-            if (keepPrev)
+            _ui.portraitImage.enabled = !shouldHidePortrait && _ui.portraitImage.sprite != null;
+            return;
+        }
+
+        if (line.character != null)
+        {
+            _ui.portraitImage.sprite = line.character.Get(line.variant);
+            ApplyPortraitTransform(line.character);
+            _ui.portraitImage.enabled = !shouldHidePortrait && _ui.portraitImage.sprite != null;
+        }
+        else
+        {
+            _ui.portraitImage.sprite = null;
+            ApplyPortraitTransform(null);
+            _ui.portraitImage.enabled = false;
+        }
+    }
+
+    private void PrepareBodyForLine(DialogueLineData line)
+    {
+        string body = GetBodyText(line);
+
+        if (_bodyAnimator != null)
+        {
+            _bodyAnimator.SetContent(body, line.bodyEffects);
+        }
+        else if (_ui != null && _ui.bodyText != null)
+        {
+            _ui.bodyText.text = body ?? "";
+            _ui.bodyText.maxVisibleCharacters = 0;
+            _ui.bodyText.ForceMeshUpdate();
+        }
+    }
+
+    private void HandleCgForLine(DialogueLineData line)
+    {
+        switch (line.cgMode)
+        {
+            case DialogueCGMode.KeepPrevious:
+                return;
+
+            case DialogueCGMode.Hide:
+                StartCgTransition(null, false, line.cgFadeDuration);
+                return;
+
+            case DialogueCGMode.Show:
+                if (line.cgSprite == null)
+                {
+                    StartCgTransition(null, false, 0f);
+                    return;
+                }
+                StartCgTransition(line.cgSprite, true, line.cgFadeDuration);
+                return;
+
+            case DialogueCGMode.None:
+            default:
+                // None 直接硬清掉，不殘留
+                StartCgTransition(null, false, 0f);
+                return;
+        }
+    }
+
+    private void StartCgTransition(Sprite sprite, bool visible, float duration)
+    {
+        bool nextVisible = visible && sprite != null;
+        _currentCgSprite = sprite;
+        _currentCgVisible = nextVisible;
+
+        if (_cgRoutine != null)
+        {
+            StopCoroutine(_cgRoutine);
+            _cgRoutine = null;
+        }
+
+        if (_ui == null || _ui.cgImage == null || duration <= 0f)
+        {
+            if (_ui != null && _ui.cgImage != null)
+                _ui.cgImage.sprite = nextVisible ? sprite : null;
+
+            SetCgAlpha(nextVisible ? 1f : 0f);
+
+            if (!nextVisible && _ui != null && _ui.cgImage != null)
+                _ui.cgImage.sprite = null;
+
+            return;
+        }
+
+        _cgRoutine = StartCoroutine(CgTransitionRoutine(sprite, nextVisible, duration));
+    }
+
+    private IEnumerator CgTransitionRoutine(Sprite nextSprite, bool nextVisible, float duration)
+    {
+        if (_ui == null || _ui.cgImage == null)
+        {
+            _cgRoutine = null;
+            yield break;
+        }
+
+        _ui.EnsureCgBehindDialogue();
+
+        float half = Mathf.Max(0.01f, duration * 0.5f);
+        bool hasCurrent = _ui.cgImage.sprite != null && _currentCgAlpha > 0.001f;
+
+        if (hasCurrent && (_ui.cgImage.sprite != nextSprite || !nextVisible))
+        {
+            float t = 0f;
+            float startAlpha = _currentCgAlpha;
+
+            while (t < half)
             {
-                // keep
+                t += Time.deltaTime;
+                SetCgAlpha(Mathf.Lerp(startAlpha, 0f, t / half));
+                yield return null;
             }
-            else if (character != null)
+
+            SetCgAlpha(0f);
+        }
+
+        _ui.cgImage.sprite = nextVisible ? nextSprite : null;
+
+        if (nextVisible && nextSprite != null)
+        {
+            float t = 0f;
+            SetCgAlpha(0f);
+
+            while (t < half)
             {
-                var v = (PortraitVariant)variantEnum;
-                _ui.portraitImage.sprite = character.Get(v);
-                ApplyPortraitTransform(character);
+                t += Time.deltaTime;
+                SetCgAlpha(Mathf.Lerp(0f, 1f, t / half));
+                yield return null;
             }
-            else
-            {
-                _ui.portraitImage.sprite = null;
-                ApplyPortraitTransform(null);
-            }
+
+            SetCgAlpha(1f);
+        }
+        else
+        {
+            SetCgAlpha(0f);
+            _ui.cgImage.sprite = null;
+        }
+
+        _cgRoutine = null;
+    }
+
+    private void ApplyCurrentCgImmediate()
+    {
+        if (_ui == null || _ui.cgImage == null)
+            return;
+
+        _ui.EnsureCgBehindDialogue();
+
+        _ui.cgImage.sprite = _currentCgVisible ? _currentCgSprite : null;
+        SetCgAlpha(_currentCgVisible && _currentCgSprite != null ? Mathf.Max(_currentCgAlpha, 1f) : 0f);
+
+        if (!_currentCgVisible)
+            _ui.cgImage.sprite = null;
+    }
+
+    private void SetCgAlpha(float alpha)
+    {
+        _currentCgAlpha = Mathf.Clamp01(alpha);
+
+        if (_ui == null || _ui.cgImage == null)
+            return;
+
+        bool show = _currentCgAlpha > 0.001f && _ui.cgImage.sprite != null;
+
+        if (_ui.cgRoot != null)
+            _ui.cgRoot.SetActive(show);
+
+        _ui.cgImage.enabled = show;
+
+        if (_ui.cgCanvasGroup != null)
+        {
+            _ui.cgCanvasGroup.alpha = _currentCgAlpha;
+        }
+        else
+        {
+            Color c = _ui.cgImage.color;
+            c.a = _currentCgAlpha;
+            _ui.cgImage.color = c;
         }
     }
 
     private void ApplyPortraitTransform(CharacterPortraitSet character)
     {
-        if (_ui == null || _ui.portraitImage == null) return;
+        if (_ui == null || _ui.portraitImage == null)
+            return;
 
         RectTransform rt = _ui.portraitImage.rectTransform;
 
@@ -352,7 +534,6 @@ public class DialogueManager : MonoBehaviour
         if (!_portraitBaseCaptured)
             return;
 
-        // 先回到 prefab 裡 Portrait 的基準狀態
         RestorePortraitRect(rt);
 
         Vector2 offset = Vector2.zero;
@@ -380,45 +561,74 @@ public class DialogueManager : MonoBehaviour
         rt.localScale = new Vector3(finalSign * scaleX, scaleY, scaleZ);
     }
 
-    private IEnumerator TypeLine(string full)
+    private IEnumerator TypeLine(DialogueLineData line)
     {
-        if (_ui.bodyText == null) yield break;
-        full ??= "";
+        if (_ui == null || _ui.bodyText == null)
+            yield break;
+
+        int totalCharacters = GetCurrentBodyCharacterCount();
+        SetVisibleCharacters(0);
 
         if (!useTypewriter)
         {
-            _ui.bodyText.text = full;
+            SetVisibleCharacters(int.MaxValue);
             yield break;
         }
 
-        _isTyping = true;
-        _ui.bodyText.text = "";
-
         float t = 0f;
-        int idx = 0;
+        int visible = 0;
 
-        while (idx < full.Length)
+        while (visible < totalCharacters)
         {
             if (IsAdvancePressed())
             {
-                _ui.bodyText.text = full;
-                _isTyping = false;
+                SetVisibleCharacters(int.MaxValue);
                 yield break;
             }
 
             t += Time.deltaTime * _activeCps;
-            int newIdx = Mathf.Clamp(Mathf.FloorToInt(t), 0, full.Length);
+            int newVisible = Mathf.Clamp(Mathf.FloorToInt(t), 0, totalCharacters);
 
-            if (newIdx != idx)
+            if (newVisible != visible)
             {
-                idx = newIdx;
-                _ui.bodyText.text = full.Substring(0, idx);
+                visible = newVisible;
+                SetVisibleCharacters(visible);
             }
 
             yield return null;
         }
+    }
 
-        _isTyping = false;
+    private int GetCurrentBodyCharacterCount()
+    {
+        if (_bodyAnimator != null)
+            return _bodyAnimator.CharacterCount;
+
+        if (_ui == null || _ui.bodyText == null)
+            return 0;
+
+        _ui.bodyText.ForceMeshUpdate();
+        return _ui.bodyText.textInfo.characterCount;
+    }
+
+    private void SetVisibleCharacters(int count)
+    {
+        if (_bodyAnimator != null)
+        {
+            _bodyAnimator.SetVisibleCharacters(count);
+        }
+        else if (_ui != null && _ui.bodyText != null)
+        {
+            _ui.bodyText.maxVisibleCharacters = count;
+        }
+    }
+
+    private IEnumerator WaitUntilAdvanceReleased()
+    {
+        yield return null;
+
+        while (Input.GetKey(advanceKey))
+            yield return null;
     }
 
     private IEnumerator WaitForAdvance()
@@ -426,7 +636,9 @@ public class DialogueManager : MonoBehaviour
         yield return null;
         while (true)
         {
-            if (IsAdvancePressed()) yield break;
+            if (IsAdvancePressed())
+                yield break;
+
             yield return null;
         }
     }
@@ -435,58 +647,32 @@ public class DialogueManager : MonoBehaviour
     {
         if (!_isPlaying) return false;
         if (allowMouseClick && Input.GetMouseButtonDown(0)) return true;
-        if (allowSpace && Input.GetKeyDown(advanceKey)) return true;
-        return false;
+        if (!allowSpace) return false;
+        return Input.GetKeyDown(advanceKey);
     }
 
-    private string GetBodyText(object line)
+    private string ResolveHintText(DialogueLineData line)
     {
-        string body = TryGetString(line, "body");
-        if (!string.IsNullOrEmpty(body)) return body;
-        return TryGetString(line, "text") ?? "";
+        switch (line.hintMode)
+        {
+            case HintMode.None:
+                return "";
+
+            case HintMode.Custom:
+                return line.hintCustom ?? "";
+
+            case HintMode.Default:
+            default:
+            {
+                string keyName = advanceKey.ToString().ToUpper();
+                return allowMouseClick ? $"按{keyName} / 點擊繼續" : $"按{keyName}繼續";
+            }
+        }
     }
 
-    private static string TryGetString(object obj, string field)
+    private string GetBodyText(DialogueLineData line)
     {
-        if (obj == null) return null;
-        var t = obj.GetType();
-        var f = t.GetField(field);
-        if (f != null && f.FieldType == typeof(string)) return (string)f.GetValue(obj);
-        var p = t.GetProperty(field);
-        if (p != null && p.PropertyType == typeof(string)) return (string)p.GetValue(obj);
-        return null;
-    }
-
-    private static bool TryGetBool(object obj, string field)
-    {
-        if (obj == null) return false;
-        var t = obj.GetType();
-        var f = t.GetField(field);
-        if (f != null && f.FieldType == typeof(bool)) return (bool)f.GetValue(obj);
-        var p = t.GetProperty(field);
-        if (p != null && p.PropertyType == typeof(bool)) return (bool)p.GetValue(obj);
-        return false;
-    }
-
-    private static int TryGetEnumInt(object obj, string field)
-    {
-        if (obj == null) return 0;
-        var t = obj.GetType();
-        var f = t.GetField(field);
-        if (f != null && f.FieldType.IsEnum) return (int)f.GetValue(obj);
-        var p = t.GetProperty(field);
-        if (p != null && p.PropertyType.IsEnum) return (int)p.GetValue(obj);
-        return 0;
-    }
-
-    private static object TryGetObject(object obj, string field)
-    {
-        if (obj == null) return null;
-        var t = obj.GetType();
-        var f = t.GetField(field);
-        if (f != null) return f.GetValue(obj);
-        var p = t.GetProperty(field);
-        if (p != null) return p.GetValue(obj);
-        return null;
+        if (line == null) return "";
+        return line.body ?? "";
     }
 }
