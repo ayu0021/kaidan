@@ -31,6 +31,7 @@ public class DialogueManager : MonoBehaviour
     private Coroutine _cgRoutine;
 
     private bool _isPlaying;
+    public bool IsPlaying => _isPlaying;
     private float _activeCps;
 
     private DialogueUISkin _currentUISkin;

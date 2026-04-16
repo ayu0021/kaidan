@@ -29,4 +29,13 @@ EditorBuildSettings:
   - enabled: 1
     path: "Assets/Scenes/\u864E\u59D1\u5A46_woods.unity"
     guid: 87bb3319128ef4c93a27286e30ee692b
+  - enabled: 1
+    path: "Assets/Scenes/\u68EE\u6797.unity"
+    guid: 34e4b57fd2102e14bb6dc9738f6d43b4
+  - enabled: 1
+    path: "Assets/Scenes/\u6230\u9B25\u5834\u666F.unity"
+    guid: 21746b13db5e545b5b4e8123ae92f2be
+  - enabled: 1
+    path: "Assets/Scenes/\u864E\u59D1\u5A46_\u6BDB\u7DDA\u7403\u623F.unity"
+    guid: 819e3a6af23e423458d308244bc6b45d
   m_configObjects: {}
