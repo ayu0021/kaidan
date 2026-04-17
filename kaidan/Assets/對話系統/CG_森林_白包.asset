@@ -25,7 +25,7 @@ MonoBehaviour:
     hintCustom: 
     cgMode: 1
     cgSprite: {fileID: 21300000, guid: 1b3dc63bac6ce41ca800e8d36ba8bdc3, type: 3}
-    cgFadeDuration: 0.37
+    cgFadeDuration: 0.07
     hidePortraitWhenCg: 1
     overrideCharsPerSecond: 0
     charsPerSecondOverride: 0

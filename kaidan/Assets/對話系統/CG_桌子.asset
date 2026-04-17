@@ -25,7 +25,7 @@ MonoBehaviour:
     hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
     cgMode: 1
     cgSprite: {fileID: 21300000, guid: 9f7c62d76e4cc42bdb592303abadb584, type: 3}
-    cgFadeDuration: 1.5
+    cgFadeDuration: 0.09
     hidePortraitWhenCg: 1
     overrideCharsPerSecond: 0
     charsPerSecondOverride: 40
