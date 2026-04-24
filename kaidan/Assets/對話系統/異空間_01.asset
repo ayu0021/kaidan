@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6eb164e84b2684214b0f5b91cef19344, type: 3}
+  m_Name: "\u7570\u7A7A\u9593_01"
+  m_EditorClassIdentifier: 
+  assetTitle: New Dialogue
+  loadSceneOnEnd: 
+  lines:
+  - uiSkin: {fileID: 0}
+    character: {fileID: 11400000, guid: fc71cd3288e424a9e95024ab1a761822, type: 2}
+    variant: 0
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: "\u4EBA\u985E\u7E3D\u662F\u53EA\u76F8\u4FE1\u81EA\u5DF1\u773C\u524D\u6240\u770B\u5230\u7684"
+    hintMode: 0
+    hintCustom: 
+    cgMode: 0
+    cgSprite: {fileID: 0}
+    cgFadeDuration: 0
+    hidePortraitWhenCg: 0
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 0
+    bodyEffects:
+    - enabled: 1
+      targetText: "\u4EBA\u985E\u7E3D\u662F\u53EA\u76F8\u4FE1\u81EA\u5DF1\u773C\u524D\u6240\u770B\u5230\u7684"
+      applyToAllMatches: 0
+      occurrenceIndex: 0
+      effectType: 2
+      color: {r: 0, g: 0, b: 0, a: 0}
+      scaleMultiplier: 0
+      amplitude: 0.27
+      frequency: 0.22
+      speed: 0.25
