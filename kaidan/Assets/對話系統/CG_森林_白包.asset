@@ -16,7 +16,7 @@ MonoBehaviour:
   loadSceneOnEnd: 
   lines:
   - uiSkin: {fileID: 0}
-    character: {fileID: 11400000, guid: fc71cd3288e424a9e95024ab1a761822, type: 2}
+    character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
     variant: 0
     keepPreviousPortrait: 0
     nameOverride: 

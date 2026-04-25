@@ -15,7 +15,7 @@ MonoBehaviour:
   assetTitle: New Dialogue
   loadSceneOnEnd: 
   lines:
-  - uiSkin: {fileID: 0}
+  - uiSkin: {fileID: 11400000, guid: 8c93a4721c27a4ae48927033c0db960c, type: 2}
     character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
     variant: 0
     keepPreviousPortrait: 0
@@ -40,12 +40,12 @@ MonoBehaviour:
       amplitude: 4.04
       frequency: 6.29
       speed: 5.68
-  - uiSkin: {fileID: 0}
+  - uiSkin: {fileID: 11400000, guid: 8c93a4721c27a4ae48927033c0db960c, type: 2}
     character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
     variant: 0
     keepPreviousPortrait: 0
     nameOverride: 
-    body: "\u628A\u525B\u525B\u64BF\u5230\u7684\u767D\u5305\u7D66\u5B83\u5427"
+    body: "...\u628A\u525B\u525B\u64BF\u5230\u7684\u767D\u5305\u7D66\u5B83\u5427"
     hintMode: 2
     hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
     cgMode: 2
