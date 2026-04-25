@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6eb164e84b2684214b0f5b91cef19344, type: 3}
+  m_Name: "\u864E\u59D1\u5A46\u4E16\u754C\u89C0"
+  m_EditorClassIdentifier: 
+  assetTitle: New Dialogue
+  loadSceneOnEnd: 
+  lines:
+  - uiSkin: {fileID: 11400000, guid: 8c93a4721c27a4ae48927033c0db960c, type: 2}
+    character: {fileID: 0}
+    variant: 0
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: 
+    hintMode: 0
+    hintCustom: 
+    cgMode: 1
+    cgSprite: {fileID: 21300000, guid: 7fc16581844de4f43bc8281fe289a111, type: 3}
+    cgFadeDuration: 0
+    hidePortraitWhenCg: 1
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 0
+    bodyEffects: []
+  - uiSkin: {fileID: 11400000, guid: 8c93a4721c27a4ae48927033c0db960c, type: 2}
+    character: {fileID: 0}
+    variant: 0
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: 
+    hintMode: 0
+    hintCustom: 
+    cgMode: 1
+    cgSprite: {fileID: 21300000, guid: aae8940b003a44985b21af89b3a3e764, type: 3}
+    cgFadeDuration: 0
+    hidePortraitWhenCg: 1
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 0
+    bodyEffects: []
+  - uiSkin: {fileID: 11400000, guid: 8c93a4721c27a4ae48927033c0db960c, type: 2}
+    character: {fileID: 0}
+    variant: 0
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: 
+    hintMode: 0
+    hintCustom: 
+    cgMode: 1
+    cgSprite: {fileID: 21300000, guid: 931f71f5c4c5b482ab6731e4908b104c, type: 3}
+    cgFadeDuration: 0
+    hidePortraitWhenCg: 1
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 0
+    bodyEffects: []
+  - uiSkin: {fileID: 11400000, guid: 8c93a4721c27a4ae48927033c0db960c, type: 2}
+    character: {fileID: 0}
+    variant: 0
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: 
+    hintMode: 0
+    hintCustom: 
+    cgMode: 1
+    cgSprite: {fileID: 21300000, guid: 1e3cf3fbdea18414fa920e54ff984972, type: 3}
+    cgFadeDuration: 0
+    hidePortraitWhenCg: 1
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 0
+    bodyEffects: []
+  - uiSkin: {fileID: 11400000, guid: 8c93a4721c27a4ae48927033c0db960c, type: 2}
+    character: {fileID: 0}
+    variant: 0
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: 
+    hintMode: 0
+    hintCustom: 
+    cgMode: 1
+    cgSprite: {fileID: 21300000, guid: 790b83771662c4ad587df1cd6bd1fb4a, type: 3}
+    cgFadeDuration: 0
+    hidePortraitWhenCg: 0
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 0
+    bodyEffects: []

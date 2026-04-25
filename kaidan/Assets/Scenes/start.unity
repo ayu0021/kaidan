@@ -345,7 +345,7 @@ RectTransform:
   m_GameObject: {fileID: 347186775}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3.25, y: 3.25, z: 3.25}
+  m_LocalScale: {x: 3.4771392, y: 3.4771392, z: 3.4771392}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 2128265920}
@@ -374,7 +374,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.6603774, g: 0.6603774, b: 0.6603774, a: 1}
@@ -384,8 +384,8 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: 21300000, guid: e7f78868d45ac4efbbb85930c246d3e2, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: e7f78868d45ac4efbbb85930c246d3e2, type: 3}
     m_SelectedSprite: {fileID: 0}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
@@ -1235,7 +1235,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.6603774, g: 0.6603774, b: 0.6603774, a: 1}
@@ -1245,8 +1245,8 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: 21300000, guid: a11a50252f2d6444fa73ea7b14c6421e, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: a11a50252f2d6444fa73ea7b14c6421e, type: 3}
     m_SelectedSprite: {fileID: 0}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
@@ -2060,9 +2060,9 @@ RectTransform:
   - {fileID: 656929783}
   - {fileID: 1155623905}
   - {fileID: 347186776}
-  - {fileID: 1095542005}
   - {fileID: 1598935930}
   - {fileID: 581432452}
+  - {fileID: 1095542005}
   m_Father: {fileID: 434865461}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}

@@ -16,13 +16,13 @@ MonoBehaviour:
   loadSceneOnEnd: 
   lines:
   - uiSkin: {fileID: 0}
-    character: {fileID: 11400000, guid: fc71cd3288e424a9e95024ab1a761822, type: 2}
+    character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
     variant: 0
     keepPreviousPortrait: 0
     nameOverride: 
     body: "\u7D66\u6211\u9322...\u6211\u7D66\u4F60\u8B1B\u4E00\u6BB5\u6545\u4E8B..."
-    hintMode: 0
-    hintCustom: 
+    hintMode: 2
+    hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
     cgMode: 1
     cgSprite: {fileID: 21300000, guid: ea31fd3d86f2a425e9219f37d8cc3839, type: 3}
     cgFadeDuration: 0.06
@@ -41,13 +41,13 @@ MonoBehaviour:
       frequency: 6.29
       speed: 5.68
   - uiSkin: {fileID: 0}
-    character: {fileID: 11400000, guid: fc71cd3288e424a9e95024ab1a761822, type: 2}
+    character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
     variant: 0
     keepPreviousPortrait: 0
     nameOverride: 
     body: "\u628A\u525B\u525B\u64BF\u5230\u7684\u767D\u5305\u7D66\u5B83\u5427"
-    hintMode: 0
-    hintCustom: 
+    hintMode: 2
+    hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
     cgMode: 2
     cgSprite: {fileID: 21300000, guid: ea31fd3d86f2a425e9219f37d8cc3839, type: 3}
     cgFadeDuration: 0.3
@@ -56,13 +56,13 @@ MonoBehaviour:
     charsPerSecondOverride: 0
     bodyEffects: []
   - uiSkin: {fileID: 0}
-    character: {fileID: 11400000, guid: fc71cd3288e424a9e95024ab1a761822, type: 2}
+    character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
     variant: 0
     keepPreviousPortrait: 0
     nameOverride: 
     body: "\u300C\u5947\u602A\u7684\u6232\u53F0\u4F38\u51FA\u624B\u6536\u4E0B\u4E86\u4F60\u7684\u767D\u5305\uFF0C\u767C\u51FA\u4E00\u9663\u5580...\u5580\u5566...\u5580\u7684\u602A\u8072\u300D"
-    hintMode: 0
-    hintCustom: 
+    hintMode: 2
+    hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
     cgMode: 1
     cgSprite: {fileID: 21300000, guid: 0c0c509dd7e114c31a85055418291bff, type: 3}
     cgFadeDuration: 0
@@ -71,15 +71,120 @@ MonoBehaviour:
     charsPerSecondOverride: 0
     bodyEffects: []
   - uiSkin: {fileID: 0}
-    character: {fileID: 11400000, guid: fc71cd3288e424a9e95024ab1a761822, type: 2}
+    character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
     variant: 0
     keepPreviousPortrait: 0
     nameOverride: 
-    body: "\u300C\u5E03\u5E55\u843D\u4E0B\uFF0C\u5B83\u958B\u59CB\u8B1B\u8FF0\u4E00\u6BB5\u6545\u4E8B\u300D"
-    hintMode: 0
-    hintCustom: 
+    body: "\u300C\u5E03\u5E55\u843D\u4E0B\uFF0C\u5B83\u958B\u59CB\u8B1B\u8FF0\u4E00\u6BB5\u6545\u4E8B\u3002\u300D"
+    hintMode: 2
+    hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
     cgMode: 1
     cgSprite: {fileID: 21300000, guid: 0c0c509dd7e114c31a85055418291bff, type: 3}
+    cgFadeDuration: 0
+    hidePortraitWhenCg: 1
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 0
+    bodyEffects: []
+  - uiSkin: {fileID: 0}
+    character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
+    variant: 0
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: "\u300C\u5F88\u4E45\u5F88\u4E45\u4EE5\u524D...\u300D"
+    hintMode: 2
+    hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
+    cgMode: 1
+    cgSprite: {fileID: 21300000, guid: 7fc16581844de4f43bc8281fe289a111, type: 3}
+    cgFadeDuration: 0
+    hidePortraitWhenCg: 1
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 0
+    bodyEffects: []
+  - uiSkin: {fileID: 0}
+    character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
+    variant: 0
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: "\u300C\u591C\u665A\u6703\u6709\u53EF\u6015\u7684\u5996\u602A\u51FA\u73FE\u300D"
+    hintMode: 2
+    hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
+    cgMode: 1
+    cgSprite: {fileID: 21300000, guid: aae8940b003a44985b21af89b3a3e764, type: 3}
+    cgFadeDuration: 0
+    hidePortraitWhenCg: 1
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 0
+    bodyEffects: []
+  - uiSkin: {fileID: 0}
+    character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
+    variant: 0
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: "\u300C\u864E\u59D1\u5A46\uFF0C\u4E00\u96BB\u5147\u60E1\u7684\u864E\u5996\u300D"
+    hintMode: 2
+    hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
+    cgMode: 1
+    cgSprite: {fileID: 21300000, guid: 931f71f5c4c5b482ab6731e4908b104c, type: 3}
+    cgFadeDuration: 0
+    hidePortraitWhenCg: 1
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 0
+    bodyEffects: []
+  - uiSkin: {fileID: 0}
+    character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
+    variant: 0
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: "\u300C\u5B83\u72E1\u733E\u3001\u9670\u96AA\u53C8\u8A6D\u8A08\u591A\u7AEF\u300D"
+    hintMode: 2
+    hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
+    cgMode: 1
+    cgSprite: {fileID: 21300000, guid: 931f71f5c4c5b482ab6731e4908b104c, type: 3}
+    cgFadeDuration: 0
+    hidePortraitWhenCg: 1
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 0
+    bodyEffects: []
+  - uiSkin: {fileID: 0}
+    character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
+    variant: 0
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: "\u300C\u864E\u59D1\u5A46\u64C5\u9577\u5047\u626E\u6210\u4EBA\uFF0C\u5C08\u9580\u54C4\u9A19\u5929\u771F\u7684\u5C0F\u5B69\u4E0A\u7576\uFF0C\u518D\u5403\u6389\u4ED6\u5011\u3002\u300D"
+    hintMode: 2
+    hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
+    cgMode: 1
+    cgSprite: {fileID: 21300000, guid: 790b83771662c4ad587df1cd6bd1fb4a, type: 3}
+    cgFadeDuration: 0
+    hidePortraitWhenCg: 1
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 0
+    bodyEffects: []
+  - uiSkin: {fileID: 0}
+    character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
+    variant: 0
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: "\u300C\u56E0\u6B64\uFF0C\u5B83\u6210\u4E86\u4EBA\u4EBA\u754F\u61FC\u7684\u5B58\u5728\u3002\u300D"
+    hintMode: 2
+    hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
+    cgMode: 1
+    cgSprite: {fileID: 21300000, guid: 1e3cf3fbdea18414fa920e54ff984972, type: 3}
+    cgFadeDuration: 0
+    hidePortraitWhenCg: 1
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 0
+    bodyEffects: []
+  - uiSkin: {fileID: 0}
+    character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
+    variant: 0
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: "\u300C\u4E00\u500B\u6050\u6016\u7684\u50B3\u8AAA\u3002\u300D"
+    hintMode: 2
+    hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
+    cgMode: 1
+    cgSprite: {fileID: 21300000, guid: 1e3cf3fbdea18414fa920e54ff984972, type: 3}
     cgFadeDuration: 0
     hidePortraitWhenCg: 1
     overrideCharsPerSecond: 0

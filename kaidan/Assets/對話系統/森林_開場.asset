@@ -22,7 +22,14 @@ MonoBehaviour:
     nameOverride: 
     body: "\u9019\u88E1\u662F...?"
     hintMode: 2
-    hintCustom: "\u6309F\u9375\u7E7C\u7E8C"
+    hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
+    cgMode: 0
+    cgSprite: {fileID: 0}
+    cgFadeDuration: 0.15
+    hidePortraitWhenCg: 1
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 40
+    bodyEffects: []
   - uiSkin: {fileID: 11400000, guid: 8c93a4721c27a4ae48927033c0db960c, type: 2}
     character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
     variant: 1
@@ -30,4 +37,11 @@ MonoBehaviour:
     nameOverride: 
     body: "\u90A3\u88E1\u6709\u500B\u767C\u5149\u7684\u6232\u81FA\uFF0C\u53BB\u770B\u770B\u5427\uFF01"
     hintMode: 2
-    hintCustom: "\u6309F\u9375\u7E7C\u7E8C"
+    hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
+    cgMode: 0
+    cgSprite: {fileID: 0}
+    cgFadeDuration: 0.15
+    hidePortraitWhenCg: 1
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 40
+    bodyEffects: []
