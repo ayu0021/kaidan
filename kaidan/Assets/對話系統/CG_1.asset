@@ -14,4 +14,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assetTitle: New Dialogue
   loadSceneOnEnd: 
-  lines: []
+  lines:
+  - uiSkin: {fileID: 0}
+    character: {fileID: 0}
+    variant: 0
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: 
+    hintMode: 0
+    hintCustom: 
+    cgMode: 0
+    cgSprite: {fileID: 0}
+    cgFadeDuration: 0
+    hidePortraitWhenCg: 0
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 0
+    bodyEffects: []
