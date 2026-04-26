@@ -123,6 +123,84 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &32760504
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 32760507}
+  - component: {fileID: 32760506}
+  - component: {fileID: 32760505}
+  m_Layer: 0
+  m_Name: "\u7570\u7A7A\u9593_\u6389\u4E0B\u53BB"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &32760505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 32760504}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c462f36a0ecdd42bbac5968451a1a631, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dialogueManager: {fileID: 0}
+  dialogueAsset: {fileID: 0}
+  playerTag: Player
+  triggerOnce: 1
+  delaySeconds: 0
+  loadSceneAfterDialogue: 0
+  sceneName: 
+  sceneLoadDelaySeconds: 0
+  useFadeBeforeSceneLoad: 1
+  fadeDuration: 0.8
+  fadeColor: {r: 0, g: 0, b: 0, a: 1}
+  fadeSortingOrder: 9999
+--- !u!65 &32760506
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 32760504}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &32760507
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 32760504}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.58761, y: 4.075, z: -5.252}
+  m_LocalScale: {x: 1.1603066, y: 0.6210083, z: 0.48003075}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &151782346
 GameObject:
   m_ObjectHideFlags: 0
@@ -406,7 +484,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 350715755}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.041508764, y: 0.000000017058287, z: -7.086791e-10, w: 0.9991382}
+  m_LocalRotation: {x: 0.041508786, y: -0.000000017459637, z: 7.253534e-10, w: 0.9991382}
   m_LocalPosition: {x: -0.192, y: 5.18, z: -42.54}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -785,7 +863,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1276757181}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.041508764, y: 0.000000017058287, z: -7.086791e-10, w: 0.9991382}
+  m_LocalRotation: {x: 0.041508786, y: -0.000000017459637, z: 7.253534e-10, w: 0.9991382}
   m_LocalPosition: {x: -0.192, y: 5.18, z: -42.54}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -827,7 +905,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5977213568871214249, guid: a724f2d9eaf6e4b7098e7cf0d114ae5a, type: 3}
       propertyPath: moveSpeed
-      value: 3.45
+      value: 2.01
       objectReference: {fileID: 0}
     - target: {fileID: 6041616886737400431, guid: a724f2d9eaf6e4b7098e7cf0d114ae5a, type: 3}
       propertyPath: m_LocalScale.x
@@ -1293,3 +1371,4 @@ SceneRoots:
   - {fileID: 1675186494}
   - {fileID: 350715760}
   - {fileID: 1276757183}
+  - {fileID: 32760507}

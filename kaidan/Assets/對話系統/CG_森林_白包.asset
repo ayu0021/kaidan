@@ -22,7 +22,7 @@ MonoBehaviour:
     nameOverride: 
     body: "\u767D\u5305...?\u5148\u6536\u8457\u5427\u3002"
     hintMode: 2
-    hintCustom: 
+    hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
     cgMode: 1
     cgSprite: {fileID: 21300000, guid: 1b3dc63bac6ce41ca800e8d36ba8bdc3, type: 3}
     cgFadeDuration: 0.07

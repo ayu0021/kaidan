@@ -20,11 +20,41 @@ MonoBehaviour:
     variant: 0
     keepPreviousPortrait: 0
     nameOverride: 
-    body: "\u7D66\u6211\u9322...\u6211\u7D66\u4F60\u8B1B\u4E00\u6BB5\u6545\u4E8B..."
+    body: "\u4F60\u597D\u554A..."
     hintMode: 2
     hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
     cgMode: 1
     cgSprite: {fileID: 21300000, guid: ea31fd3d86f2a425e9219f37d8cc3839, type: 3}
+    cgFadeDuration: 0
+    hidePortraitWhenCg: 1
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 0
+    bodyEffects: []
+  - uiSkin: {fileID: 0}
+    character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
+    variant: 0
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: "\u4F60\u662F\u5F9E\u5225\u7684\u4E16\u754C\u4F86\u7684\u5427..."
+    hintMode: 2
+    hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
+    cgMode: 1
+    cgSprite: {fileID: 21300000, guid: ea31fd3d86f2a425e9219f37d8cc3839, type: 3}
+    cgFadeDuration: 0
+    hidePortraitWhenCg: 1
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 0
+    bodyEffects: []
+  - uiSkin: {fileID: 11400000, guid: 8c93a4721c27a4ae48927033c0db960c, type: 2}
+    character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
+    variant: 0
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: "\u7D66\u6211\u9322...\u6211\u7D66\u4F60\u8B1B\u4E00\u6BB5\u6545\u4E8B..."
+    hintMode: 2
+    hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
+    cgMode: 1
+    cgSprite: {fileID: 21300000, guid: 0c0c509dd7e114c31a85055418291bff, type: 3}
     cgFadeDuration: 0.06
     hidePortraitWhenCg: 1
     overrideCharsPerSecond: 0
@@ -37,9 +67,19 @@ MonoBehaviour:
       effectType: 0
       color: {r: 0.7264151, g: 0, b: 0, a: 1}
       scaleMultiplier: 0
-      amplitude: 4.04
-      frequency: 6.29
-      speed: 5.68
+      amplitude: 6.45
+      frequency: 10.31
+      speed: 8.41
+    - enabled: 1
+      targetText: "\u7D66\u6211\u9322...\u6211\u7D66\u4F60\u8B1B\u4E00\u6BB5\u6545\u4E8B..."
+      applyToAllMatches: 0
+      occurrenceIndex: 0
+      effectType: 2
+      color: {r: 0.7264151, g: 0, b: 0, a: 1}
+      scaleMultiplier: 0
+      amplitude: 6.45
+      frequency: 10.31
+      speed: 8.41
   - uiSkin: {fileID: 11400000, guid: 8c93a4721c27a4ae48927033c0db960c, type: 2}
     character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
     variant: 0

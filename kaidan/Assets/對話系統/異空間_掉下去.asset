@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6eb164e84b2684214b0f5b91cef19344, type: 3}
+  m_Name: "\u7570\u7A7A\u9593_\u6389\u4E0B\u53BB"
+  m_EditorClassIdentifier: 
+  assetTitle: New Dialogue
+  loadSceneOnEnd: 
+  lines:
+  - uiSkin: {fileID: 11400000, guid: 8c93a4721c27a4ae48927033c0db960c, type: 2}
+    character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
+    variant: 0
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: "\u7A7A\u9593\u5728\u6643\u52D5...\uFF01"
+    hintMode: 2
+    hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
+    cgMode: 1
+    cgSprite: {fileID: 21300000, guid: c718050a6b85e4a898057254fa4bf76b, type: 3}
+    cgFadeDuration: 0
+    hidePortraitWhenCg: 1
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 0
+    bodyEffects: []
+  - uiSkin: {fileID: 11400000, guid: 8c93a4721c27a4ae48927033c0db960c, type: 2}
+    character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
+    variant: 0
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: "\u54C7\u554A\u554A\u554A\u554A\u554A\u554A\u554A------"
+    hintMode: 2
+    hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
+    cgMode: 1
+    cgSprite: {fileID: 21300000, guid: 25350898f4b3a4414913bd6b18838198, type: 3}
+    cgFadeDuration: 0
+    hidePortraitWhenCg: 1
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 0
+    bodyEffects:
+    - enabled: 1
+      targetText: 
+      applyToAllMatches: 0
+      occurrenceIndex: 0
+      effectType: 2
+      color: {r: 0, g: 0, b: 0, a: 0}
+      scaleMultiplier: 0
+      amplitude: 2.34
+      frequency: 3.32
+      speed: 5.71
