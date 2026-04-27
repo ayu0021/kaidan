@@ -152,6 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65d7f21cd2d3adf42afde0d67b691696, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainMenuSceneName: start
 --- !u!4 &81438250
 Transform:
   m_ObjectHideFlags: 0
@@ -1646,6 +1647,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1732268830}
   m_CullTransparentMesh: 1
+--- !u!1 &1780259641
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1780259643}
+  - component: {fileID: 1780259642}
+  m_Layer: 0
+  m_Name: GlobalIdleAutoReturn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1780259642
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1780259641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90662ffd8a0f148bab0be794e7be423b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  idleTimeLimit: 180
+  mainMenuSceneName: start
+--- !u!4 &1780259643
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1780259641}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 755.1847, y: 490.44165, z: -19.373962}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1949133464
 GameObject:
   m_ObjectHideFlags: 0
@@ -2186,3 +2233,4 @@ SceneRoots:
   - {fileID: 1993020854}
   - {fileID: 1949133465}
   - {fileID: 81438250}
+  - {fileID: 1780259643}
