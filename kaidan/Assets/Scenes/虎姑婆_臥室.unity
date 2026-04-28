@@ -3028,7 +3028,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705370746}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.1812864, y: -0.01706566, z: 0.0031463883, w: 0.98327726}
+  m_LocalRotation: {x: 0.1812864, y: -0.017065622, z: 0.0031463818, w: 0.98327726}
   m_LocalPosition: {x: -9.88, y: 15.12, z: -24.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -6179,7 +6179,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1473550038}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.1812864, y: -0.01706566, z: 0.0031463883, w: 0.98327726}
+  m_LocalRotation: {x: 0.1812864, y: -0.017065622, z: 0.0031463818, w: 0.98327726}
   m_LocalPosition: {x: -9.88, y: 15.12, z: -24.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -6953,8 +6953,8 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 21300000, guid: 534047f043d6f411aa4391b31d9493c5, type: 3}
-    m_PressedSprite: {fileID: 21300000, guid: 534047f043d6f411aa4391b31d9493c5, type: 3}
+    m_HighlightedSprite: {fileID: 21300000, guid: 4390d917d4d484a42bd0d16f051df78d, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: 4390d917d4d484a42bd0d16f051df78d, type: 3}
     m_SelectedSprite: {fileID: 0}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
@@ -6988,7 +6988,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 08028698242fe49ca8d8700ca9041306, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 63c7e41153dd841cf80b7c8340d71c2e, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
