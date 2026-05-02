@@ -2,47 +2,40 @@ using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
-[DefaultExecutionOrder(-1000)] // 盡量早一點初始化（但真正保險的是懶初始化）
 public class InnerShieldBarrier : MonoBehaviour
 {
     [Header("Vanish")]
-    [Tooltip("消散淡出時間；想瞬間消失就設 0")]
     public float fadeTime = 0.5f;
-
-    [Tooltip("護罩消失粒子 Prefab（可不填）")]
     public ParticleSystem vanishVfxPrefab;
-
-    [Tooltip("粒子生成位置（可不填，會用自己 transform.position）")]
     public Transform vfxSpawnPoint;
 
     [Header("Render / Physics")]
-    [Tooltip("不填會自動抓子物件所有 Renderer")]
     public Renderer[] renderers;
-
-    [Tooltip("不填會自動抓子物件所有 Collider（含自己）")]
     public Collider[] colliders;
-
-    [Tooltip("隱藏時是否 SetActive(false)。一般不建議，除非你確定外部不會再呼叫它")]
     public bool deactivateGameObjectWhenHidden = false;
 
-    private MaterialPropertyBlock _mpb;
-    private bool _inited;
+    MaterialPropertyBlock _mpb;
+    bool _inited;
+    bool _vanished;
 
-    static readonly int BaseColorId = Shader.PropertyToID("_BaseColor"); // URP/HDRP
-    static readonly int ColorId     = Shader.PropertyToID("_Color");     // Built-in
+    static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
+    static readonly int ColorId = Shader.PropertyToID("_Color");
 
-    void Awake() => EnsureInit();
-    void OnEnable() => EnsureInit();
-    void OnValidate()
+    void Awake()
     {
-        if (!Application.isPlaying) EnsureInit();
+        EnsureInit();
     }
 
-    private void EnsureInit()
+    void OnEnable()
+    {
+        EnsureInit();
+    }
+
+    void EnsureInit()
     {
         if (_inited) return;
 
-        if (_mpb == null) _mpb = new MaterialPropertyBlock();
+        _mpb = new MaterialPropertyBlock();
 
         if (renderers == null || renderers.Length == 0)
             renderers = GetComponentsInChildren<Renderer>(true);
@@ -53,27 +46,34 @@ public class InnerShieldBarrier : MonoBehaviour
         _inited = true;
     }
 
-    /// <summary>
-    /// locked=true：Collider 開啟（擋子彈）
-    /// locked=false：Collider 關閉（可打進去）
-    /// </summary>
     public void SetLocked(bool locked)
     {
         EnsureInit();
 
+        if (_vanished && locked)
+            _vanished = false;
+
         if (colliders != null)
         {
-            for (int i = 0; i < colliders.Length; i++)
-                if (colliders[i]) colliders[i].enabled = locked;
+            foreach (Collider c in colliders)
+            {
+                if (c)
+                    c.enabled = locked;
+            }
         }
 
-        SetVisible(true);
-        SetAlphaAll(1f);
+        SetVisible(locked);
+        SetAlphaAll(locked ? 1f : 0f);
     }
 
     public IEnumerator Vanish()
     {
         EnsureInit();
+
+        if (_vanished)
+            yield break;
+
+        _vanished = true;
 
         if (vanishVfxPrefab)
         {
@@ -81,20 +81,26 @@ public class InnerShieldBarrier : MonoBehaviour
             Instantiate(vanishVfxPrefab, p, Quaternion.identity);
         }
 
-        // 先關碰撞，避免淡出期間還擋子彈
         if (colliders != null)
         {
-            for (int i = 0; i < colliders.Length; i++)
-                if (colliders[i]) colliders[i].enabled = false;
+            foreach (Collider c in colliders)
+            {
+                if (c)
+                    c.enabled = false;
+            }
         }
 
         if (fadeTime <= 0f)
         {
+            SetAlphaAll(0f);
             SetVisible(false);
             yield break;
         }
 
+        SetVisible(true);
+
         float t = 0f;
+
         while (t < fadeTime)
         {
             t += Time.deltaTime;
@@ -103,6 +109,7 @@ public class InnerShieldBarrier : MonoBehaviour
             yield return null;
         }
 
+        SetAlphaAll(0f);
         SetVisible(false);
     }
 
@@ -110,17 +117,15 @@ public class InnerShieldBarrier : MonoBehaviour
     {
         EnsureInit();
 
-        // 如果之前你有 deactive，想顯示要先 active 回來
         if (on && !gameObject.activeSelf)
             gameObject.SetActive(true);
 
         if (renderers != null)
         {
-            for (int i = 0; i < renderers.Length; i++)
+            foreach (Renderer r in renderers)
             {
-                var r = renderers[i];
-                if (!r) continue;
-                r.enabled = on;
+                if (r)
+                    r.enabled = on;
             }
         }
 
@@ -128,18 +133,17 @@ public class InnerShieldBarrier : MonoBehaviour
             gameObject.SetActive(false);
     }
 
-    private void SetAlphaAll(float a)
+    void SetAlphaAll(float a)
     {
         EnsureInit();
 
-        if (renderers == null || renderers.Length == 0) return;
+        if (renderers == null) return;
 
-        for (int i = 0; i < renderers.Length; i++)
+        foreach (Renderer r in renderers)
         {
-            var r = renderers[i];
             if (!r) continue;
 
-            var mat = r.sharedMaterial;
+            Material mat = r.sharedMaterial;
             if (!mat) continue;
 
             r.GetPropertyBlock(_mpb);
@@ -162,13 +166,20 @@ public class InnerShieldBarrier : MonoBehaviour
     }
 
     [ContextMenu("TEST/Lock")]
-    private void TestLock() => SetLocked(true);
+    void TestLock()
+    {
+        SetLocked(true);
+    }
 
     [ContextMenu("TEST/Unlock")]
-    private void TestUnlock() => SetLocked(false);
+    void TestUnlock()
+    {
+        SetLocked(false);
+    }
 
     [ContextMenu("TEST/Vanish")]
-    private void TestVanish() => StartCoroutine(Vanish());
+    void TestVanish()
+    {
+        StartCoroutine(Vanish());
+    }
 }
-
-

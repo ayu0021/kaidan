@@ -3,13 +3,8 @@ using UnityEngine;
 
 public class BattleDirector : MonoBehaviour
 {
-    public enum AttackType
-    {
-        Wait,
-        CandleDark,
-        Needle,
-        Yarn
-    }
+    public enum BattleEndType { None, Win, Lose }
+    public enum AttackType { Wait, CandleDark, Needle, Yarn }
 
     [System.Serializable]
     public class BattleStep
@@ -28,12 +23,24 @@ public class BattleDirector : MonoBehaviour
     public NeedleAttackController needleAttack;
     public YarnAttackController yarnAttack;
 
-    [Header("UI")]
+    [Header("Player Scripts To Stop")]
+    public MonoBehaviour[] playerScriptsToDisableOnEnd;
+
+    [Header("Dialogue Endings")]
+    public DialogueManager dialogueManager;
+    public DialogueAsset winDialogueAsset;
+    public DialogueAsset loseDialogueAsset;
+    public DialogueUISkin skinOverride;
+
+    [Header("Ending Timing")]
+    public float endingDialogueDelay = 1f;
+
+    [Header("UI Optional")]
     public GameObject winPanel;
+    public GameObject gameOverPanel;
 
     [Header("Battle Settings")]
     public bool autoStart = true;
-    public bool pauseTimeOnBattleEnd = true;
     public bool switchToPhase2WhenShellCleared = true;
 
     [Header("Phase 1 Sequence")]
@@ -42,20 +49,38 @@ public class BattleDirector : MonoBehaviour
     [Header("Phase 2 Sequence")]
     public BattleStep[] phase2Sequence;
 
-    private bool battleEnded;
-    private bool usingPhase2;
-    private Coroutine battleCoroutine;
+    [Header("Cleanup Generated Attacks")]
+    public string[] cleanupNameContains =
+    {
+        "NeedleBulletRoot",
+        "NeedleBullet",
+        "YarnDropRoot",
+        "YarnDrop",
+        "Particle System"
+    };
+
+    bool battleEnded;
+    bool usingPhase2;
+    Coroutine battleCoroutine;
+    Coroutine endingCoroutine;
+
+    public bool BattleEnded => battleEnded;
+    public BattleEndType CurrentEndType { get; private set; } = BattleEndType.None;
 
     void Start()
     {
         Time.timeScale = 1f;
 
-        if (winPanel != null)
-            winPanel.SetActive(false);
+        if (!dialogueManager)
+            dialogueManager = FindObjectOfType<DialogueManager>();
 
-        if (player != null)
+        if (player)
             player.OnPlayerDied += HandlePlayerDied;
 
+        if (winPanel) winPanel.SetActive(false);
+        if (gameOverPanel) gameOverPanel.SetActive(false);
+
+        EnableAttackScripts(true);
         StopAllAttackControllers();
 
         if (autoStart)
@@ -64,83 +89,95 @@ public class BattleDirector : MonoBehaviour
 
     void OnDestroy()
     {
-        if (player != null)
+        if (player)
             player.OnPlayerDied -= HandlePlayerDied;
     }
 
     public void BeginBattle()
     {
+        battleEnded = false;
+        usingPhase2 = false;
+        CurrentEndType = BattleEndType.None;
+        Time.timeScale = 1f;
+
         if (battleCoroutine != null)
             StopCoroutine(battleCoroutine);
 
-        battleEnded = false;
-        usingPhase2 = false;
+        if (endingCoroutine != null)
+            StopCoroutine(endingCoroutine);
 
-        if (winPanel != null)
-            winPanel.SetActive(false);
+        if (winPanel) winPanel.SetActive(false);
+        if (gameOverPanel) gameOverPanel.SetActive(false);
 
-        if (needleAttack != null)
-            needleAttack.ApplyAggressiveMode(false);
-
-        if (yarnAttack != null)
-            yarnAttack.ApplyAggressiveMode(false);
-
+        EnableAttackScripts(true);
+        EnablePlayerScripts(true);
         StopAllAttackControllers();
+
+        if (needleAttack) needleAttack.ApplyAggressiveMode(false);
+        if (yarnAttack) yarnAttack.ApplyAggressiveMode(false);
+
         battleCoroutine = StartCoroutine(BattleLoop());
+
+        Debug.Log("[BattleDirector] 戰鬥開始。", this);
     }
 
-    private IEnumerator BattleLoop()
+    IEnumerator BattleLoop()
     {
         while (!battleEnded)
         {
-            BattleStep[] currentSequence = usingPhase2 ? phase2Sequence : phase1Sequence;
+            BattleStep[] currentSequence = GetCurrentSequence();
 
             if (currentSequence == null || currentSequence.Length == 0)
-                yield break;
+            {
+                Debug.LogWarning("[BattleDirector] 沒有設定任何攻擊 Sequence。", this);
+                yield return null;
+                continue;
+            }
 
             for (int i = 0; i < currentSequence.Length; i++)
             {
                 if (battleEnded) yield break;
 
                 if (ShouldEnterPhase2())
-                {
-                    usingPhase2 = true;
+                    EnterPhase2();
 
-                    if (needleAttack != null)
-                        needleAttack.ApplyAggressiveMode(true);
+                currentSequence = GetCurrentSequence();
 
-                    if (yarnAttack != null)
-                        yarnAttack.ApplyAggressiveMode(true);
+                if (currentSequence == null || currentSequence.Length == 0)
+                    currentSequence = phase1Sequence;
 
-                    StopAllAttackControllers();
-                    break;
-                }
+                BattleStep step = currentSequence[i % currentSequence.Length];
 
-                yield return RunStep(currentSequence[i]);
-
-                if (IsBossDead())
-                {
-                    WinBattle();
-                    yield break;
-                }
-
-                if (player != null && player.IsDead)
-                {
-                    LoseBattle();
-                    yield break;
-                }
+                yield return RunStep(step);
             }
 
             yield return null;
         }
     }
 
-    private IEnumerator RunStep(BattleStep step)
+    BattleStep[] GetCurrentSequence()
+    {
+        if (usingPhase2)
+        {
+            if (phase2Sequence != null && phase2Sequence.Length > 0)
+                return phase2Sequence;
+
+            return phase1Sequence;
+        }
+
+        return phase1Sequence;
+    }
+
+    IEnumerator RunStep(BattleStep step)
     {
         StopAllAttackControllers();
 
         if (step.preDelay > 0f)
             yield return WaitSafe(step.preDelay);
+
+        if (battleEnded) yield break;
+
+        Debug.Log($"[BattleDirector] 執行攻擊：{step.attackType}，Duration = {step.duration}", this);
 
         switch (step.attackType)
         {
@@ -149,105 +186,237 @@ public class BattleDirector : MonoBehaviour
                 break;
 
             case AttackType.CandleDark:
-                if (candleAttack != null)
+                if (candleAttack)
                     yield return candleAttack.PlayDarkPhase(step.duration);
                 else
                     yield return WaitSafe(step.duration);
                 break;
 
             case AttackType.Needle:
-                if (needleAttack != null)
+                if (needleAttack)
+                {
+                    needleAttack.enabled = true;
                     needleAttack.BeginAttack();
+                }
 
                 yield return WaitSafe(step.duration);
 
-                if (needleAttack != null)
+                if (needleAttack)
                     needleAttack.StopAttack();
                 break;
 
             case AttackType.Yarn:
-                if (yarnAttack != null)
+                if (yarnAttack)
+                {
+                    yarnAttack.enabled = true;
                     yarnAttack.BeginAttack();
+                }
 
                 yield return WaitSafe(step.duration);
 
-                if (yarnAttack != null)
+                if (yarnAttack)
                     yarnAttack.StopAttack();
                 break;
         }
 
-        if (candleAttack != null)
+        if (candleAttack)
             candleAttack.ForceLight();
     }
 
-    private IEnumerator WaitSafe(float duration)
+    IEnumerator WaitSafe(float duration)
     {
         float timer = 0f;
+
         while (timer < duration)
         {
             if (battleEnded) yield break;
-            if (player != null && player.IsDead) yield break;
-            if (IsBossDead()) yield break;
-
             timer += Time.deltaTime;
             yield return null;
         }
     }
 
-    private bool ShouldEnterPhase2()
+    bool ShouldEnterPhase2()
     {
         if (!switchToPhase2WhenShellCleared) return false;
         if (usingPhase2) return false;
-        if (bossShell == null) return false;
+        if (!bossShell) return false;
 
         return bossShell.ShellCleared;
     }
 
-    private bool IsBossDead()
+    void EnterPhase2()
     {
-        if (weakPoint == null) return false;
-        return !weakPoint.gameObject.activeInHierarchy;
+        usingPhase2 = true;
+
+        if (needleAttack)
+            needleAttack.ApplyAggressiveMode(true);
+
+        if (yarnAttack)
+            yarnAttack.ApplyAggressiveMode(true);
+
+        StopAllAttackControllers();
+
+        Debug.Log("[BattleDirector] 進入第二階段。", this);
     }
 
-    private void HandlePlayerDied()
+    void HandlePlayerDied()
     {
         LoseBattle();
     }
 
-    private void WinBattle()
+    public void WinBattle()
     {
-        if (battleEnded) return;
-        battleEnded = true;
-
-        StopAllAttackControllers();
-
-        if (winPanel != null)
-            winPanel.SetActive(true);
-
-        if (pauseTimeOnBattleEnd)
-            Time.timeScale = 0f;
+        EndBattle(BattleEndType.Win);
     }
 
-    private void LoseBattle()
+    public void LoseBattle()
     {
-        if (battleEnded) return;
-        battleEnded = true;
-
-        StopAllAttackControllers();
-
-        if (pauseTimeOnBattleEnd)
-            Time.timeScale = 0f;
+        EndBattle(BattleEndType.Lose);
     }
 
-    private void StopAllAttackControllers()
+    public void EndBattle(BattleEndType endType)
     {
-        if (candleAttack != null)
+        if (battleEnded) return;
+
+        battleEnded = true;
+        CurrentEndType = endType;
+
+        if (battleCoroutine != null)
+        {
+            StopCoroutine(battleCoroutine);
+            battleCoroutine = null;
+        }
+
+        StopAllAttackControllers();
+        EnableAttackScripts(false);
+        EnablePlayerScripts(false);
+        CleanupGeneratedAttacks();
+
+        if (endType == BattleEndType.Win)
+        {
+            if (winPanel) winPanel.SetActive(true);
+            Debug.Log("[BattleDirector] 勝利結局。", this);
+        }
+        else
+        {
+            if (gameOverPanel) gameOverPanel.SetActive(true);
+            Debug.Log("[BattleDirector] 失敗結局。", this);
+        }
+
+        Time.timeScale = 1f;
+        endingCoroutine = StartCoroutine(PlayEndingDialogue(endType));
+    }
+
+    IEnumerator PlayEndingDialogue(BattleEndType endType)
+    {
+        if (endingDialogueDelay > 0f)
+            yield return new WaitForSeconds(endingDialogueDelay);
+
+        if (!dialogueManager)
+            dialogueManager = FindObjectOfType<DialogueManager>();
+
+        if (!dialogueManager)
+        {
+            Debug.LogWarning("[BattleDirector] 找不到 DialogueManager。", this);
+            yield break;
+        }
+
+        DialogueAsset asset = endType == BattleEndType.Win ? winDialogueAsset : loseDialogueAsset;
+
+        if (!asset)
+        {
+            Debug.LogWarning($"[BattleDirector] 沒有設定 {endType} DialogueAsset。", this);
+            yield break;
+        }
+
+        dialogueManager.Play(asset, skinOverride);
+    }
+
+    void StopAllAttackControllers()
+    {
+        if (candleAttack)
             candleAttack.ForceLight();
 
-        if (needleAttack != null)
+        if (needleAttack)
             needleAttack.StopAttack();
 
-        if (yarnAttack != null)
+        if (yarnAttack)
             yarnAttack.StopAttack();
+    }
+
+    void EnableAttackScripts(bool enabled)
+    {
+        if (candleAttack) candleAttack.enabled = enabled;
+        if (needleAttack) needleAttack.enabled = enabled;
+        if (yarnAttack) yarnAttack.enabled = enabled;
+    }
+
+    void EnablePlayerScripts(bool enabled)
+    {
+        if (playerScriptsToDisableOnEnd == null) return;
+
+        foreach (MonoBehaviour script in playerScriptsToDisableOnEnd)
+        {
+            if (script)
+                script.enabled = enabled;
+        }
+    }
+
+    public void CleanupGeneratedAttacks()
+    {
+        int count = 0;
+
+        ParticleSystem[] particles = FindObjectsOfType<ParticleSystem>(true);
+        foreach (ParticleSystem ps in particles)
+        {
+            if (ps)
+                ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        }
+
+        GameObject[] allObjects = FindObjectsOfType<GameObject>(true);
+
+        foreach (GameObject obj in allObjects)
+        {
+            if (!obj) continue;
+
+            string objName = obj.name;
+            bool shouldDestroy = false;
+
+            foreach (string key in cleanupNameContains)
+            {
+                if (string.IsNullOrEmpty(key)) continue;
+
+                if (objName.Contains(key) && objName.Contains("(Clone)"))
+                {
+                    shouldDestroy = true;
+                    break;
+                }
+            }
+
+            if (!shouldDestroy) continue;
+
+            Destroy(obj);
+            count++;
+        }
+
+        Debug.Log($"[BattleDirector] 清除場上攻擊物件數量：{count}", this);
+    }
+
+    [ContextMenu("TEST/Win Battle")]
+    void TestWinBattle()
+    {
+        WinBattle();
+    }
+
+    [ContextMenu("TEST/Lose Battle")]
+    void TestLoseBattle()
+    {
+        LoseBattle();
+    }
+
+    [ContextMenu("TEST/Cleanup Generated Attacks")]
+    void TestCleanup()
+    {
+        CleanupGeneratedAttacks();
     }
 }

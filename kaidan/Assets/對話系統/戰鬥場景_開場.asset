@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6eb164e84b2684214b0f5b91cef19344, type: 3}
+  m_Name: "\u6230\u9B25\u5834\u666F_\u958B\u5834"
+  m_EditorClassIdentifier: 
+  assetTitle: New Dialogue
+  loadSceneOnEnd: 
+  lines:
+  - uiSkin: {fileID: 11400000, guid: e9db15f6c9d184f07b3063c973ceb20c, type: 2}
+    character: {fileID: 11400000, guid: 28a2afca7dbf84227b76f55483dfc5b3, type: 2}
+    variant: 1
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: "\u5B83\u751F\u6C23\u5566\uFF01\uFF01\uFF01"
+    hintMode: 2
+    hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
+    cgMode: 0
+    cgSprite: {fileID: 0}
+    cgFadeDuration: 0
+    hidePortraitWhenCg: 0
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 0
+    bodyEffects: []
+  - uiSkin: {fileID: 11400000, guid: 8c93a4721c27a4ae48927033c0db960c, type: 2}
+    character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
+    variant: 1
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: "\u5C0F\u5FC3\uFF01"
+    hintMode: 2
+    hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
+    cgMode: 0
+    cgSprite: {fileID: 0}
+    cgFadeDuration: 0
+    hidePortraitWhenCg: 0
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 0
+    bodyEffects: []

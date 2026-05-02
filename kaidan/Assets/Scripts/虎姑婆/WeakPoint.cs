@@ -1,267 +1,276 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
-[RequireComponent(typeof(Collider))]
+[DisallowMultipleComponent]
 public class WeakPoint : MonoBehaviour
 {
     [Header("HP")]
-    public float maxHp = 5f;
-    public float hp = 5f;
+    public int maxHp = 3;
+    public int hp = 3;
 
     [Header("Damage Gate")]
-    [SerializeField] private bool _canTakeDamage = true;
-    public bool canTakeDamage => _canTakeDamage;
+    public bool canTakeDamage = false;
 
     [Header("Fade Out")]
     public float fadeDuration = 1.2f;
 
-    [Header("Hit Flash (換顏色受擊特效)")]
+    [Header("Hit Flash")]
     public bool enableHitFlash = true;
-    public Color hitFlashColor = new Color(1f, 0.2f, 0.2f, 1f);
-    public float hitFlashTime = 0.08f;
+    public Color hitFlashColor = Color.red;
+    public float hitFlashTime = 0.15f;
 
-    [Header("Death VFX (粒子消散)")]
-    [Tooltip("弱點死亡時噴的粒子 Prefab（ParticleSystem）")]
+    [Header("Death VFX")]
     public ParticleSystem deathVfxPrefab;
-
-    [Tooltip("粒子生成位置（不填就用自己 transform.position）")]
     public Transform vfxSpawnPoint;
+    public bool vfxUseUnscaledTime = false;
 
-    [Tooltip("粒子是否使用 Unscaled Time（避免你 WIN 時 Time.timeScale=0 粒子不播）")]
-    public bool vfxUseUnscaledTime = true;
+    [Header("HP UI")]
+    public GameObject hpUI;
+    public GameObject[] hpIcons;
 
-    [Header("HP UI (三格血條)")]
-    [Tooltip("拖入 WeakPointHpUI_3Bars（可不填）")]
-    public WeakPointHpUI_3Bars hpUI;
+    [Header("Events")]
+    public UnityEvent onHit;
+    public UnityEvent onBroken;
 
-    [Header("Auto References (可不填)")]
-    public Renderer[] renderers;
-    public Collider[] colliders;
+    Renderer[] _renderers;
+    Collider[] _colliders;
+    MaterialPropertyBlock _mpb;
+    bool _dead;
+    bool _flashing;
 
-    private MaterialPropertyBlock _mpb;
-    private Coroutine _flashCo;
-    private bool _breaking;
-    private Color[] _baseColors;
-    private float _currentAlpha = 1f;
-
-    static readonly int BaseColorId = Shader.PropertyToID("_BaseColor"); // URP/HDRP
-    static readonly int ColorId     = Shader.PropertyToID("_Color");     // Built-in / Legacy
+    static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
+    static readonly int ColorId = Shader.PropertyToID("_Color");
+    static readonly int EmissionColorId = Shader.PropertyToID("_EmissionColor");
 
     void Awake()
     {
-        if (hp <= 0f) hp = maxHp;
-
+        _renderers = GetComponentsInChildren<Renderer>(true);
+        _colliders = GetComponentsInChildren<Collider>(true);
         _mpb = new MaterialPropertyBlock();
 
-        if (renderers == null || renderers.Length == 0)
-            renderers = GetComponentsInChildren<Renderer>(true);
+        hp = Mathf.Clamp(hp <= 0 ? maxHp : hp, 0, maxHp);
 
-        if (colliders == null || colliders.Length == 0)
-            colliders = GetComponentsInChildren<Collider>(true);
-
-        CacheBaseColors();
-        SetAlphaAll(1f);
-
+        SetDamageEnabled(canTakeDamage);
         RefreshHpUI();
     }
 
-    void CacheBaseColors()
-    {
-        _baseColors = new Color[renderers.Length];
-        for (int i = 0; i < renderers.Length; i++)
-        {
-            var r = renderers[i];
-            var mat = r ? r.sharedMaterial : null;
-
-            if (!mat)
-            {
-                _baseColors[i] = Color.white;
-                continue;
-            }
-
-            if (mat.HasProperty(BaseColorId)) _baseColors[i] = mat.GetColor(BaseColorId);
-            else if (mat.HasProperty(ColorId)) _baseColors[i] = mat.GetColor(ColorId);
-            else _baseColors[i] = Color.white;
-
-            _baseColors[i].a = 1f;
-        }
-    }
-
-    // 外殼清空後開弱點（舊流程兼容）
     public void SetDamageEnabled(bool enabled)
     {
-        _canTakeDamage = enabled;
+        canTakeDamage = enabled;
 
-        if (colliders != null)
-            foreach (var c in colliders) if (c) c.enabled = enabled;
-
-        if (enabled)
+        if (_colliders != null)
         {
-            if (renderers != null) foreach (var r in renderers) if (r) r.enabled = true;
-            SetAlphaAll(1f);
+            foreach (Collider c in _colliders)
+            {
+                if (c)
+                    c.enabled = true;
+            }
         }
 
-        RefreshHpUI();
-    }
+        if (hpUI)
+            hpUI.SetActive(enabled && !_dead);
 
-    // 兼容舊呼叫
-    public void TakeDamage(float damage) =>
-        TakeDamage(damage, transform.position, -transform.forward);
+        Debug.Log($"[WeakPoint] Damage Enabled = {enabled}", this);
+    }
 
     public void TakeDamage(float damage, Vector3 hitPoint, Vector3 hitNormal)
     {
-        if (!_canTakeDamage) return;
-        if (_breaking) return;
-        if (hp <= 0f) return;
+        if (_dead) return;
 
-        hp -= damage;
-        if (hp < 0f) hp = 0f;
+        if (!canTakeDamage)
+        {
+            Debug.Log("[WeakPoint] 被打到，但目前還不能受傷。", this);
+            return;
+        }
 
-        // UI 更新 + 受擊變色（你要的那行已經寫進來）
+        int dmg = Mathf.Max(1, Mathf.RoundToInt(damage));
+        hp = Mathf.Max(0, hp - dmg);
+
+        Debug.Log($"[WeakPoint] 受到傷害 {dmg}，剩餘 HP = {hp}", this);
+
         RefreshHpUI();
-        if (hpUI) hpUI.OnHit();
+        onHit?.Invoke();
 
-        // 本體受擊閃色
-        if (enableHitFlash)
+        if (enableHitFlash && !_flashing)
+            StartCoroutine(HitFlash());
+
+        if (hp <= 0)
+            BreakWeakPoint();
+    }
+
+    public void TakeDamage(int damage)
+    {
+        TakeDamage(damage, transform.position, Vector3.up);
+    }
+
+    void BreakWeakPoint()
+    {
+        if (_dead) return;
+
+        _dead = true;
+        canTakeDamage = false;
+
+        Debug.Log("[WeakPoint] 弱點已擊破。", this);
+
+        if (_colliders != null)
         {
-            if (_flashCo != null) StopCoroutine(_flashCo);
-            _flashCo = StartCoroutine(HitFlash());
+            foreach (Collider c in _colliders)
+            {
+                if (c)
+                    c.enabled = false;
+            }
         }
 
-        if (hp <= 0f)
+        if (hpUI)
+            hpUI.SetActive(false);
+
+        if (deathVfxPrefab)
         {
-            StartCoroutine(BreakAndVanish());
+            Vector3 p = vfxSpawnPoint ? vfxSpawnPoint.position : transform.position;
+            Instantiate(deathVfxPrefab, p, Quaternion.identity);
         }
+
+        onBroken?.Invoke();
+
+        StartCoroutine(FadeAndHide());
     }
 
     IEnumerator HitFlash()
     {
-        SetColorAll(hitFlashColor, _currentAlpha);
+        _flashing = true;
 
-        float t = 0f;
-        while (t < hitFlashTime)
-        {
-            t += Time.deltaTime;
-            yield return null;
-        }
+        SetColorOverride(hitFlashColor, true);
 
-        RestoreBaseColorAll(_currentAlpha);
-        _flashCo = null;
+        yield return new WaitForSeconds(hitFlashTime);
+
+        SetColorOverride(Color.white, false);
+
+        _flashing = false;
     }
 
-    IEnumerator BreakAndVanish()
+    IEnumerator FadeAndHide()
     {
-        _breaking = true;
-
-        // 1) 死亡粒子消散
-        SpawnDeathVfx();
-
-        // 2) 先關碰撞避免淡出期間還能被打
-        if (colliders != null)
-            foreach (var c in colliders) if (c) c.enabled = false;
-
-        // 3) 淡出或直接消失
         if (fadeDuration <= 0f)
         {
-            if (renderers != null) foreach (var r in renderers) if (r) r.enabled = false;
-            gameObject.SetActive(false);
+            SetVisible(false);
             yield break;
         }
 
         float t = 0f;
+
         while (t < fadeDuration)
         {
             t += Time.deltaTime;
             float a = Mathf.Lerp(1f, 0f, Mathf.Clamp01(t / fadeDuration));
-            SetAlphaAll(a);
+            SetAlpha(a);
             yield return null;
         }
 
-        if (renderers != null) foreach (var r in renderers) if (r) r.enabled = false;
-        gameObject.SetActive(false);
-    }
-
-    void SpawnDeathVfx()
-    {
-        if (!deathVfxPrefab) return;
-
-        Vector3 p = vfxSpawnPoint ? vfxSpawnPoint.position : transform.position;
-        Quaternion q = vfxSpawnPoint ? vfxSpawnPoint.rotation : Quaternion.identity;
-
-        var ps = Instantiate(deathVfxPrefab, p, q);
-
-        // 避免你 WIN 時 Time.timeScale=0 粒子不播
-        if (vfxUseUnscaledTime)
-        {
-            var main = ps.main;
-            main.useUnscaledTime = true;
-        }
-
-        ps.Play(true);
-
-        // 自動清掉粒子
-        float life = 2.5f;
-        try
-        {
-            var main = ps.main;
-            float dur = main.duration;
-            float lt = 0.5f;
-
-            if (main.startLifetime.mode == ParticleSystemCurveMode.TwoConstants)
-                lt = main.startLifetime.constantMax;
-            else if (main.startLifetime.mode == ParticleSystemCurveMode.Constant)
-                lt = main.startLifetime.constant;
-
-            life = dur + lt + 0.5f;
-        }
-        catch { /* ignore */ }
-
-        Destroy(ps.gameObject, life);
+        SetVisible(false);
     }
 
     void RefreshHpUI()
     {
-        if (hpUI) hpUI.Refresh(hp, maxHp);
-    }
+        if (hpIcons == null) return;
 
-    void SetAlphaAll(float a)
-    {
-        _currentAlpha = a;
-
-        if (enableHitFlash && _flashCo != null)
-            SetColorAll(hitFlashColor, a);
-        else
-            RestoreBaseColorAll(a);
-    }
-
-    void RestoreBaseColorAll(float alpha)
-    {
-        for (int i = 0; i < renderers.Length; i++)
+        for (int i = 0; i < hpIcons.Length; i++)
         {
-            var r = renderers[i];
-            if (!r || !r.sharedMaterial) continue;
-
-            Color c = _baseColors[i];
-            c.a = alpha;
-            ApplyColor(r, c);
+            if (hpIcons[i])
+                hpIcons[i].SetActive(i < hp);
         }
     }
 
-    void SetColorAll(Color color, float alpha)
+    void SetVisible(bool visible)
     {
-        Color c = color; c.a = alpha;
-        foreach (var r in renderers)
-            if (r && r.sharedMaterial) ApplyColor(r, c);
+        if (_renderers == null) return;
+
+        foreach (Renderer r in _renderers)
+        {
+            if (r)
+                r.enabled = visible;
+        }
     }
 
-    void ApplyColor(Renderer r, Color c)
+    void SetAlpha(float alpha)
     {
-        var mat = r.sharedMaterial;
-        r.GetPropertyBlock(_mpb);
+        if (_renderers == null) return;
 
-        if (mat.HasProperty(BaseColorId)) _mpb.SetColor(BaseColorId, c);
-        else if (mat.HasProperty(ColorId)) _mpb.SetColor(ColorId, c);
+        foreach (Renderer r in _renderers)
+        {
+            if (!r) continue;
 
-        r.SetPropertyBlock(_mpb);
+            Material mat = r.sharedMaterial;
+            if (!mat) continue;
+
+            r.GetPropertyBlock(_mpb);
+
+            if (mat.HasProperty(BaseColorId))
+            {
+                Color c = mat.GetColor(BaseColorId);
+                c.a = alpha;
+                _mpb.SetColor(BaseColorId, c);
+            }
+            else if (mat.HasProperty(ColorId))
+            {
+                Color c = mat.GetColor(ColorId);
+                c.a = alpha;
+                _mpb.SetColor(ColorId, c);
+            }
+
+            r.SetPropertyBlock(_mpb);
+        }
+    }
+
+    void SetColorOverride(Color color, bool on)
+    {
+        if (_renderers == null) return;
+
+        foreach (Renderer r in _renderers)
+        {
+            if (!r) continue;
+
+            Material mat = r.sharedMaterial;
+            if (!mat) continue;
+
+            r.GetPropertyBlock(_mpb);
+
+            if (on)
+            {
+                if (mat.HasProperty(BaseColorId))
+                    _mpb.SetColor(BaseColorId, color);
+
+                if (mat.HasProperty(ColorId))
+                    _mpb.SetColor(ColorId, color);
+
+                if (mat.HasProperty(EmissionColorId))
+                    _mpb.SetColor(EmissionColorId, color * 2f);
+            }
+            else
+            {
+                _mpb.Clear();
+            }
+
+            r.SetPropertyBlock(_mpb);
+        }
+    }
+
+    [ContextMenu("TEST/Damage 1")]
+    void TestDamage()
+    {
+        TakeDamage(1, transform.position, Vector3.up);
+    }
+
+    [ContextMenu("TEST/Enable Damage")]
+    void TestEnableDamage()
+    {
+        SetDamageEnabled(true);
+    }
+
+    [ContextMenu("TEST/Break")]
+    void TestBreak()
+    {
+        hp = 1;
+        TakeDamage(1, transform.position, Vector3.up);
     }
 }
