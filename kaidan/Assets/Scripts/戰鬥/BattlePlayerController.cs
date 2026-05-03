@@ -12,7 +12,10 @@ public class BattlePlayerController : MonoBehaviour
 
     [Header("玩家血量")]
     public int maxHP = 3;
-    public float invincibleTime = 0.6f;
+    public float invincibleTime = 1f;
+
+    [Header("傷害免疫")]
+    public bool damageImmune;
 
     [Header("生命 UI")]
     public Image[] lifeIcons;
@@ -35,6 +38,7 @@ public class BattlePlayerController : MonoBehaviour
 
     public int CurrentHP => currentHP;
     public bool IsDead => isDead;
+    public bool IsInvincible => damageImmune || invincibleTimer > 0f;
 
     private Rigidbody rb;
     private Vector3 moveInput;
@@ -159,10 +163,15 @@ public class BattlePlayerController : MonoBehaviour
         forbidMovementCheck = false;
     }
 
+    public void SetDamageImmune(bool immune)
+    {
+        damageImmune = immune;
+    }
+
     public void TakeDamage(int damage)
     {
         if (isDead) return;
-        if (invincibleTimer > 0f) return;
+        if (IsInvincible) return;
 
         currentHP -= damage;
         if (currentHP < 0) currentHP = 0;

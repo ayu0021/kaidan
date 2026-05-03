@@ -43,6 +43,12 @@ public class BattleDirector : MonoBehaviour
     public bool autoStart = true;
     public bool switchToPhase2WhenShellCleared = true;
 
+    [Header("Candle Trigger")]
+    public bool triggerCandleWhenShellsLow = true;
+    public int candleTriggerRemainingShells = 3;
+    public float candleTriggerDuration = 3f;
+    public bool candleTriggerOnlyOnce = true;
+
     [Header("Phase 1 Sequence")]
     public BattleStep[] phase1Sequence;
 
@@ -61,6 +67,7 @@ public class BattleDirector : MonoBehaviour
 
     bool battleEnded;
     bool usingPhase2;
+    bool candleTriggeredByShellCount;
     Coroutine battleCoroutine;
     Coroutine endingCoroutine;
 
@@ -97,6 +104,7 @@ public class BattleDirector : MonoBehaviour
     {
         battleEnded = false;
         usingPhase2 = false;
+        candleTriggeredByShellCount = false;
         CurrentEndType = BattleEndType.None;
         Time.timeScale = 1f;
 
@@ -125,6 +133,12 @@ public class BattleDirector : MonoBehaviour
     {
         while (!battleEnded)
         {
+            if (ShouldTriggerCandleAtShellCount())
+            {
+                yield return TriggerCandleByShellCount();
+                continue;
+            }
+
             BattleStep[] currentSequence = GetCurrentSequence();
 
             if (currentSequence == null || currentSequence.Length == 0)
@@ -242,6 +256,31 @@ public class BattleDirector : MonoBehaviour
         if (!bossShell) return false;
 
         return bossShell.ShellCleared;
+    }
+
+    bool ShouldTriggerCandleAtShellCount()
+    {
+        if (!triggerCandleWhenShellsLow) return false;
+        if (!candleAttack) return false;
+        if (!bossShell) return false;
+        if (bossShell.ShellCleared) return false;
+        if (candleTriggerOnlyOnce && candleTriggeredByShellCount) return false;
+
+        return bossShell.RemainingShellCount <= candleTriggerRemainingShells;
+    }
+
+    IEnumerator TriggerCandleByShellCount()
+    {
+        candleTriggeredByShellCount = true;
+
+        StopAllAttackControllers();
+
+        Debug.Log($"[BattleDirector] 剩下 {bossShell.RemainingShellCount} 片殼，觸發 CandleDark。", this);
+
+        yield return candleAttack.PlayDarkPhase(candleTriggerDuration);
+
+        if (candleAttack)
+            candleAttack.ForceLight();
     }
 
     void EnterPhase2()

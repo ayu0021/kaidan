@@ -144,10 +144,18 @@ MonoBehaviour:
   breakVfxPrefab: {fileID: 0}
   vfxSpawnPoint: {fileID: 0}
   destroyAfter: 1.2
+  fadeWhenDetached: 1
+  detachFadeTime: 0.45
+  detachScaleMul: 0.2
+  detachSpinDegrees: 35
   hoverScaleHint: 1
   hoverScaleMul: 1.03
   hoverEmissionHint: 1
   emissionBoost: 2.5
+  hoverTint: {r: 0.55, g: 1, b: 1, a: 1}
+  hoverPulse: 1
+  hoverPulseSpeed: 8
+  hoverPulseStrength: 0.12
 --- !u!64 &50562659
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -191,10 +199,18 @@ MonoBehaviour:
   breakVfxPrefab: {fileID: 0}
   vfxSpawnPoint: {fileID: 0}
   destroyAfter: 1.2
+  fadeWhenDetached: 1
+  detachFadeTime: 0.45
+  detachScaleMul: 0.2
+  detachSpinDegrees: 35
   hoverScaleHint: 1
   hoverScaleMul: 1.03
   hoverEmissionHint: 1
   emissionBoost: 2.5
+  hoverTint: {r: 0.55, g: 1, b: 1, a: 1}
+  hoverPulse: 1
+  hoverPulseSpeed: 8
+  hoverPulseStrength: 0.12
 --- !u!64 &62969678
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -576,10 +592,18 @@ MonoBehaviour:
   breakVfxPrefab: {fileID: 0}
   vfxSpawnPoint: {fileID: 0}
   destroyAfter: 0.8
+  fadeWhenDetached: 1
+  detachFadeTime: 0.45
+  detachScaleMul: 0.2
+  detachSpinDegrees: 35
   hoverScaleHint: 1
   hoverScaleMul: 1.03
   hoverEmissionHint: 1
   emissionBoost: 2.5
+  hoverTint: {r: 0.55, g: 1, b: 1, a: 1}
+  hoverPulse: 1
+  hoverPulseSpeed: 8
+  hoverPulseStrength: 0.12
 --- !u!95 &90677577
 Animator:
   serializedVersion: 5
@@ -695,10 +719,18 @@ MonoBehaviour:
   breakVfxPrefab: {fileID: 0}
   vfxSpawnPoint: {fileID: 53665829830853877, guid: 436f05a29884341be86f48b7612b56a1, type: 3}
   destroyAfter: 1.2
+  fadeWhenDetached: 1
+  detachFadeTime: 0.45
+  detachScaleMul: 0.2
+  detachSpinDegrees: 35
   hoverScaleHint: 1
   hoverScaleMul: 1.03
   hoverEmissionHint: 1
   emissionBoost: 2.5
+  hoverTint: {r: 0.55, g: 1, b: 1, a: 1}
+  hoverPulse: 1
+  hoverPulseSpeed: 8
+  hoverPulseStrength: 0.12
 --- !u!64 &108819310
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -871,10 +903,18 @@ MonoBehaviour:
   breakVfxPrefab: {fileID: 0}
   vfxSpawnPoint: {fileID: 0}
   destroyAfter: 1.2
+  fadeWhenDetached: 1
+  detachFadeTime: 0.45
+  detachScaleMul: 0.2
+  detachSpinDegrees: 35
   hoverScaleHint: 1
   hoverScaleMul: 1.03
   hoverEmissionHint: 1
   emissionBoost: 2.5
+  hoverTint: {r: 0.55, g: 1, b: 1, a: 1}
+  hoverPulse: 1
+  hoverPulseSpeed: 8
+  hoverPulseStrength: 0.12
 --- !u!64 &232229311
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -944,9 +984,9 @@ MonoBehaviour:
   player: {fileID: 1360972164}
   darkOverlay: {fileID: 507042110}
   stopWarningText: {fileID: 637899418}
-  darkAlpha: 1
-  fadeTime: 0.02
-  warningLeadTime: 1
+  darkAlpha: 0.85
+  fadeTime: 0.55
+  warningLeadTime: 1.1
 --- !u!1 &313245695 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -216338064319844982, guid: 0bf1456431662406d9654c244e4c4c3c, type: 3}
@@ -2727,10 +2767,18 @@ MonoBehaviour:
   breakVfxPrefab: {fileID: 0}
   vfxSpawnPoint: {fileID: 0}
   destroyAfter: 0.8
+  fadeWhenDetached: 1
+  detachFadeTime: 0.45
+  detachScaleMul: 0.2
+  detachSpinDegrees: 35
   hoverScaleHint: 1
   hoverScaleMul: 1.03
   hoverEmissionHint: 1
   emissionBoost: 2.5
+  hoverTint: {r: 0.55, g: 1, b: 1, a: 1}
+  hoverPulse: 1
+  hoverPulseSpeed: 8
+  hoverPulseStrength: 0.12
 --- !u!95 &642362247
 Animator:
   serializedVersion: 5
@@ -3242,10 +3290,18 @@ MonoBehaviour:
   breakVfxPrefab: {fileID: 0}
   vfxSpawnPoint: {fileID: 0}
   destroyAfter: 0.8
+  fadeWhenDetached: 1
+  detachFadeTime: 0.45
+  detachScaleMul: 0.2
+  detachSpinDegrees: 35
   hoverScaleHint: 1
   hoverScaleMul: 1.03
   hoverEmissionHint: 1
   emissionBoost: 2.5
+  hoverTint: {r: 0.55, g: 1, b: 1, a: 1}
+  hoverPulse: 1
+  hoverPulseSpeed: 8
+  hoverPulseStrength: 0.12
 --- !u!95 &726719446
 Animator:
   serializedVersion: 5
@@ -3549,7 +3605,8 @@ MonoBehaviour:
   moveSpeed: 8
   moveLimits: {x: 15, y: 15}
   maxHP: 3
-  invincibleTime: 0.6
+  invincibleTime: 1
+  damageImmune: 0
   lifeIcons:
   - {fileID: 0}
   - {fileID: 0}
@@ -3803,19 +3860,19 @@ MonoBehaviour:
   arenaXZ: {x: 5, y: 5}
   groundY: 0
   normalSettings:
-    spawnInterval: 1.2
-    dropsPerWave: 2
+    spawnInterval: 1
+    dropsPerWave: 3
     startHeight: 5
-    warningTime: 0.8
-    fallTime: 0.25
+    warningTime: 0.7
+    fallTime: 0.28
     activeDamageTime: 0.2
     damage: 1
   aggressiveSettings:
-    spawnInterval: 1.2
-    dropsPerWave: 2
+    spawnInterval: 0.85
+    dropsPerWave: 4
     startHeight: 5
-    warningTime: 0.8
-    fallTime: 0.25
+    warningTime: 0.55
+    fallTime: 0.22
     activeDamageTime: 0.2
     damage: 1
 --- !u!1 &919460454
@@ -3951,10 +4008,18 @@ MonoBehaviour:
   breakVfxPrefab: {fileID: 0}
   vfxSpawnPoint: {fileID: 0}
   destroyAfter: 1.2
+  fadeWhenDetached: 1
+  detachFadeTime: 0.45
+  detachScaleMul: 0.2
+  detachSpinDegrees: 35
   hoverScaleHint: 1
   hoverScaleMul: 1.03
   hoverEmissionHint: 1
   emissionBoost: 2.5
+  hoverTint: {r: 0.55, g: 1, b: 1, a: 1}
+  hoverPulse: 1
+  hoverPulseSpeed: 8
+  hoverPulseStrength: 0.12
 --- !u!64 &921600972
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -3989,6 +4054,7 @@ GameObject:
   - component: {fileID: 1016105452}
   - component: {fileID: 1016105455}
   - component: {fileID: 1016105456}
+  - component: {fileID: 1016105457}
   m_Layer: 8
   m_Name: BossRoot
   m_TagString: Untagged
@@ -4011,7 +4077,30 @@ MonoBehaviour:
   shellPiecesRoot: {fileID: 553933592}
   innerShield: {fileID: 915028489}
   weakPoint: {fileID: 418989854}
+  revealShellsOverTime: 1
+  initialVisibleShellCount: 3
+  revealIntervalMin: 7
+  revealIntervalMax: 10
   showDebugLog: 1
+--- !u!114 &1016105457
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1016105451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7db3adc0b82e4db99dc79d6bd5bb1c43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bossShell: {fileID: 1016105452}
+  fontAsset: {fileID: 11400000, guid: e27a8b93fe4a845908475a260cc89e09, type: 2}
+  titleText: "\u4E3B\u8981\u4EFB\u52D9\uFF1A\u64CA\u6557\u864E\u59D1\u5A46"
+  breakShellFormat: "\u64CA\u7834\u788E\u7247\uFF1A\u5269\u9918 {0} \u7247"
+  attackWeakPointText: "\u653B\u64CA\u864E\u59D1\u5A46\u8EAB\u524D\u7684\u5F31\u9EDE"
+  anchoredPosition: {x: 32, y: -32}
+  panelSize: {x: 460, y: 126}
 --- !u!4 &1016105453
 Transform:
   m_ObjectHideFlags: 0
@@ -4060,14 +4149,30 @@ MonoBehaviour:
   gameOverPanel: {fileID: 0}
   autoStart: 0
   switchToPhase2WhenShellCleared: 1
+  triggerCandleWhenShellsLow: 1
+  candleTriggerRemainingShells: 3
+  candleTriggerDuration: 3
+  candleTriggerOnlyOnce: 1
   phase1Sequence:
   - attackType: 2
-    preDelay: 0.45
-    duration: 5.72
+    preDelay: 0.35
+    duration: 4.2
+  - attackType: 3
+    preDelay: 0.25
+    duration: 3.4
+  - attackType: 2
+    preDelay: 0.25
+    duration: 3.6
+  phase2Sequence:
+  - attackType: 3
+    preDelay: 0.2
+    duration: 4
+  - attackType: 2
+    preDelay: 0.2
+    duration: 4.5
   - attackType: 1
-    preDelay: 0.45
-    duration: 3.27
-  phase2Sequence: []
+    preDelay: 0.35
+    duration: 2.6
   cleanupNameContains:
   - NeedleBulletRoot
   - NeedleBullet
@@ -4231,10 +4336,18 @@ MonoBehaviour:
   breakVfxPrefab: {fileID: 0}
   vfxSpawnPoint: {fileID: 0}
   destroyAfter: 0.8
+  fadeWhenDetached: 1
+  detachFadeTime: 0.45
+  detachScaleMul: 0.2
+  detachSpinDegrees: 35
   hoverScaleHint: 1
   hoverScaleMul: 1.03
   hoverEmissionHint: 1
   emissionBoost: 2.5
+  hoverTint: {r: 0.55, g: 1, b: 1, a: 1}
+  hoverPulse: 1
+  hoverPulseSpeed: 8
+  hoverPulseStrength: 0.12
 --- !u!95 &1141538168
 Animator:
   serializedVersion: 5
@@ -4512,23 +4625,23 @@ MonoBehaviour:
   firePoints:
   - {fileID: 1090904761}
   normalSettings:
-    pattern: 1
-    fireInterval: 0.6
-    bulletSpeed: 2.75
-    bulletLifetime: 6.97
+    pattern: 3
+    fireInterval: 0.5
+    bulletSpeed: 4.5
+    bulletLifetime: 5.5
     damage: 1
-    bulletsPerShot: 5
-    spreadAngle: 59.1
-    circleCount: 1
+    bulletsPerShot: 3
+    spreadAngle: 28
+    circleCount: 8
   aggressiveSettings:
     pattern: 2
-    fireInterval: 0.6
-    bulletSpeed: 9
+    fireInterval: 0.7
+    bulletSpeed: 5.8
     bulletLifetime: 5
     damage: 1
     bulletsPerShot: 5
     spreadAngle: 45
-    circleCount: 2
+    circleCount: 12
 --- !u!1 &1226492914
 GameObject:
   m_ObjectHideFlags: 0
@@ -5178,10 +5291,18 @@ MonoBehaviour:
   breakVfxPrefab: {fileID: 0}
   vfxSpawnPoint: {fileID: 0}
   destroyAfter: 1.2
+  fadeWhenDetached: 1
+  detachFadeTime: 0.45
+  detachScaleMul: 0.2
+  detachSpinDegrees: 35
   hoverScaleHint: 1
   hoverScaleMul: 1.03
   hoverEmissionHint: 1
   emissionBoost: 2.5
+  hoverTint: {r: 0.55, g: 1, b: 1, a: 1}
+  hoverPulse: 1
+  hoverPulseSpeed: 8
+  hoverPulseStrength: 0.12
 --- !u!64 &1340455749
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -5429,7 +5550,8 @@ MonoBehaviour:
   moveSpeed: 20
   moveLimits: {x: 50, y: 50}
   maxHP: 3
-  invincibleTime: 0.6
+  invincibleTime: 1
+  damageImmune: 0
   lifeIcons:
   - {fileID: 1238518813}
   - {fileID: 1850511567}
@@ -5632,10 +5754,18 @@ MonoBehaviour:
   breakVfxPrefab: {fileID: 0}
   vfxSpawnPoint: {fileID: 0}
   destroyAfter: 1.2
+  fadeWhenDetached: 1
+  detachFadeTime: 0.45
+  detachScaleMul: 0.2
+  detachSpinDegrees: 35
   hoverScaleHint: 1
   hoverScaleMul: 1.03
   hoverEmissionHint: 1
   emissionBoost: 2.5
+  hoverTint: {r: 0.55, g: 1, b: 1, a: 1}
+  hoverPulse: 1
+  hoverPulseSpeed: 8
+  hoverPulseStrength: 0.12
 --- !u!64 &1497539959
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -6129,10 +6259,18 @@ MonoBehaviour:
   breakVfxPrefab: {fileID: 0}
   vfxSpawnPoint: {fileID: 0}
   destroyAfter: 0.8
+  fadeWhenDetached: 1
+  detachFadeTime: 0.45
+  detachScaleMul: 0.2
+  detachSpinDegrees: 35
   hoverScaleHint: 1
   hoverScaleMul: 1.03
   hoverEmissionHint: 1
   emissionBoost: 2.5
+  hoverTint: {r: 0.55, g: 1, b: 1, a: 1}
+  hoverPulse: 1
+  hoverPulseSpeed: 8
+  hoverPulseStrength: 0.12
 --- !u!95 &1632202243
 Animator:
   serializedVersion: 5
@@ -6248,10 +6386,18 @@ MonoBehaviour:
   breakVfxPrefab: {fileID: 0}
   vfxSpawnPoint: {fileID: 0}
   destroyAfter: 1.2
+  fadeWhenDetached: 1
+  detachFadeTime: 0.45
+  detachScaleMul: 0.2
+  detachSpinDegrees: 35
   hoverScaleHint: 1
   hoverScaleMul: 1.03
   hoverEmissionHint: 1
   emissionBoost: 2.5
+  hoverTint: {r: 0.55, g: 1, b: 1, a: 1}
+  hoverPulse: 1
+  hoverPulseSpeed: 8
+  hoverPulseStrength: 0.12
 --- !u!64 &1633555180
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -6348,10 +6494,18 @@ MonoBehaviour:
   breakVfxPrefab: {fileID: 0}
   vfxSpawnPoint: {fileID: 0}
   destroyAfter: 1.2
+  fadeWhenDetached: 1
+  detachFadeTime: 0.45
+  detachScaleMul: 0.2
+  detachSpinDegrees: 35
   hoverScaleHint: 1
   hoverScaleMul: 1.03
   hoverEmissionHint: 1
   emissionBoost: 2.5
+  hoverTint: {r: 0.55, g: 1, b: 1, a: 1}
+  hoverPulse: 1
+  hoverPulseSpeed: 8
+  hoverPulseStrength: 0.12
 --- !u!64 &1694366633
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -6801,10 +6955,18 @@ MonoBehaviour:
   breakVfxPrefab: {fileID: 0}
   vfxSpawnPoint: {fileID: 0}
   destroyAfter: 0.8
+  fadeWhenDetached: 1
+  detachFadeTime: 0.45
+  detachScaleMul: 0.2
+  detachSpinDegrees: 35
   hoverScaleHint: 1
   hoverScaleMul: 1.03
   hoverEmissionHint: 1
   emissionBoost: 2.5
+  hoverTint: {r: 0.55, g: 1, b: 1, a: 1}
+  hoverPulse: 1
+  hoverPulseSpeed: 8
+  hoverPulseStrength: 0.12
 --- !u!95 &1772727763
 Animator:
   serializedVersion: 5
@@ -7164,10 +7326,18 @@ MonoBehaviour:
   breakVfxPrefab: {fileID: 0}
   vfxSpawnPoint: {fileID: 0}
   destroyAfter: 0.8
+  fadeWhenDetached: 1
+  detachFadeTime: 0.45
+  detachScaleMul: 0.2
+  detachSpinDegrees: 35
   hoverScaleHint: 1
   hoverScaleMul: 1.03
   hoverEmissionHint: 1
   emissionBoost: 2.5
+  hoverTint: {r: 0.55, g: 1, b: 1, a: 1}
+  hoverPulse: 1
+  hoverPulseSpeed: 8
+  hoverPulseStrength: 0.12
 --- !u!95 &1855533725
 Animator:
   serializedVersion: 5
@@ -7865,7 +8035,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 3263931781923126087, guid: 088c6b1dbb9064f6e87a03ddc234da0b, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

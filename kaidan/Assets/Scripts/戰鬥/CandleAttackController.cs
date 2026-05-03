@@ -26,25 +26,28 @@ public class CandleAttackController : MonoBehaviour
     /// </summary>
     public IEnumerator PlayDarkPhase(float restrictionDuration)
     {
-        // 1. 先暗下來
-        yield return FadeOverlay(darkAlpha);
-
-        // 2. 顯示提示文字，但此時還沒開始限制玩家
+        // 1. 先顯示預告，但此時還沒暗下來，也還沒限制玩家
         if (stopWarningText != null)
             stopWarningText.SetActive(true);
 
-        // 3. 給玩家幾秒反應時間
-        float preTimer = 0f;
-        while (preTimer < warningLeadTime)
+        // 2. 給玩家幾秒反應時間
+        float warningTimer = 0f;
+        while (warningTimer < warningLeadTime)
         {
             if (player != null && player.IsDead)
                 yield break;
 
-            preTimer += Time.deltaTime;
+            warningTimer += Time.deltaTime;
             yield return null;
         }
 
-        // 4. 現在才正式開始「不能動」
+        // 3. 預告結束後才開始漸暗
+        yield return FadeOverlay(darkAlpha);
+
+        if (player != null)
+            player.SetDamageImmune(true);
+
+        // 4. 變暗後才正式開始「不能動」
         if (player != null)
         {
             player.SetMovementLocked(true);
@@ -56,7 +59,7 @@ public class CandleAttackController : MonoBehaviour
         while (timer < restrictionDuration)
         {
             if (player != null && player.IsDead)
-                yield break;
+                break;
 
             timer += Time.deltaTime;
             yield return null;
@@ -73,6 +76,9 @@ public class CandleAttackController : MonoBehaviour
             stopWarningText.SetActive(false);
 
         yield return FadeOverlay(0f);
+
+        if (player != null)
+            player.SetDamageImmune(false);
     }
 
     public void ForceLight()
@@ -87,6 +93,7 @@ public class CandleAttackController : MonoBehaviour
         {
             player.EndNoMoveCheck();
             player.SetMovementLocked(false);
+            player.SetDamageImmune(false);
         }
     }
 

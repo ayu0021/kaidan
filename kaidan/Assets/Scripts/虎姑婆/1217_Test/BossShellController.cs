@@ -8,17 +8,32 @@ public class BossShellController : MonoBehaviour
     public InnerShieldBarrier innerShield;
     public WeakPoint weakPoint;
 
+    [Header("Shell Reveal")]
+    public bool revealShellsOverTime = true;
+    public int initialVisibleShellCount = 3;
+    public float revealIntervalMin = 7f;
+    public float revealIntervalMax = 10f;
+
     [Header("Debug")]
     public bool showDebugLog = true;
 
+    ShellShard[] _shards;
     int _remaining;
+    int _visibleShellCount;
     bool _initialized;
+    bool _revealStarted;
     bool _clearingStarted;
     bool _weakPointUnlocked;
+
+    void Awake()
+    {
+        Init();
+    }
 
     void Start()
     {
         Init();
+        StartRevealRoutine();
     }
 
     void Init()
@@ -29,14 +44,19 @@ public class BossShellController : MonoBehaviour
         if (!shellPiecesRoot)
             shellPiecesRoot = transform;
 
-        ShellShard[] shards = shellPiecesRoot.GetComponentsInChildren<ShellShard>(true);
-        _remaining = shards.Length;
+        _shards = shellPiecesRoot.GetComponentsInChildren<ShellShard>(true);
+        _remaining = _shards.Length;
+        _visibleShellCount = revealShellsOverTime
+            ? Mathf.Clamp(initialVisibleShellCount, 0, _shards.Length)
+            : _shards.Length;
 
-        foreach (ShellShard shard in shards)
+        foreach (ShellShard shard in _shards)
         {
             if (shard)
                 shard.BindController(this);
         }
+
+        ApplyShellAvailability();
 
         if (weakPoint)
             weakPoint.SetDamageEnabled(false);
@@ -53,6 +73,69 @@ public class BossShellController : MonoBehaviour
                 Debug.LogWarning("[BossShellController] 沒有找到 ShellShard，直接開啟 WeakPoint。", this);
 
             UnlockWeakPoint();
+        }
+    }
+
+    void StartRevealRoutine()
+    {
+        if (_revealStarted) return;
+        if (!revealShellsOverTime) return;
+        if (_shards == null || _shards.Length == 0) return;
+        if (_visibleShellCount >= _shards.Length) return;
+
+        _revealStarted = true;
+        StartCoroutine(RevealShellsOverTime());
+    }
+
+    IEnumerator RevealShellsOverTime()
+    {
+        while (!_weakPointUnlocked && _visibleShellCount < _shards.Length)
+        {
+            float wait = Random.Range(
+                Mathf.Min(revealIntervalMin, revealIntervalMax),
+                Mathf.Max(revealIntervalMin, revealIntervalMax)
+            );
+
+            yield return new WaitForSeconds(wait);
+
+            if (_weakPointUnlocked)
+                yield break;
+
+            RevealNextShell();
+        }
+    }
+
+    void RevealNextShell()
+    {
+        if (_shards == null) return;
+
+        while (_visibleShellCount < _shards.Length)
+        {
+            ShellShard shard = _shards[_visibleShellCount];
+            _visibleShellCount++;
+
+            if (!shard || shard.detached)
+                continue;
+
+            shard.SetAvailable(true);
+
+            if (showDebugLog)
+                Debug.Log($"[BossShellController] 顯示新的殼片：{shard.name}", shard);
+
+            return;
+        }
+    }
+
+    void ApplyShellAvailability()
+    {
+        if (_shards == null) return;
+
+        for (int i = 0; i < _shards.Length; i++)
+        {
+            ShellShard shard = _shards[i];
+            if (!shard) continue;
+
+            shard.SetAvailable(i < _visibleShellCount);
         }
     }
 
