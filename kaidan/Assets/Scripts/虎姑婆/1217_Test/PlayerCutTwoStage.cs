@@ -14,9 +14,10 @@ public class PlayerCutTwoStage : MonoBehaviour
     [Range(0f, 180f)] public float shellHalfAngle = 120f;
 
     [Header("WeakPoint Attack")]
-    public float weakPointRange = 999f;
+    public float weakPointRange = 2.2f;
     public float weakPointDamage = 1f;
-    public bool ignoreWeakPointDistance = true;
+    public bool ignoreWeakPointDistance = false;
+    public float weakPointBoundsPadding = 0.15f;
 
     [Header("Input")]
     public KeyCode cutKey = KeyCode.Space;
@@ -123,7 +124,7 @@ public class PlayerCutTwoStage : MonoBehaviour
 
         float dist = Vector3.Distance(origin, target);
 
-        if (!ignoreWeakPointDistance && dist > weakPointRange)
+        if (!ignoreWeakPointDistance && !IsWeakPointInRange(origin, wpCol, target, dist))
         {
             if (showDebugLog)
                 Debug.LogWarning($"[Cut] WeakPoint 太遠，距離 {dist:0.00}，限制 {weakPointRange:0.00}", this);
@@ -142,6 +143,24 @@ public class PlayerCutTwoStage : MonoBehaviour
             Debug.Log($"[Cut] 直接攻擊 WeakPoint：{wp.name}，距離 {dist:0.00}", wp);
 
         wp.TakeDamage(weakPointDamage, target, hitNormal);
+    }
+
+    bool IsWeakPointInRange(Vector3 origin, Collider wpCol, Vector3 target, float dist)
+    {
+        if (wpCol)
+        {
+            Bounds bounds = wpCol.bounds;
+            bounds.Expand(weakPointBoundsPadding * 2f);
+
+            if (bounds.Contains(origin))
+                return true;
+
+            Vector3 closest = bounds.ClosestPoint(origin);
+            if (Vector3.Distance(origin, closest) <= weakPointBoundsPadding)
+                return true;
+        }
+
+        return dist <= weakPointRange;
     }
 
     void UpdateHover()

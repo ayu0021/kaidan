@@ -3915,9 +3915,10 @@ MonoBehaviour:
   shellRange: 2.5
   shellCastRadius: 0.35
   shellHalfAngle: 120
-  weakPointRange: 999
+  weakPointRange: 2.2
   weakPointDamage: 1
-  ignoreWeakPointDistance: 1
+  ignoreWeakPointDistance: 0
+  weakPointBoundsPadding: 0.15
   cutKey: 32
   hoverRefreshInterval: 0.05
   showDebugLog: 1
@@ -4624,6 +4625,18 @@ MonoBehaviour:
   bulletPrefab: {fileID: 1870171812}
   firePoints:
   - {fileID: 1090904761}
+  firePointMode: 2
+  extraFirePointOffsets:
+  - {x: -5, y: 0, z: 0}
+  - {x: 5, y: 0, z: 0}
+  - {x: -8, y: 0, z: -4}
+  - {x: 8, y: 0, z: -4}
+  rampDifficultyOverTime: 1
+  fullDifficultyTime: 60
+  minFireIntervalMultiplier: 0.65
+  bulletSpeedBonusAtMax: 1.6
+  extraBulletsAtMax: 2
+  extraCircleBulletsAtMax: 8
   normalSettings:
     pattern: 3
     fireInterval: 0.5

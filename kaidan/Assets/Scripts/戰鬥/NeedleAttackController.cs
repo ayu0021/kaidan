@@ -3,6 +3,14 @@ using UnityEngine;
 
 public class NeedleAttackController : MonoBehaviour
 {
+    public enum FirePointMode
+    {
+        FirstOnly,
+        RandomActive,
+        CycleActive,
+        AllActive
+    }
+
     public enum NeedlePattern
     {
         StraightLine,
@@ -33,6 +41,24 @@ public class NeedleAttackController : MonoBehaviour
     public NeedleBullet bulletPrefab;
     public Transform[] firePoints;
 
+    [Header("多生成點")]
+    public FirePointMode firePointMode = FirePointMode.CycleActive;
+    public Vector3[] extraFirePointOffsets =
+    {
+        new Vector3(-5f, 0f, 0f),
+        new Vector3(5f, 0f, 0f),
+        new Vector3(-8f, 0f, -4f),
+        new Vector3(8f, 0f, -4f)
+    };
+
+    [Header("5 分鐘難度曲線")]
+    public bool rampDifficultyOverTime = true;
+    public float fullDifficultyTime = 300f;
+    public float minFireIntervalMultiplier = 0.65f;
+    public float bulletSpeedBonusAtMax = 1.6f;
+    public int extraBulletsAtMax = 2;
+    public int extraCircleBulletsAtMax = 8;
+
     [Header("一般模式")]
     public NeedleSettings normalSettings = new NeedleSettings();
 
@@ -41,6 +67,8 @@ public class NeedleAttackController : MonoBehaviour
 
     private bool aggressiveMode;
     private Coroutine attackCoroutine;
+    private float difficultyTimer;
+    private int cycleIndex;
 
     public void ApplyAggressiveMode(bool aggressive)
     {
@@ -62,12 +90,21 @@ public class NeedleAttackController : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+        if (!rampDifficultyOverTime) return;
+        if (player != null && player.IsDead) return;
+
+        difficultyTimer += Time.deltaTime;
+    }
+
     private IEnumerator AttackLoop()
     {
         while (true)
         {
             FireOnce();
-            yield return new WaitForSeconds(Current.fireInterval);
+            float interval = GetFireInterval();
+            yield return new WaitForSeconds(interval);
         }
     }
 
@@ -99,90 +136,84 @@ public class NeedleAttackController : MonoBehaviour
 
     private void FireStraightLine()
     {
-        if (firePoints != null && firePoints.Length > 0)
+        foreach (FireOrigin origin in GetSelectedFireOrigins())
         {
-            foreach (var fp in firePoints)
-            {
-                if (fp == null) continue;
-                Vector3 dir = FlatDir(fp.forward);
-                if (dir.sqrMagnitude < 0.0001f)
-                    dir = Vector3.forward;
-
-                SpawnBullet(fp.position, dir);
-            }
-        }
-        else
-        {
-            Vector3 dir = FlatDir(transform.forward);
+            Vector3 dir = FlatDir(origin.forward);
             if (dir.sqrMagnitude < 0.0001f)
                 dir = Vector3.forward;
 
-            SpawnBullet(transform.position, dir);
+            SpawnBullet(origin.position, dir);
         }
     }
 
     private void FireSpreadShot()
     {
-        Transform fp = GetMainFirePoint();
-        Vector3 baseDir = FlatDir(fp.forward);
-        if (baseDir.sqrMagnitude < 0.0001f)
-            baseDir = Vector3.forward;
-
-        int count = Mathf.Max(1, Current.bulletsPerShot);
-        float totalAngle = Current.spreadAngle;
-
-        if (count == 1)
+        foreach (FireOrigin origin in GetSelectedFireOrigins())
         {
-            SpawnBullet(fp.position, baseDir);
-            return;
-        }
+            Vector3 baseDir = FlatDir(origin.forward);
+            if (baseDir.sqrMagnitude < 0.0001f)
+                baseDir = Vector3.forward;
 
-        float startAngle = -totalAngle * 0.5f;
-        float step = totalAngle / (count - 1);
+            int count = Mathf.Max(1, GetBulletsPerShot());
+            float totalAngle = Current.spreadAngle;
 
-        for (int i = 0; i < count; i++)
-        {
-            float angle = startAngle + step * i;
-            Vector3 dir = RotateY(baseDir, angle);
-            SpawnBullet(fp.position, dir);
+            if (count == 1)
+            {
+                SpawnBullet(origin.position, baseDir);
+                continue;
+            }
+
+            float startAngle = -totalAngle * 0.5f;
+            float step = totalAngle / (count - 1);
+
+            for (int i = 0; i < count; i++)
+            {
+                float angle = startAngle + step * i;
+                Vector3 dir = RotateY(baseDir, angle);
+                SpawnBullet(origin.position, dir);
+            }
         }
     }
 
     private void FireCircleBurst()
     {
-        Transform fp = GetMainFirePoint();
-        int count = Mathf.Max(4, Current.circleCount);
-
-        for (int i = 0; i < count; i++)
+        foreach (FireOrigin origin in GetSelectedFireOrigins())
         {
-            float angle = (360f / count) * i;
-            Vector3 dir = RotateY(Vector3.forward, angle);
-            SpawnBullet(fp.position, dir);
+            int count = Mathf.Max(4, GetCircleCount());
+
+            for (int i = 0; i < count; i++)
+            {
+                float angle = (360f / count) * i;
+                Vector3 dir = RotateY(Vector3.forward, angle);
+                SpawnBullet(origin.position, dir);
+            }
         }
     }
 
     private void FireAimBurst()
     {
-        Transform fp = GetMainFirePoint();
-        Vector3 baseDir = GetAimDirection(fp);
-
-        int count = Mathf.Max(1, Current.bulletsPerShot);
-        float totalAngle = Current.spreadAngle;
-
-        if (count == 1)
+        foreach (FireOrigin origin in GetSelectedFireOrigins())
         {
-            SpawnBullet(fp.position, baseDir);
-            return;
-        }
+            Vector3 baseDir = GetAimDirection(origin.position, origin.forward);
 
-        float startAngle = -totalAngle * 0.5f;
-        float step = totalAngle / (count - 1);
+            int count = Mathf.Max(1, GetBulletsPerShot());
+            float totalAngle = Current.spreadAngle;
 
-        for (int i = 0; i < count; i++)
-        {
-            float angle = startAngle + step * i;
-            Vector3 dir = RotateY(baseDir, angle);
-            SpawnBullet(fp.position, dir);
+            if (count == 1)
+            {
+                SpawnBullet(origin.position, baseDir);
+                continue;
+            }
+
+            float startAngle = -totalAngle * 0.5f;
+            float step = totalAngle / (count - 1);
+
+            for (int i = 0; i < count; i++)
+            {
+                float angle = startAngle + step * i;
+                Vector3 dir = RotateY(baseDir, angle);
+                SpawnBullet(origin.position, dir);
+            }
         }
     }
 
@@ -200,31 +231,113 @@ public class NeedleAttackController : MonoBehaviour
 
         bullet.Initialize(
             direction,
-            Current.bulletSpeed,
+            GetBulletSpeed(),
             Current.bulletLifetime,
             Current.damage
         );
     }
 
-    private Transform GetMainFirePoint()
+    private FireOrigin GetMainFireOrigin()
     {
         if (firePoints != null && firePoints.Length > 0 && firePoints[0] != null)
-            return firePoints[0];
+            return new FireOrigin(firePoints[0].position, firePoints[0].forward);
 
-        return transform;
+        return new FireOrigin(transform.position, transform.forward);
     }
 
-    private Vector3 GetAimDirection(Transform from)
+    private FireOrigin[] GetSelectedFireOrigins()
+    {
+        FireOrigin[] all = GetActiveFireOrigins();
+        if (all.Length <= 1 || firePointMode == FirePointMode.AllActive)
+            return all;
+
+        int index = 0;
+
+        if (firePointMode == FirePointMode.RandomActive)
+            index = Random.Range(0, all.Length);
+        else if (firePointMode == FirePointMode.CycleActive)
+        {
+            index = cycleIndex % all.Length;
+            cycleIndex++;
+        }
+
+        return new[] { all[Mathf.Clamp(index, 0, all.Length - 1)] };
+    }
+
+    private FireOrigin[] GetActiveFireOrigins()
+    {
+        FireOrigin main = GetMainFireOrigin();
+        int total = 1 + (extraFirePointOffsets == null ? 0 : extraFirePointOffsets.Length);
+        int active = Mathf.Clamp(GetActiveFirePointCount(total), 1, total);
+
+        FireOrigin[] origins = new FireOrigin[active];
+        origins[0] = main;
+
+        for (int i = 1; i < active; i++)
+        {
+            Vector3 offset = extraFirePointOffsets[i - 1];
+            origins[i] = new FireOrigin(main.position + offset, main.forward);
+        }
+
+        return origins;
+    }
+
+    private int GetActiveFirePointCount(int total)
+    {
+        if (!rampDifficultyOverTime) return total;
+        return 1 + Mathf.FloorToInt(Difficulty01 * (total - 1));
+    }
+
+    private float GetFireInterval()
+    {
+        float multiplier = rampDifficultyOverTime
+            ? Mathf.Lerp(1f, Mathf.Clamp(minFireIntervalMultiplier, 0.1f, 1f), Difficulty01)
+            : 1f;
+
+        return Mathf.Max(0.08f, Current.fireInterval * multiplier);
+    }
+
+    private float GetBulletSpeed()
+    {
+        float bonus = rampDifficultyOverTime ? bulletSpeedBonusAtMax * Difficulty01 : 0f;
+        return Current.bulletSpeed + bonus;
+    }
+
+    private int GetBulletsPerShot()
+    {
+        int bonus = rampDifficultyOverTime ? Mathf.RoundToInt(extraBulletsAtMax * Difficulty01) : 0;
+        return Current.bulletsPerShot + bonus;
+    }
+
+    private int GetCircleCount()
+    {
+        int bonus = rampDifficultyOverTime ? Mathf.RoundToInt(extraCircleBulletsAtMax * Difficulty01) : 0;
+        return Current.circleCount + bonus;
+    }
+
+    private float Difficulty01
+    {
+        get
+        {
+            if (!rampDifficultyOverTime || fullDifficultyTime <= 0f)
+                return aggressiveMode ? 1f : 0f;
+
+            float baseDifficulty = Mathf.Clamp01(difficultyTimer / fullDifficultyTime);
+            return aggressiveMode ? Mathf.Max(baseDifficulty, 0.55f) : baseDifficulty;
+        }
+    }
+
+    private Vector3 GetAimDirection(Vector3 fromPosition, Vector3 fallbackForward)
     {
         if (player != null)
         {
-            Vector3 dir = player.transform.position - from.position;
+            Vector3 dir = player.transform.position - fromPosition;
             dir.y = 0f;
             if (dir.sqrMagnitude > 0.0001f)
                 return dir.normalized;
         }
 
-        Vector3 fallback = FlatDir(from.forward);
+        Vector3 fallback = FlatDir(fallbackForward);
         return fallback.sqrMagnitude > 0.0001f ? fallback : Vector3.forward;
     }
 
@@ -237,5 +350,17 @@ public class NeedleAttackController : MonoBehaviour
     private Vector3 RotateY(Vector3 dir, float angleDeg)
     {
         return Quaternion.Euler(0f, angleDeg, 0f) * dir;
+    }
+
+    private readonly struct FireOrigin
+    {
+        public readonly Vector3 position;
+        public readonly Vector3 forward;
+
+        public FireOrigin(Vector3 position, Vector3 forward)
+        {
+            this.position = position;
+            this.forward = forward;
+        }
     }
 }
