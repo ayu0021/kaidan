@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PickupItem : MonoBehaviour
 {
@@ -18,11 +19,17 @@ public class PickupItem : MonoBehaviour
     [Header("偵測")]
     public string playerTag = "Player";
 
+    [Header("撿拾後行為")]
+    public DialogueTriggerAsset dialogueAfterPickup;
+    public bool hideRenderersAfterPickup = true;
+    public bool disableCollidersAfterPickup = true;
+    public bool destroyObjectAfterPickup = true;
+    public UnityEvent onPickedUp;
+
     private GameObject promptInstance;
     private bool playerNearby = false;
     private bool pickedUp = false;
 
-    private bool isScreenSpaceUI = false;
     private bool isWorldPrompt = false;
 
     private SpriteRenderer[] spriteRenderers;
@@ -45,7 +52,6 @@ public class PickupItem : MonoBehaviour
 
         if (canvas != null && canvas.renderMode != RenderMode.WorldSpace)
         {
-            isScreenSpaceUI = true;
             isWorldPrompt = false;
 
             promptInstance = Instantiate(promptPrefab);
@@ -53,7 +59,6 @@ public class PickupItem : MonoBehaviour
         }
         else
         {
-            isScreenSpaceUI = false;
             isWorldPrompt = true;
 
             promptInstance = Instantiate(
@@ -201,6 +206,49 @@ public class PickupItem : MonoBehaviour
         if (selectionGlow != null)
             selectionGlow.SetActive(false);
 
-        Destroy(gameObject);
+        if (dialogueAfterPickup != null)
+            dialogueAfterPickup.TriggerDialogue();
+
+        onPickedUp?.Invoke();
+
+        if (hideRenderersAfterPickup)
+            SetRenderersVisible(false);
+
+        if (disableCollidersAfterPickup)
+            SetCollidersEnabled(false);
+
+        if (destroyObjectAfterPickup)
+            Destroy(gameObject);
+    }
+
+    void SetRenderersVisible(bool visible)
+    {
+        if (spriteRenderers != null)
+        {
+            foreach (SpriteRenderer r in spriteRenderers)
+            {
+                if (r)
+                    r.enabled = visible;
+            }
+        }
+
+        if (meshRenderers != null)
+        {
+            foreach (MeshRenderer r in meshRenderers)
+            {
+                if (r)
+                    r.enabled = visible;
+            }
+        }
+    }
+
+    void SetCollidersEnabled(bool enabled)
+    {
+        Collider[] colliders = GetComponentsInChildren<Collider>(true);
+        foreach (Collider c in colliders)
+        {
+            if (c)
+                c.enabled = enabled;
+        }
     }
 }

@@ -285,6 +285,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dialogueManager: {fileID: 1720512635}
   dialogueAsset: {fileID: 11400000, guid: 4d9943d1dd2044883a5ca207275e68d4, type: 2}
+  triggerMode: 1
   playerTag: Player
   triggerOnce: 1
   delaySeconds: 1
@@ -1021,6 +1022,10 @@ PrefabInstance:
       propertyPath: tintStrength
       value: 0.214
       objectReference: {fileID: 0}
+    - target: {fileID: 5967107301783495319, guid: ab7860278c8644836a7a25fcc2ebeb02, type: 3}
+      propertyPath: dialogueAfterPickup
+      value: 
+      objectReference: {fileID: 38284731}
     - target: {fileID: 5967107301783495319, guid: ab7860278c8644836a7a25fcc2ebeb02, type: 3}
       propertyPath: selectionGlow
       value: 

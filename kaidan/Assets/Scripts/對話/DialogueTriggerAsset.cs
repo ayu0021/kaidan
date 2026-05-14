@@ -5,11 +5,18 @@ using UnityEngine.UI;
 
 public class DialogueTriggerAsset : MonoBehaviour
 {
+    public enum TriggerMode
+    {
+        PlayerEnter,
+        ManualOnly
+    }
+
     [Header("References")]
     public DialogueManager dialogueManager;
     public DialogueAsset dialogueAsset;
 
     [Header("Trigger")]
+    public TriggerMode triggerMode = TriggerMode.PlayerEnter;
     public string playerTag = "Player";
     public bool triggerOnce = true;
 
@@ -46,11 +53,23 @@ public class DialogueTriggerAsset : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (triggerOnce && triggered) return;
+        if (triggerMode != TriggerMode.PlayerEnter) return;
         if (!other.CompareTag(playerTag)) return;
+
+        TriggerDialogue();
+    }
+
+    public void TriggerDialogue()
+    {
+        if (triggerOnce && triggered) return;
 
         triggered = true;
         StartCoroutine(TriggerRoutine());
+    }
+
+    public void ResetTrigger()
+    {
+        triggered = false;
     }
 
     IEnumerator TriggerRoutine()

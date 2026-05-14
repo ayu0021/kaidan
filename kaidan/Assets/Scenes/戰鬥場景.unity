@@ -1938,11 +1938,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHp: 3
   hp: 3
+  maxPercent: 100
+  currentPercent: 100
+  baseDamagePercent: 5
+  comboRampStart: 999
+  comboBonusPercent: 0
+  comboResetTime: 1.2
   canTakeDamage: 0
+  applyRuntimeCrystalMaterial: 1
+  crystalColor: {r: 0, g: 0, b: 0, a: 1}
+  crystalEmission: {r: 0, g: 0, b: 0, a: 1}
+  crystalEmissionStrength: 0
+  idlePulseSpeed: 2.4
+  idlePulseStrength: 0.04
   fadeDuration: 1.2
   enableHitFlash: 1
-  hitFlashColor: {r: 0.735849, g: 0, b: 0, a: 1}
+  hitFlashColor: {r: 1, g: 0.15, b: 0.25, a: 1}
   hitFlashTime: 0.15
+  hitScalePunch: 1.16
+  useGeneratedHitParticles: 1
+  hitParticleCount: 18
   deathVfxPrefab: {fileID: 2616343936032492810, guid: 436f05a29884341be86f48b7612b56a1, type: 3}
   vfxSpawnPoint: {fileID: 0}
   vfxUseUnscaledTime: 1
@@ -1951,6 +1966,11 @@ MonoBehaviour:
   - {fileID: 1922279059}
   - {fileID: 218393385}
   - {fileID: 1755799327}
+  createTopCenterPercentUI: 1
+  hpBarSize: {x: 520, y: 34}
+  hpBarAnchoredPosition: {x: 0, y: -46}
+  hpBarFillColor: {r: 0.1, g: 0.95, b: 1, a: 0.92}
+  hpBarBackColor: {r: 0, g: 0, b: 0, a: 0.56}
   onHit:
     m_PersistentCalls:
       m_Calls: []
@@ -3437,7 +3457,7 @@ Transform:
   m_GameObject: {fileID: 642362244}
   serializedVersion: 2
   m_LocalRotation: {x: 0.30908588, y: 0.6938863, z: -0.5832063, w: 0.28785118}
-  m_LocalPosition: {x: 17.78, y: 6.83, z: -16.96}
+  m_LocalPosition: {x: 19.33, y: 6.61, z: -15.13}
   m_LocalScale: {x: 1.8662, y: 1.8662, z: 1.8662}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3859,7 +3879,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4894,9 +4914,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2dbc6c82e97da44d6b838c2fc842560c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  applyRuntimeShieldMaterial: 1
+  shieldColor: {r: 0, g: 0, b: 0, a: 0.72}
+  emissionColor: {r: 0, g: 0, b: 0, a: 1}
+  emissionStrength: 0
+  pulseSpeed: 2.2
+  pulseAlpha: 0.1
   fadeTime: 0.5
   vanishVfxPrefab: {fileID: 2616343936032492810, guid: 436f05a29884341be86f48b7612b56a1, type: 3}
   vfxSpawnPoint: {fileID: 0}
+  useGeneratedShatterVfx: 1
+  shatterParticleCount: 64
+  shatterLifetime: 0.75
+  shatterSpeed: 3.2
+  shatterSize: 0.16
   renderers:
   - {fileID: 915028491}
   colliders:
@@ -5301,6 +5332,7 @@ GameObject:
   - component: {fileID: 1016105455}
   - component: {fileID: 1016105456}
   - component: {fileID: 1016105457}
+  - component: {fileID: 1016105458}
   m_Layer: 8
   m_Name: BossRoot
   m_TagString: Untagged
@@ -5374,6 +5406,7 @@ MonoBehaviour:
   endingDialogueDelay: 1
   winPanel: {fileID: 0}
   gameOverPanel: {fileID: 0}
+  deathMenu: {fileID: 1016105458}
   autoStart: 0
   switchToPhase2WhenShellCleared: 1
   triggerCandleWhenShellsLow: 1
@@ -5447,6 +5480,26 @@ MonoBehaviour:
   attackWeakPointText: "\u653B\u64CA\u864E\u59D1\u5A46\u8EAB\u524D\u7684\u5F31\u9EDE"
   anchoredPosition: {x: 32, y: -32}
   panelSize: {x: 460, y: 126}
+--- !u!114 &1016105458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1016105451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b52bcd90bd84ab4a8210d10b87f0a4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  battleSceneName: "\u6230\u9B25\u5834\u666F"
+  mainMenuSceneName: start
+  fontAsset: {fileID: 11400000, guid: d0ea3bf5854c24a188f4908a582fe549, type: 2}
+  overlayAlpha: 0.72
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  buttonColor: {r: 0.08, g: 0.08, b: 0.08, a: 0.82}
+  buttonHoverColor: {r: 0.18, g: 0.18, b: 0.18, a: 0.92}
+  warningColor: {r: 1, g: 0.86, b: 0.58, a: 1}
 --- !u!1 &1024786878
 GameObject:
   m_ObjectHideFlags: 0
@@ -5693,8 +5746,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 200, y: 40, z: 1}
-  m_Center: {x: -0.28355742, y: 0, z: 0}
+  m_Size: {x: 200, y: 40, z: 4.508917}
+  m_Center: {x: -0.28355408, y: 0, z: -1.7544584}
 --- !u!4 &1083012107
 Transform:
   m_ObjectHideFlags: 0
@@ -5704,7 +5757,7 @@ Transform:
   m_GameObject: {fileID: 1083012105}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.9494879, y: 24.3, z: 4.4}
+  m_LocalPosition: {x: -1.9494879, y: 24.3, z: 23.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -8644,7 +8697,7 @@ Transform:
   m_GameObject: {fileID: 1632202240}
   serializedVersion: 2
   m_LocalRotation: {x: 0.56637776, y: 0.5311602, z: -0.4077995, w: 0.4804006}
-  m_LocalPosition: {x: 33.963387, y: 8.531562, z: -12.833009}
+  m_LocalPosition: {x: 36.01, y: 12.71, z: -32.18}
   m_LocalScale: {x: 2.1049, y: 2.1049, z: 2.1049}
   m_ConstrainProportionsScale: 0
   m_Children: []

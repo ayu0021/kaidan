@@ -38,6 +38,7 @@ public class BattleDirector : MonoBehaviour
     [Header("UI Optional")]
     public GameObject winPanel;
     public GameObject gameOverPanel;
+    public BattleDeathMenu deathMenu;
 
     [Header("Battle Settings")]
     public bool autoStart = true;
@@ -86,6 +87,8 @@ public class BattleDirector : MonoBehaviour
 
         if (winPanel) winPanel.SetActive(false);
         if (gameOverPanel) gameOverPanel.SetActive(false);
+        if (!deathMenu)
+            deathMenu = FindObjectOfType<BattleDeathMenu>(true);
 
         EnableAttackScripts(true);
         StopAllAttackControllers();
@@ -116,6 +119,8 @@ public class BattleDirector : MonoBehaviour
 
         if (winPanel) winPanel.SetActive(false);
         if (gameOverPanel) gameOverPanel.SetActive(false);
+        if (!deathMenu)
+            deathMenu = FindObjectOfType<BattleDeathMenu>(true);
 
         EnableAttackScripts(true);
         EnablePlayerScripts(true);
@@ -339,10 +344,13 @@ public class BattleDirector : MonoBehaviour
         else
         {
             if (gameOverPanel) gameOverPanel.SetActive(true);
+            if (deathMenu) deathMenu.Show();
             Debug.Log("[BattleDirector] 失敗結局。", this);
         }
 
         Time.timeScale = 1f;
+        if (endType == BattleEndType.Lose && deathMenu)
+            return;
         endingCoroutine = StartCoroutine(PlayEndingDialogue(endType));
     }
 
