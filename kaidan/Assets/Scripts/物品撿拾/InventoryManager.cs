@@ -43,18 +43,15 @@ public class InventoryManager : MonoBehaviour
     {
         if (item == null) return;
 
-        if (item.maxStack > 1)
+        var existing = items.Find(s => s.data == item);
+        if (existing != null)
         {
-            var existing = items.Find(s => s.data == item);
-            if (existing != null)
-            {
-                existing.count = Mathf.Min(existing.count + amount, item.maxStack);
-                onInventoryChanged?.Invoke();
-                return;
-            }
+            existing.count = Mathf.Min(existing.count + amount, Mathf.Max(1, item.maxStack));
+            onInventoryChanged?.Invoke();
+            return;
         }
 
-        items.Add(new ItemStack { data = item, count = Mathf.Min(amount, item.maxStack) });
+        items.Add(new ItemStack { data = item, count = Mathf.Min(amount, Mathf.Max(1, item.maxStack)) });
         onInventoryChanged?.Invoke();
     }
 

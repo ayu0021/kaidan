@@ -677,8 +677,8 @@ RectTransform:
   m_GameObject: {fileID: 128386939}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1392410077}
   m_Father: {fileID: 862360995}
@@ -1023,10 +1023,6 @@ PrefabInstance:
       value: 0.214
       objectReference: {fileID: 0}
     - target: {fileID: 5967107301783495319, guid: ab7860278c8644836a7a25fcc2ebeb02, type: 3}
-      propertyPath: dialogueAfterPickup
-      value: 
-      objectReference: {fileID: 38284731}
-    - target: {fileID: 5967107301783495319, guid: ab7860278c8644836a7a25fcc2ebeb02, type: 3}
       propertyPath: selectionGlow
       value: 
       objectReference: {fileID: 1562365776}
@@ -1042,6 +1038,10 @@ PrefabInstance:
       propertyPath: highlightColor.r
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5967107301783495319, guid: ab7860278c8644836a7a25fcc2ebeb02, type: 3}
+      propertyPath: dialogueAfterPickup
+      value: 
+      objectReference: {fileID: 38284731}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1139,14 +1139,14 @@ RectTransform:
   m_GameObject: {fileID: 325635220}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 862360995}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 7, y: 85}
+  m_AnchoredPosition: {x: 7, y: 216}
   m_SizeDelta: {x: 400, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &325635223
@@ -1862,8 +1862,8 @@ RectTransform:
   m_GameObject: {fileID: 537453829}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1238614170}
   - {fileID: 201690523}
@@ -2077,15 +2077,15 @@ RectTransform:
   m_GameObject: {fileID: 686669788}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 791970727}
   m_Father: {fileID: 862360995}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 865, y: 590}
+  m_AnchoredPosition: {x: 734, y: 460}
   m_SizeDelta: {x: 400, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &686669790
@@ -2204,6 +2204,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dialogueManager: {fileID: 1720512635}
   dialogueAsset: {fileID: 11400000, guid: 1a08c3340f6f3458d96c85d1cf896ebf, type: 2}
+  triggerMode: 0
   playerTag: Player
   triggerOnce: 1
   delaySeconds: 1
@@ -4247,6 +4248,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dialogueManager: {fileID: 1720512635}
   dialogueAsset: {fileID: 11400000, guid: 8cab23773986b440db923f121fd42328, type: 2}
+  triggerMode: 0
   playerTag: Player
   triggerOnce: 1
   delaySeconds: 1

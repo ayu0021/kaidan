@@ -21,6 +21,8 @@ public class PickupItem : MonoBehaviour
 
     [Header("撿拾後行為")]
     public DialogueTriggerAsset dialogueAfterPickup;
+    public bool rememberPickup = true;
+    public string pickupId;
     public bool hideRenderersAfterPickup = true;
     public bool disableCollidersAfterPickup = true;
     public bool destroyObjectAfterPickup = true;
@@ -40,8 +42,16 @@ public class PickupItem : MonoBehaviour
 
     void Start()
     {
-        SetupPrompt();
+        EnsurePickupId();
         SetupHighlight();
+
+        if (rememberPickup && GameProgressState.Instance != null && GameProgressState.Instance.HasCollectedPickup(pickupId))
+        {
+            HideAlreadyCollectedPickup();
+            return;
+        }
+
+        SetupPrompt();
     }
 
     void SetupPrompt()
@@ -200,6 +210,9 @@ public class PickupItem : MonoBehaviour
             InventoryManager.Instance.AddItem(itemData);
         }
 
+        if (rememberPickup && GameProgressState.Instance != null)
+            GameProgressState.Instance.MarkPickupCollected(pickupId);
+
         if (promptInstance != null)
             Destroy(promptInstance);
 
@@ -250,5 +263,23 @@ public class PickupItem : MonoBehaviour
             if (c)
                 c.enabled = enabled;
         }
+    }
+
+    void EnsurePickupId()
+    {
+        if (!string.IsNullOrWhiteSpace(pickupId)) return;
+
+        string sceneName = gameObject.scene.IsValid() ? gameObject.scene.name : "NoScene";
+        pickupId = $"{sceneName}:{gameObject.name}";
+    }
+
+    void HideAlreadyCollectedPickup()
+    {
+        pickedUp = true;
+        SetRenderersVisible(false);
+        SetCollidersEnabled(false);
+
+        if (destroyObjectAfterPickup)
+            Destroy(gameObject);
     }
 }

@@ -19,6 +19,8 @@ public class DialogueTriggerAsset : MonoBehaviour
     public TriggerMode triggerMode = TriggerMode.PlayerEnter;
     public string playerTag = "Player";
     public bool triggerOnce = true;
+    public bool rememberTriggeredEvent = true;
+    public string eventId;
 
     [Header("Delay")]
     public float delaySeconds = 0f;
@@ -51,6 +53,14 @@ public class DialogueTriggerAsset : MonoBehaviour
     private Image fadeImage;
     private GameObject fadeRoot;
 
+    void Awake()
+    {
+        EnsureEventId();
+
+        if (rememberTriggeredEvent && GameProgressState.Instance != null && GameProgressState.Instance.HasCompletedEvent(eventId))
+            triggered = true;
+    }
+
     void OnTriggerEnter(Collider other)
     {
         if (triggerMode != TriggerMode.PlayerEnter) return;
@@ -61,9 +71,12 @@ public class DialogueTriggerAsset : MonoBehaviour
 
     public void TriggerDialogue()
     {
-        if (triggerOnce && triggered) return;
+        if ((triggerOnce || rememberTriggeredEvent) && triggered) return;
 
         triggered = true;
+        if (rememberTriggeredEvent && GameProgressState.Instance != null)
+            GameProgressState.Instance.MarkEventCompleted(eventId);
+
         StartCoroutine(TriggerRoutine());
     }
 
@@ -147,6 +160,14 @@ public class DialogueTriggerAsset : MonoBehaviour
 
             current = current.parent;
         }
+    }
+
+    void EnsureEventId()
+    {
+        if (!string.IsNullOrWhiteSpace(eventId)) return;
+
+        string sceneName = gameObject.scene.IsValid() ? gameObject.scene.name : "NoScene";
+        eventId = $"{sceneName}:{gameObject.name}";
     }
 
     IEnumerator FadeOutRoutine()

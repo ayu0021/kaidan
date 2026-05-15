@@ -1146,7 +1146,7 @@ MonoBehaviour:
   videoPlayer: {fileID: 0}
   nextSceneName: "\u68EE\u6797"
   defaultNextSceneName: "\u864E\u59D1\u5A46_\u5BA2\u5EF3"
-  allowKeyboardSkip: 1
+  allowKeyboardSkip: 0
   allowSpaceToSkip: 1
   allowEscToSkip: 0
   keyboardRespectsSkipDelay: 0
