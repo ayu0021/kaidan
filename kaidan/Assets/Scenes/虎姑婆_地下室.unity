@@ -160,6 +160,7 @@ GameObject:
   - component: {fileID: 14224558}
   - component: {fileID: 14224557}
   - component: {fileID: 14224556}
+  - component: {fileID: 14224559}
   m_Layer: 0
   m_Name: "\u5730\u4E0B\u5BA4_\u958B\u5834"
   m_TagString: Untagged
@@ -179,7 +180,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c462f36a0ecdd42bbac5968451a1a631, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dialogueManager: {fileID: 2243303178201519898, guid: 4efb887c947395f4dac83a10361d63b4, type: 3}
+  dialogueManager: {fileID: 0}
   dialogueAsset: {fileID: 11400000, guid: 38757fe4bbbc44d32897b57ce87396e0, type: 2}
   triggerMode: 0
   playerTag: Player
@@ -191,6 +192,34 @@ MonoBehaviour:
   sceneName: 
   sceneLoadDelaySeconds: 0
   useFadeBeforeSceneLoad: 1
+  fadeDuration: 0.8
+  fadeColor: {r: 0, g: 0, b: 0, a: 1}
+  fadeSortingOrder: 9999
+--- !u!114 &14224559
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 14224555}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d67a962f0b041949e45e848fbe8be4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dialogueManager: {fileID: 0}
+  bookcase: {fileID: 0}
+  autoFindBookcaseName: "\u66F8\u6AC3_0"
+  mechanismDialogue: {fileID: 11400000, guid: 0d909bc3cb26d42d8a8ae51992d9e2ef, type: 2}
+  enterOtherSpaceDialogue: {fileID: 11400000, guid: b939781479e0d40ae9af6a4a5ad33969, type: 2}
+  localMoveOffset: {x: -3, y: 0, z: 0}
+  moveDuration: 1.2
+  playerTag: Player
+  triggerOnce: 1
+  rememberTriggeredEvent: 1
+  eventId: "\u864E\u59D1\u5A46_\u5730\u4E0B\u5BA4:\u66F8\u6AC3\u6A5F\u95DC"
+  targetSceneName: "\u7570\u7A7A\u9593"
+  useFadeTransition: 1
   fadeDuration: 0.8
   fadeColor: {r: 0, g: 0, b: 0, a: 1}
   fadeSortingOrder: 9999
@@ -2334,6 +2363,10 @@ PrefabInstance:
     - target: {fileID: 7200694468483583927, guid: 6348282df95f5144ca92a8d56fc39181, type: 3}
       propertyPath: m_Name
       value: "\u63A7\u5236\u8F49\u5834\u7570\u7A7A\u9593"
+      objectReference: {fileID: 0}
+    - target: {fileID: 7200694468483583927, guid: 6348282df95f5144ca92a8d56fc39181, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9189738975892110595, guid: 6348282df95f5144ca92a8d56fc39181, type: 3}
       propertyPath: m_LocalPosition.x
