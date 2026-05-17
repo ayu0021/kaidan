@@ -10,6 +10,7 @@ public class BattleIntroDialogueStarter : MonoBehaviour
 
     [Header("Battle")]
     public BattleDirector battleDirector;
+    public BattleRulesUI battleRulesUI;
 
     [Header("Timing")]
     public float startDelay = 0.5f;
@@ -46,6 +47,9 @@ public class BattleIntroDialogueStarter : MonoBehaviour
         if (!battleDirector)
             battleDirector = FindObjectOfType<BattleDirector>();
 
+        if (!battleRulesUI)
+            battleRulesUI = FindObjectOfType<BattleRulesUI>(true);
+
         if (!dialogueManager)
         {
             Debug.LogWarning("[BattleIntroDialogueStarter] 找不到 DialogueManager。", this);
@@ -63,6 +67,12 @@ public class BattleIntroDialogueStarter : MonoBehaviour
         dialogueManager.Play(introDialogueAsset, skinOverride);
 
         yield return new WaitUntil(() => !IsDialoguePlaying());
+
+        if (battleRulesUI)
+        {
+            battleRulesUI.Show();
+            yield return new WaitUntil(() => !battleRulesUI.IsOpen);
+        }
 
         if (battleStartDelayAfterDialogue > 0f)
             yield return new WaitForSeconds(battleStartDelayAfterDialogue);

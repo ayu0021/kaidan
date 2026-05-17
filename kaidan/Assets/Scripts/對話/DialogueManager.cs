@@ -1,5 +1,7 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -35,6 +37,7 @@ public class DialogueManager : MonoBehaviour
     private float _activeCps;
 
     private DialogueUISkin _currentUISkin;
+    private CanvasGroup _sceneFadeCanvasGroup;
 
     private bool _portraitBaseCaptured;
     private Vector3 _portraitBaseLocalScale;
@@ -284,6 +287,9 @@ public class DialogueManager : MonoBehaviour
             yield return StartCoroutine(WaitForAdvance());
 
         CloseUI();
+
+        if (!string.IsNullOrWhiteSpace(asset.loadSceneOnEnd))
+            yield return StartCoroutine(FadeOutAndLoadScene(asset.loadSceneOnEnd));
     }
 
     private DialogueUISkin ResolveSkinForLine(DialogueLineData line)
@@ -307,6 +313,55 @@ public class DialogueManager : MonoBehaviour
 
         if (_currentUISkin != null && _currentUISkin.hideRootOnClose && _ui != null)
             _ui.RootGO.SetActive(false);
+    }
+
+    private IEnumerator FadeOutAndLoadScene(string sceneName)
+    {
+        EnsureSceneFadeCanvas();
+
+        float duration = 0.8f;
+        float elapsed = 0f;
+        _sceneFadeCanvasGroup.alpha = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            _sceneFadeCanvasGroup.alpha = Mathf.Clamp01(elapsed / duration);
+            yield return null;
+        }
+
+        _sceneFadeCanvasGroup.alpha = 1f;
+        SceneManager.LoadScene(sceneName);
+    }
+
+    private void EnsureSceneFadeCanvas()
+    {
+        if (_sceneFadeCanvasGroup != null)
+            return;
+
+        GameObject root = new GameObject("DialogueSceneFadeCanvas");
+        Canvas canvas = root.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = 9999;
+        root.AddComponent<CanvasScaler>();
+        root.AddComponent<GraphicRaycaster>();
+
+        _sceneFadeCanvasGroup = root.AddComponent<CanvasGroup>();
+        _sceneFadeCanvasGroup.alpha = 0f;
+        _sceneFadeCanvasGroup.blocksRaycasts = true;
+        _sceneFadeCanvasGroup.interactable = false;
+
+        GameObject imageObject = new GameObject("FadeImage");
+        imageObject.transform.SetParent(root.transform, false);
+
+        RectTransform rect = imageObject.AddComponent<RectTransform>();
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.offsetMin = Vector2.zero;
+        rect.offsetMax = Vector2.zero;
+
+        Image image = imageObject.AddComponent<Image>();
+        image.color = Color.black;
     }
 
     private void ApplyLineToUI(DialogueLineData line)

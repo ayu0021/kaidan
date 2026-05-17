@@ -169,7 +169,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   videoPlayer: {fileID: 654160020}
-  nextSceneName: "\u8AAA\u66F8\u4EBA_"
+  nextSceneName: "\u68EE\u6797"
   defaultNextSceneName: "\u864E\u59D1\u5A46_\u5BA2\u5EF3"
   allowKeyboardSkip: 1
   allowSpaceToSkip: 1

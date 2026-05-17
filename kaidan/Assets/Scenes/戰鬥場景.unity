@@ -7370,6 +7370,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1345008718}
   - component: {fileID: 1345008717}
+  - component: {fileID: 1345008719}
   m_Layer: 0
   m_Name: BattleIntroController
   m_TagString: Untagged
@@ -7393,10 +7394,27 @@ MonoBehaviour:
   introDialogueAsset: {fileID: 11400000, guid: 5ac23af5633ab4d0ca08f721caf7faff, type: 2}
   skinOverride: {fileID: 0}
   battleDirector: {fileID: 1016105455}
+  battleRulesUI: {fileID: 1345008719}
   startDelay: 0.5
   battleStartDelayAfterDialogue: 3.66
   triggerOnSceneStart: 1
   triggerOnce: 1
+--- !u!114 &1345008719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1345008716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d740722aef34af8849b64587f174b98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rulesSprite: {fileID: 21300000, guid: 430724a3e4fc7451e9cd3cab7e6e0fda, type: 3}
+  buttonLabel: "\u6230\u9B25\u8AAA\u660E"
+  settingsUI: {fileID: 1712684139}
+  fontAsset: {fileID: 11400000, guid: d0ea3bf5854c24a188f4908a582fe549, type: 2}
 --- !u!4 &1345008718
 Transform:
   m_ObjectHideFlags: 0

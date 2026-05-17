@@ -7,6 +7,10 @@ public class PlayerController : MonoBehaviour
     [Header("移動速度")]
     public float moveSpeed = 3f;
 
+    [Tooltip("左右移動速度倍率。1 為原速，數值越小左右移動越慢。")]
+    [Range(0.1f, 1f)]
+    public float horizontalSpeedMultiplier = 0.75f;
+
     [Header("防穿模距離")]
     public float skinWidth = 0.02f;
 
@@ -126,7 +130,8 @@ public class PlayerController : MonoBehaviour
     {
         if (rb == null || capsule == null) return;
 
-        Vector3 desiredMove = moveInput * moveSpeed * Time.fixedDeltaTime;
+        Vector3 adjustedMoveInput = new Vector3(moveInput.x * horizontalSpeedMultiplier, 0f, moveInput.z);
+        Vector3 desiredMove = adjustedMoveInput * moveSpeed * Time.fixedDeltaTime;
         if (desiredMove.sqrMagnitude < 0.000001f) return;
 
         Vector3 center = rb.position + capsule.center;

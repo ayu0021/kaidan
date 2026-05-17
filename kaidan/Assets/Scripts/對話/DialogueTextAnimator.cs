@@ -62,7 +62,10 @@ public class DialogueTextAnimator : MonoBehaviour
         targetText.ForceMeshUpdate(true, true);
 
         ResolveEffects(_currentText, effects);
-        CacheMeshInfo();
+        if (_resolvedEffects.Count > 0)
+            CacheMeshInfo();
+        else
+            _cachedMeshInfo = null;
 
         // 再交回打字機
         targetText.maxVisibleCharacters = 0;

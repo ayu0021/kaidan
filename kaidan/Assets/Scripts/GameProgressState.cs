@@ -114,4 +114,12 @@ public class GameProgressState : MonoBehaviour
         if (!string.IsNullOrWhiteSpace(pickupId))
             collectedPickups.Add(pickupId);
     }
+
+    public void ResetAllProgress()
+    {
+        completedEvents.Clear();
+        collectedPickups.Clear();
+        scenePlayerPositions.Clear();
+        currentSceneName = SceneManager.GetActiveScene().name;
+    }
 }

@@ -73,4 +73,10 @@ public class InventoryManager : MonoBehaviour
 
     /// <summary>取得唯讀清單（供 UI 使用）</summary>
     public IReadOnlyList<ItemStack> GetItems() => items.AsReadOnly();
+
+    public void ClearAllItems()
+    {
+        items.Clear();
+        onInventoryChanged?.Invoke();
+    }
 }

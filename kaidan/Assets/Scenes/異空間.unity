@@ -134,6 +134,7 @@ GameObject:
   - component: {fileID: 32760507}
   - component: {fileID: 32760506}
   - component: {fileID: 32760505}
+  - component: {fileID: 32760508}
   m_Layer: 0
   m_Name: "\u7570\u7A7A\u9593_\u6389\u4E0B\u53BB"
   m_TagString: Untagged
@@ -155,7 +156,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dialogueManager: {fileID: 266543681}
   dialogueAsset: {fileID: 11400000, guid: a7ea8082b6c5d4c65ae5751eea5c7d3e, type: 2}
-  triggerMode: 0
+  triggerMode: 1
   playerTag: Player
   triggerOnce: 1
   delaySeconds: 0
@@ -166,6 +167,26 @@ MonoBehaviour:
   fadeDuration: 0.8
   fadeColor: {r: 0, g: 0, b: 0, a: 1}
   fadeSortingOrder: 9999
+--- !u!114 &32760508
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 32760504}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ac70d6d1157459e854c401153a0e21f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dialogueTrigger: {fileID: 32760505}
+  gameplayCamera: {fileID: 1276757182}
+  playerController: {fileID: 0}
+  playerTag: Player
+  triggerOnce: 1
+  shakeDuration: 1.3
+  shakeStrength: 0.9
+  shakeFrequency: 18
 --- !u!65 &32760506
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -941,6 +962,7 @@ GameObject:
   - component: {fileID: 569462912}
   - component: {fileID: 569462911}
   - component: {fileID: 569462913}
+  - component: {fileID: 569462914}
   m_Layer: 0
   m_Name: "\u7570\u7A7A\u9593_\u958B\u5834"
   m_TagString: Untagged
@@ -962,7 +984,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dialogueManager: {fileID: 266543681}
   dialogueAsset: {fileID: 11400000, guid: 6d3c3ee94309fd149ba811341e7ebf6c, type: 2}
-  triggerMode: 0
+  triggerMode: 1
   playerTag: Player
   triggerOnce: 1
   delaySeconds: 0
@@ -973,6 +995,40 @@ MonoBehaviour:
   fadeDuration: 0.8
   fadeColor: {r: 0, g: 0, b: 0, a: 1}
   fadeSortingOrder: 9999
+--- !u!114 &569462914
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 569462910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70ea12adce00453d86e4d03e3a5397f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  openingDialogue: {fileID: 569462911}
+  gameplayCamera: {fileID: 1276757182}
+  playerController: {fileID: 0}
+  introPriority: 30
+  blendBackDelay: 2.6
+  shots:
+  - position: {x: -0.192, y: 9.5, z: -57}
+    eulerAngles: {x: 11, y: 0, z: 0}
+    fieldOfView: 28
+    duration: 0
+  - position: {x: -12, y: 8.2, z: -48}
+    eulerAngles: {x: 9, y: 17, z: 0}
+    fieldOfView: 24
+    duration: 3.5
+  - position: {x: 12, y: 7.8, z: -45}
+    eulerAngles: {x: 8, y: -16, z: 0}
+    fieldOfView: 22
+    duration: 3.8
+  - position: {x: -0.192, y: 5.18, z: -42.54}
+    eulerAngles: {x: 4.53, y: 0, z: 0}
+    fieldOfView: 10.7
+    duration: 2.8
 --- !u!4 &569462912
 Transform:
   m_ObjectHideFlags: 0
