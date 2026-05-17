@@ -1,11 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class InteractDialoguePrompt : MonoBehaviour
 {
     [Header("Trigger")]
     public string playerTag = "Player";
     public bool triggerOnce = false;
+    public bool rememberTriggeredEvent = true;
+    public string eventId;
 
     [Header("Input")]
     public KeyCode interactKey = KeyCode.F;
@@ -36,6 +39,12 @@ public class InteractDialoguePrompt : MonoBehaviour
 
     private void Awake()
     {
+        EnsureEventId();
+
+        GameProgressState progress = GameProgressState.GetOrCreateInstance();
+        if (rememberTriggeredEvent && progress.HasCompletedEvent(eventId))
+            _used = true;
+
         // 3D Trigger 需要 Collider.isTrigger = true
         if (TryGetComponent<Collider>(out var col) && !col.isTrigger)
             col.isTrigger = true;
@@ -66,7 +75,7 @@ public class InteractDialoguePrompt : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (_used && triggerOnce) return;
+        if (IsAlreadyUsed()) return;
         if (!other.CompareTag(playerTag)) return;
 
         _playerInside = true;
@@ -92,7 +101,7 @@ public class InteractDialoguePrompt : MonoBehaviour
 
     private void Update()
     {
-        if (_used && triggerOnce) return;
+        if (IsAlreadyUsed()) return;
         if (!_playerInside || s_player == null) return;
 
         var best = GetBestCandidate();
@@ -123,7 +132,10 @@ public class InteractDialoguePrompt : MonoBehaviour
             else
                 Debug.LogWarning($"[InteractDialoguePrompt] Missing DialogueManager or DialogueAsset on {name}");
 
-            if (triggerOnce)
+            if (rememberTriggeredEvent)
+                GameProgressState.GetOrCreateInstance().MarkEventCompleted(eventId);
+
+            if (triggerOnce || rememberTriggeredEvent)
             {
                 _used = true;
                 s_candidates.Remove(this);
@@ -185,5 +197,18 @@ public class InteractDialoguePrompt : MonoBehaviour
     {
         var wp = GetWorldPrompt();
         if (wp != null) wp.Hide(transform);
+    }
+
+    private void EnsureEventId()
+    {
+        if (!string.IsNullOrWhiteSpace(eventId)) return;
+
+        string sceneName = gameObject.scene.IsValid() ? gameObject.scene.name : SceneManager.GetActiveScene().name;
+        eventId = $"{sceneName}:{gameObject.name}";
+    }
+
+    private bool IsAlreadyUsed()
+    {
+        return _used && (triggerOnce || rememberTriggeredEvent);
     }
 }

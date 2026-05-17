@@ -66,7 +66,8 @@ public class BasementBookcaseSequence : MonoBehaviour
         openedLocalPosition = startLocalPosition + localMoveOffset;
         EnsureBookcaseTrigger();
 
-        if (rememberTriggeredEvent && GameProgressState.Instance != null && GameProgressState.Instance.HasCompletedEvent(eventId))
+        GameProgressState progress = GameProgressState.GetOrCreateInstance();
+        if (rememberTriggeredEvent && progress.HasCompletedEvent(eventId))
         {
             triggered = true;
             bookcase.localPosition = openedLocalPosition;
@@ -131,8 +132,8 @@ public class BasementBookcaseSequence : MonoBehaviour
         running = true;
         triggered = true;
 
-        if (rememberTriggeredEvent && GameProgressState.Instance != null)
-            GameProgressState.Instance.MarkEventCompleted(eventId);
+        if (rememberTriggeredEvent)
+            GameProgressState.GetOrCreateInstance().MarkEventCompleted(eventId);
 
         yield return PlayDialogueAndWait(mechanismDialogue);
         yield return MoveBookcase();

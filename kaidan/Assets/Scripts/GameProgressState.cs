@@ -16,10 +16,16 @@ public class GameProgressState : MonoBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     static void EnsureInstance()
     {
-        if (Instance) return;
+        GetOrCreateInstance();
+    }
+
+    public static GameProgressState GetOrCreateInstance()
+    {
+        if (Instance)
+            return Instance;
 
         GameObject obj = new GameObject(nameof(GameProgressState));
-        obj.AddComponent<GameProgressState>();
+        return obj.AddComponent<GameProgressState>();
     }
 
     void Awake()

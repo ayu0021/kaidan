@@ -38,7 +38,7 @@ public class InventoryManager : MonoBehaviour
 
     // ── 公開 API ──────────────────────────────────────────────
 
-    /// <summary>加入物品，支援堆疊</summary>
+    /// <summary>加入物品；同一種物品只保留一份，避免重複顯示。</summary>
     public void AddItem(ItemData item, int amount = 1)
     {
         if (item == null) return;
@@ -46,12 +46,10 @@ public class InventoryManager : MonoBehaviour
         var existing = items.Find(s => s.data == item);
         if (existing != null)
         {
-            existing.count = Mathf.Min(existing.count + amount, Mathf.Max(1, item.maxStack));
-            onInventoryChanged?.Invoke();
             return;
         }
 
-        items.Add(new ItemStack { data = item, count = Mathf.Min(amount, Mathf.Max(1, item.maxStack)) });
+        items.Add(new ItemStack { data = item, count = 1 });
         onInventoryChanged?.Invoke();
     }
 

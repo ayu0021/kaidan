@@ -22,6 +22,10 @@ public class DialogueTriggerAsset : MonoBehaviour
     public bool rememberTriggeredEvent = true;
     public string eventId;
 
+    [Header("Optional Auto Complete")]
+    [Tooltip("若玩家已經撿到這個物品，代表這段對話在故事上應視為已發生，不再重播。")]
+    public string treatAsCompletedIfPickupCollectedId;
+
     [Header("Delay")]
     public float delaySeconds = 0f;
 
@@ -57,7 +61,15 @@ public class DialogueTriggerAsset : MonoBehaviour
     {
         EnsureEventId();
 
-        if (rememberTriggeredEvent && GameProgressState.Instance != null && GameProgressState.Instance.HasCompletedEvent(eventId))
+        GameProgressState progress = GameProgressState.GetOrCreateInstance();
+
+        if (!string.IsNullOrWhiteSpace(treatAsCompletedIfPickupCollectedId)
+            && progress.HasCollectedPickup(treatAsCompletedIfPickupCollectedId))
+        {
+            progress.MarkEventCompleted(eventId);
+        }
+
+        if (rememberTriggeredEvent && progress.HasCompletedEvent(eventId))
             triggered = true;
     }
 
@@ -74,8 +86,8 @@ public class DialogueTriggerAsset : MonoBehaviour
         if ((triggerOnce || rememberTriggeredEvent) && triggered) return;
 
         triggered = true;
-        if (rememberTriggeredEvent && GameProgressState.Instance != null)
-            GameProgressState.Instance.MarkEventCompleted(eventId);
+        if (rememberTriggeredEvent)
+            GameProgressState.GetOrCreateInstance().MarkEventCompleted(eventId);
 
         StartCoroutine(TriggerRoutine());
     }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -12,12 +13,23 @@ public class DialogueInteractAsset : MonoBehaviour
 
     public string playerTag = "Player";
     public bool triggerOnce = true;
+    public bool rememberTriggeredEvent = true;
+    public string eventId;
 
     [Header("Prompt (Optional)")]
     public GameObject promptUI; // 例如 "按 E 互動" 的 UI（可不填）
 
     bool playerInside = false;
     bool triggered = false;
+
+    void Awake()
+    {
+        EnsureEventId();
+
+        GameProgressState progress = GameProgressState.GetOrCreateInstance();
+        if (rememberTriggeredEvent && progress.HasCompletedEvent(eventId))
+            triggered = true;
+    }
 
     void Start()
     {
@@ -27,7 +39,7 @@ public class DialogueInteractAsset : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag(playerTag)) return;
-        if (triggerOnce && triggered) return;
+        if ((triggerOnce || rememberTriggeredEvent) && triggered) return;
 
         playerInside = true;
         if (promptUI != null) promptUI.SetActive(true);
@@ -44,11 +56,14 @@ public class DialogueInteractAsset : MonoBehaviour
     void Update()
     {
         if (!playerInside) return;
-        if (triggerOnce && triggered) return;
+        if ((triggerOnce || rememberTriggeredEvent) && triggered) return;
 
         if (GetEDown())
         {
             triggered = true;
+            if (rememberTriggeredEvent)
+                GameProgressState.GetOrCreateInstance().MarkEventCompleted(eventId);
+
             if (promptUI != null) promptUI.SetActive(false);
 
             if (dialogueRoot != null) dialogueRoot.SetActive(true);
@@ -64,5 +79,12 @@ public class DialogueInteractAsset : MonoBehaviour
         return Input.GetKeyDown(KeyCode.E);
 #endif
     }
-}
 
+    void EnsureEventId()
+    {
+        if (!string.IsNullOrWhiteSpace(eventId)) return;
+
+        string sceneName = gameObject.scene.IsValid() ? gameObject.scene.name : SceneManager.GetActiveScene().name;
+        eventId = $"{sceneName}:{gameObject.name}";
+    }
+}

@@ -45,7 +45,8 @@ public class PickupItem : MonoBehaviour
         EnsurePickupId();
         SetupHighlight();
 
-        if (rememberPickup && GameProgressState.Instance != null && GameProgressState.Instance.HasCollectedPickup(pickupId))
+        GameProgressState progress = GameProgressState.GetOrCreateInstance();
+        if (rememberPickup && progress.HasCollectedPickup(pickupId))
         {
             HideAlreadyCollectedPickup();
             return;
@@ -210,8 +211,8 @@ public class PickupItem : MonoBehaviour
             InventoryManager.Instance.AddItem(itemData);
         }
 
-        if (rememberPickup && GameProgressState.Instance != null)
-            GameProgressState.Instance.MarkPickupCollected(pickupId);
+        if (rememberPickup)
+            GameProgressState.GetOrCreateInstance().MarkPickupCollected(pickupId);
 
         if (promptInstance != null)
             Destroy(promptInstance);

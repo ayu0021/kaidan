@@ -7379,7 +7379,7 @@ MonoBehaviour:
   eventId: "\u864E\u59D1\u5A46_\u81E5\u5BA4:\u5C0D\u8A71_\u8001\u864E\u73A9\u5076"
   delaySeconds: 0
   loadSceneAfterDialogue: 1
-  sceneName: "\u864E\u59D1\u5A46_\u5730\u4E0B\u5BA4"
+  sceneName: "\u864E\u59D1\u5A46_\u5BA2\u5EF3"
   sceneLoadDelaySeconds: 0
   useFadeBeforeSceneLoad: 1
   fadeDuration: 0.8
