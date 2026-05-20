@@ -19,6 +19,7 @@ public class YarnDrop : MonoBehaviour
     public Vector3 visualLocalOffset = Vector3.zero;
     public Vector3 visualRotationEuler = Vector3.zero;
     public Vector3 visualScale = new Vector3(3f, 3f, 3f);
+    public float attackScale = 1f;
     public bool forceVisualRenderersOn = true;
     public bool addFallbackScissorVisual = true;
     public Vector3 fallbackScissorScale = new Vector3(1.8f, 1.8f, 1.8f);
@@ -36,6 +37,8 @@ public class YarnDrop : MonoBehaviour
     private bool setupDone;
     private bool damageWindowOpen;
     private bool alreadyHitPlayer;
+    private float baseSphereRadius;
+    private Vector3 baseBoxSize;
 
     public void Setup(int dmg, float height, float warnTime, float fallDuration, float activeTime)
     {
@@ -45,6 +48,8 @@ public class YarnDrop : MonoBehaviour
         fallTime = fallDuration;
         activeDamageTime = activeTime;
         setupDone = true;
+        ApplyScaleToDamageTrigger();
+        ApplyScaleToVisual();
     }
 
     void Awake()
@@ -52,6 +57,7 @@ public class YarnDrop : MonoBehaviour
         damageTrigger = GetComponent<Collider>();
         damageTrigger.isTrigger = true;
         damageTrigger.enabled = false;
+        CacheDamageTriggerSize();
 
         if (warningDecal != null)
             warningDecal.SetActive(false);
@@ -233,7 +239,8 @@ public class YarnDrop : MonoBehaviour
         GameObject warning = GetWarningDecal();
         if (warning == null) return;
 
-        warning.transform.localScale = new Vector3(scale, scale, scale);
+        float scaled = scale * Mathf.Max(0.05f, attackScale);
+        warning.transform.localScale = new Vector3(scaled, scaled, scaled);
     }
 
     void EnsureVisual()
@@ -247,7 +254,7 @@ public class YarnDrop : MonoBehaviour
             activeVisual = spawnedVisual.transform;
             activeVisual.localPosition = visualLocalOffset;
             activeVisual.localRotation = Quaternion.Euler(visualRotationEuler);
-            activeVisual.localScale = visualScale;
+            ApplyScaleToVisual();
             PrepareVisual(spawnedVisual);
             EnsureFallbackVisualIfNeeded(spawnedVisual.transform);
             return;
@@ -256,9 +263,46 @@ public class YarnDrop : MonoBehaviour
         if (yarnVisual != null)
         {
             activeVisual = yarnVisual;
+            ApplyScaleToVisual();
             PrepareVisual(activeVisual.gameObject);
             EnsureFallbackVisualIfNeeded(activeVisual);
         }
+    }
+
+    void CacheDamageTriggerSize()
+    {
+        if (damageTrigger is SphereCollider sphere)
+            baseSphereRadius = sphere.radius;
+        else if (damageTrigger is BoxCollider box)
+            baseBoxSize = box.size;
+    }
+
+    void ApplyScaleToDamageTrigger()
+    {
+        float scale = Mathf.Max(0.05f, attackScale);
+
+        if (damageTrigger is SphereCollider sphere)
+        {
+            if (baseSphereRadius <= 0f)
+                baseSphereRadius = sphere.radius;
+
+            sphere.radius = baseSphereRadius * scale;
+        }
+        else if (damageTrigger is BoxCollider box)
+        {
+            if (baseBoxSize == Vector3.zero)
+                baseBoxSize = box.size;
+
+            box.size = baseBoxSize * scale;
+        }
+    }
+
+    void ApplyScaleToVisual()
+    {
+        if (activeVisual == null) return;
+
+        float scale = Mathf.Max(0.05f, attackScale);
+        activeVisual.localScale = visualScale * scale;
     }
 
     void EnsureFallbackVisualIfNeeded(Transform visualRoot)

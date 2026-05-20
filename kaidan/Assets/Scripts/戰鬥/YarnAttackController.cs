@@ -48,6 +48,14 @@ public class YarnAttackController : MonoBehaviour
     public bool useFallbackScissorWhenNoPrefab = true;
     public Vector3 fallbackScissorScale = new Vector3(1.8f, 1.8f, 1.8f);
 
+    [Header("剪刀大小變化")]
+    [Tooltip("開啟後每把剪刀會在小尺寸和大尺寸之間隨機。小尺寸就是上面 dropVisualScale 目前的大小。")]
+    public bool randomizeDropSize = true;
+    [Range(0f, 1f)]
+    public float largeDropChance = 0.35f;
+    public float smallDropScaleMultiplier = 1f;
+    public float largeDropScaleMultiplier = 1.55f;
+
     [Header("一般模式")]
     public WaveSettings normalSettings = new WaveSettings();
 
@@ -123,6 +131,7 @@ public class YarnAttackController : MonoBehaviour
             drop.visualLocalOffset = dropVisualOffset;
             drop.visualRotationEuler = dropVisualRotationEuler;
             drop.visualScale = dropVisualScale;
+            drop.attackScale = PickDropScaleMultiplier();
             drop.forceVisualRenderersOn = forceVisualRenderersOn;
             drop.addFallbackScissorVisual = useFallbackScissorWhenNoPrefab && drop.fallingVisualPrefab == null;
             drop.fallbackScissorScale = fallbackScissorScale;
@@ -159,6 +168,16 @@ public class YarnAttackController : MonoBehaviour
         float x = arenaCenter.x + Random.Range(-arenaXZ.x, arenaXZ.x);
         float z = arenaCenter.z + Random.Range(-arenaXZ.y, arenaXZ.y);
         return new Vector3(x, groundY, z);
+    }
+
+    private float PickDropScaleMultiplier()
+    {
+        if (!randomizeDropSize)
+            return Mathf.Max(0.05f, smallDropScaleMultiplier);
+
+        bool useLarge = Random.value < Mathf.Clamp01(largeDropChance);
+        float scale = useLarge ? largeDropScaleMultiplier : smallDropScaleMultiplier;
+        return Mathf.Max(0.05f, scale);
     }
 
     void OnDrawGizmosSelected()

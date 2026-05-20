@@ -2288,6 +2288,7 @@ MonoBehaviour:
   visualLocalOffset: {x: 0, y: 0, z: 0}
   visualRotationEuler: {x: 0, y: 0, z: 0}
   visualScale: {x: 3, y: 3, z: 3}
+  attackScale: 1
   forceVisualRenderersOn: 1
   addFallbackScissorVisual: 0
   fallbackScissorScale: {x: 1.8, y: 1.8, z: 1.8}
@@ -5025,6 +5026,10 @@ MonoBehaviour:
   forceVisualRenderersOn: 1
   useFallbackScissorWhenNoPrefab: 1
   fallbackScissorScale: {x: 1.8, y: 1.8, z: 1.8}
+  randomizeDropSize: 1
+  largeDropChance: 0.35
+  smallDropScaleMultiplier: 1
+  largeDropScaleMultiplier: 1.55
   normalSettings:
     spawnInterval: 1.2
     dropsPerWave: 5

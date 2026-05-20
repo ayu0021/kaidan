@@ -67,6 +67,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 922eb60b31c2c498cbdf38bd98cd8e1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  replaceVisualWithParticles: 1
+  hideExistingVisualRenderers: 1
+  particleColorA: {r: 1, g: 0.05, b: 0.1, a: 1}
+  particleColorB: {r: 0.55, g: 0, b: 1, a: 1}
+  particleRate: 110
+  particleRadius: 0.75
+  particleSizeRange: {x: 0.28, y: 0.72}
+  particleLifetimeRange: {x: 0.16, y: 0.38}
+  particleSpeedRange: {x: 0.25, y: 1.25}
+  addFlickerLight: 1
+  flickerLightRange: 2.4
+  flickerLightIntensity: 1.2
+  flickerSpeed: 22
 --- !u!1 &6945411215403084085
 GameObject:
   m_ObjectHideFlags: 0
