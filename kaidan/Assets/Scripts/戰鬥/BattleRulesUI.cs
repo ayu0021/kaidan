@@ -6,6 +6,10 @@ public class BattleRulesUI : MonoBehaviour
 {
     [Header("Rule Image")]
     public Sprite rulesSprite;
+    public Sprite closeButtonSprite;
+    public Sprite closeButtonSelectedSprite;
+    public Vector2 closeButtonSize = new Vector2(72f, 72f);
+    public Vector3 closeButtonScale = new Vector3(4f, 4f, 4f);
     public string buttonLabel = "戰鬥說明";
 
     [Header("Optional References")]
@@ -50,7 +54,10 @@ public class BattleRulesUI : MonoBehaviour
         canvas = canvasObject.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
         canvas.sortingOrder = 9000;
-        canvasObject.AddComponent<CanvasScaler>().uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        CanvasScaler scaler = canvasObject.AddComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1920f, 1080f);
+        scaler.matchWidthOrHeight = 0.5f;
         canvasObject.AddComponent<GraphicRaycaster>();
 
         overlayRoot = new GameObject("BattleRulesOverlay");
@@ -64,12 +71,10 @@ public class BattleRulesUI : MonoBehaviour
         GameObject imageObject = new GameObject("RulesImage");
         imageObject.transform.SetParent(overlayRoot.transform, false);
         RectTransform imageRect = imageObject.AddComponent<RectTransform>();
-        imageRect.anchorMin = new Vector2(0.5f, 0.5f);
-        imageRect.anchorMax = new Vector2(0.5f, 0.5f);
-        imageRect.sizeDelta = new Vector2(1280f, 720f);
+        Stretch(imageRect);
         Image image = imageObject.AddComponent<Image>();
         image.sprite = rulesSprite;
-        image.preserveAspect = true;
+        image.preserveAspect = false;
         image.color = rulesSprite ? Color.white : new Color(0.12f, 0.12f, 0.16f, 1f);
 
         GameObject placeholderText = new GameObject("PlaceholderText");
@@ -83,10 +88,11 @@ public class BattleRulesUI : MonoBehaviour
         placeholder.color = Color.white;
         if (fontAsset) placeholder.font = fontAsset;
 
-        closeButton = CreateTextButton("CloseButton", overlayRoot.transform, "X", new Vector2(-44f, -44f), new Vector2(72f, 72f));
+        closeButton = CreateImageButton("CloseButton", overlayRoot.transform, closeButtonSprite, closeButtonSelectedSprite, new Vector2(-44f, -44f), closeButtonSize);
         RectTransform closeRect = closeButton.GetComponent<RectTransform>();
         closeRect.anchorMin = closeRect.anchorMax = new Vector2(1f, 1f);
         closeRect.pivot = new Vector2(1f, 1f);
+        closeRect.localScale = closeButtonScale;
         closeButton.onClick.AddListener(Hide);
 
         overlayRoot.SetActive(false);
@@ -138,6 +144,36 @@ public class BattleRulesUI : MonoBehaviour
         text.fontSize = 30f;
         text.color = Color.white;
         if (fontAsset) text.font = fontAsset;
+
+        return button;
+    }
+
+    Button CreateImageButton(string name, Transform parent, Sprite normalSprite, Sprite selectedSprite, Vector2 anchoredPosition, Vector2 size)
+    {
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+
+        RectTransform rect = go.AddComponent<RectTransform>();
+        rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
+        rect.anchoredPosition = anchoredPosition;
+        rect.sizeDelta = size;
+
+        Image image = go.AddComponent<Image>();
+        image.sprite = normalSprite;
+        image.preserveAspect = true;
+        image.color = normalSprite ? Color.white : new Color(0.1f, 0.1f, 0.13f, 0.96f);
+
+        Button button = go.AddComponent<Button>();
+        button.transition = selectedSprite ? Selectable.Transition.SpriteSwap : Selectable.Transition.ColorTint;
+
+        if (selectedSprite)
+        {
+            SpriteState state = button.spriteState;
+            state.highlightedSprite = selectedSprite;
+            state.pressedSprite = selectedSprite;
+            state.selectedSprite = selectedSprite;
+            button.spriteState = state;
+        }
 
         return button;
     }

@@ -1427,7 +1427,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -1437,8 +1437,8 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: 21300000, guid: 7031cb95d0e7741568ab43693cde6386, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: 7031cb95d0e7741568ab43693cde6386, type: 3}
     m_SelectedSprite: {fileID: 0}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
@@ -1472,7 +1472,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 3976243d266169e4397b24509d165159, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ce4a5295cb8534a42b668623b9c119ae, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2800,7 +2800,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705370746}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.1812864, y: -0.017065622, z: 0.0031463818, w: 0.98327726}
+  m_LocalRotation: {x: 0.1812864, y: -0.01706566, z: 0.0031463883, w: 0.98327726}
   m_LocalPosition: {x: -9.88, y: 15.12, z: -24.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -6187,7 +6187,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1473550038}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.1812864, y: -0.017065622, z: 0.0031463818, w: 0.98327726}
+  m_LocalRotation: {x: 0.1812864, y: -0.01706566, z: 0.0031463883, w: 0.98327726}
   m_LocalPosition: {x: -9.88, y: 15.12, z: -24.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -7377,6 +7377,7 @@ MonoBehaviour:
   triggerOnce: 1
   rememberTriggeredEvent: 1
   eventId: "\u864E\u59D1\u5A46_\u81E5\u5BA4:\u5C0D\u8A71_\u8001\u864E\u73A9\u5076"
+  treatAsCompletedIfPickupCollectedId: 
   delaySeconds: 0
   loadSceneAfterDialogue: 1
   sceneName: "\u864E\u59D1\u5A46_\u5BA2\u5EF3"

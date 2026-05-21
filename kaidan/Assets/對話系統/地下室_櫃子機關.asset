@@ -30,18 +30,3 @@ MonoBehaviour:
     overrideCharsPerSecond: 0
     charsPerSecondOverride: 0
     bodyEffects: []
-  - uiSkin: {fileID: 11400000, guid: e9db15f6c9d184f07b3063c973ceb20c, type: 2}
-    character: {fileID: 11400000, guid: 28a2afca7dbf84227b76f55483dfc5b3, type: 2}
-    variant: 0
-    keepPreviousPortrait: 0
-    nameOverride: 
-    body: "\u9019\u500B\u6AC3\u5B50\u4F3C\u4E4E\u54EA\u88E1\u6709\u554F\u984C..."
-    hintMode: 2
-    hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
-    cgMode: 0
-    cgSprite: {fileID: 0}
-    cgFadeDuration: 0
-    hidePortraitWhenCg: 0
-    overrideCharsPerSecond: 0
-    charsPerSecondOverride: 0
-    bodyEffects: []

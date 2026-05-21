@@ -20,7 +20,32 @@ MonoBehaviour:
     variant: 1
     keepPreviousPortrait: 0
     nameOverride: 
-    body: "\u5B83\u751F\u6C23\u5566\uFF01\uFF01\uFF01"
+    body: "\u662F\u864E\u59D1\u5A46\uFF01\uFF01\uFF01"
+    hintMode: 2
+    hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
+    cgMode: 0
+    cgSprite: {fileID: 0}
+    cgFadeDuration: 0
+    hidePortraitWhenCg: 0
+    overrideCharsPerSecond: 0
+    charsPerSecondOverride: 0
+    bodyEffects:
+    - enabled: 1
+      targetText: "\u662F\u864E\u59D1\u5A46\uFF01\uFF01\uFF01"
+      applyToAllMatches: 0
+      occurrenceIndex: 0
+      effectType: 2
+      color: {r: 0, g: 0, b: 0, a: 0}
+      scaleMultiplier: 0
+      amplitude: 6.05
+      frequency: 5.65
+      speed: 2.47
+  - uiSkin: {fileID: 11400000, guid: 8c93a4721c27a4ae48927033c0db960c, type: 2}
+    character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
+    variant: 1
+    keepPreviousPortrait: 0
+    nameOverride: 
+    body: "\u5C0F\u5FC3\uFF01"
     hintMode: 2
     hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
     cgMode: 0
@@ -30,12 +55,12 @@ MonoBehaviour:
     overrideCharsPerSecond: 0
     charsPerSecondOverride: 0
     bodyEffects: []
-  - uiSkin: {fileID: 11400000, guid: 8c93a4721c27a4ae48927033c0db960c, type: 2}
-    character: {fileID: 11400000, guid: 3bef10aa917934f329ef5aba34c1e93c, type: 2}
+  - uiSkin: {fileID: 11400000, guid: e9db15f6c9d184f07b3063c973ceb20c, type: 2}
+    character: {fileID: 11400000, guid: 28a2afca7dbf84227b76f55483dfc5b3, type: 2}
     variant: 1
     keepPreviousPortrait: 0
     nameOverride: 
-    body: "\u5C0F\u5FC3\uFF01"
+    body: "\u5B83\u751F\u6C23\u5566\uFF01"
     hintMode: 2
     hintCustom: "\u9EDE\u64CA\u7E7C\u7E8C"
     cgMode: 0

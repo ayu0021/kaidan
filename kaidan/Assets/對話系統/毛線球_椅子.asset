@@ -65,7 +65,7 @@ MonoBehaviour:
       applyToAllMatches: 0
       occurrenceIndex: 0
       effectType: 0
-      color: {r: 0.8679245, g: 0.039250337, b: 0, a: 0}
+      color: {r: 0.8679245, g: 0.039250337, b: 0, a: 1}
       scaleMultiplier: 0
       amplitude: 0
       frequency: 0

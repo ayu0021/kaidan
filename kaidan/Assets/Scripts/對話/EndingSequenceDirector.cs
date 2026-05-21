@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.Video;
 
 [DisallowMultipleComponent]
 public class EndingSequenceDirector : MonoBehaviour
@@ -35,12 +36,18 @@ public class EndingSequenceDirector : MonoBehaviour
     public float glitchDuration = 0.55f;
     public float revealDuration = 1.2f;
     public float endingFadeDuration = 2.2f;
+    public VideoClip glitchVideoClip;
 
     [Header("Credits")]
     public TMP_FontAsset creditsFont;
     [TextArea(4, 12)]
     public string creditsText = "製作團隊\n\n感謝每一位同行的工作夥伴\n\n謝謝遊玩";
-    public float creditsScrollDuration = 18f;
+    public Sprite creditsSprite;
+    public Sprite finalLogoSprite;
+    public float creditsScrollDuration = 42f;
+    public float finalLogoStartBeforeCreditsEnd = 4f;
+    public float finalLogoHoldDuration = 4f;
+    public float finalLogoFadeDuration = 1.6f;
     public string restartSceneName = "start";
 
     DialogueManager dialogueManager;
@@ -49,13 +56,18 @@ public class EndingSequenceDirector : MonoBehaviour
     CanvasGroup blackGroup;
     RawImage glitchImage;
     CanvasGroup glitchGroup;
+    VideoPlayer glitchVideoPlayer;
+    RenderTexture glitchRenderTexture;
     Image storytellerImage;
     RawImage spotlightImage;
     RawImage[] lanternGlowImages;
     TextMeshProUGUI creditsLabel;
+    Image creditsImage;
+    Image finalLogoImage;
     RectTransform creditsRect;
     CanvasGroup creditsGroup;
     float[] lanternSeeds;
+    Coroutine finalLogoCoroutine;
 
     void Start()
     {
@@ -85,10 +97,19 @@ public class EndingSequenceDirector : MonoBehaviour
         StartCoroutine(FlickerLanterns());
         yield return PlayDialogue(storytellerDialogue);
 
+        SetStorytellerVisible(false);
+        SetUiEffectsVisible(false);
         blackRect.SetAsLastSibling();
         yield return FadeBlack(1f, endingFadeDuration);
+        blackGroup.alpha = 1f;
         yield return RollCredits();
         yield return FadeCredits(0f, 1.2f);
+        if (finalLogoCoroutine != null)
+            yield return finalLogoCoroutine;
+        else
+            yield return ShowFinalLogo(0f);
+        blackRect.SetAsLastSibling();
+        yield return FadeBlack(1f, 1.2f);
         ResetRunState();
 
         if (!string.IsNullOrWhiteSpace(restartSceneName))
@@ -154,6 +175,12 @@ public class EndingSequenceDirector : MonoBehaviour
         glitchGroup.alpha = 0f;
         glitchImage = glitchObject.AddComponent<RawImage>();
         glitchImage.color = Color.white;
+        glitchVideoPlayer = glitchObject.AddComponent<VideoPlayer>();
+        glitchVideoPlayer.playOnAwake = false;
+        glitchVideoPlayer.isLooping = false;
+        glitchVideoPlayer.renderMode = VideoRenderMode.RenderTexture;
+        glitchVideoPlayer.audioOutputMode = VideoAudioOutputMode.None;
+        glitchVideoPlayer.clip = glitchVideoClip;
 
         GameObject spotlightObject = new GameObject("Spotlight");
         spotlightObject.transform.SetParent(overlayCanvas.transform, false);
@@ -191,7 +218,20 @@ public class EndingSequenceDirector : MonoBehaviour
         creditsGroup = creditsObject.AddComponent<CanvasGroup>();
         creditsGroup.alpha = 1f;
 
-        creditsLabel = creditsObject.AddComponent<TextMeshProUGUI>();
+        creditsImage = creditsObject.AddComponent<Image>();
+        creditsImage.sprite = creditsSprite;
+        creditsImage.preserveAspect = true;
+        creditsImage.color = creditsSprite ? Color.white : Color.clear;
+
+        GameObject creditsTextObject = new GameObject("CreditsFallbackText");
+        creditsTextObject.transform.SetParent(creditsObject.transform, false);
+        RectTransform creditsTextRect = creditsTextObject.AddComponent<RectTransform>();
+        creditsTextRect.anchorMin = Vector2.zero;
+        creditsTextRect.anchorMax = Vector2.one;
+        creditsTextRect.offsetMin = Vector2.zero;
+        creditsTextRect.offsetMax = Vector2.zero;
+
+        creditsLabel = creditsTextObject.AddComponent<TextMeshProUGUI>();
         creditsLabel.text = creditsText;
         creditsLabel.alignment = TextAlignmentOptions.Center;
         creditsLabel.fontSize = 42f;
@@ -199,7 +239,21 @@ public class EndingSequenceDirector : MonoBehaviour
         creditsLabel.enableWordWrapping = true;
         if (creditsFont)
             creditsLabel.font = creditsFont;
-        creditsLabel.gameObject.SetActive(false);
+        creditsLabel.gameObject.SetActive(!creditsSprite);
+        creditsImage.gameObject.SetActive(false);
+
+        GameObject finalLogoObject = new GameObject("FinalLogo");
+        finalLogoObject.transform.SetParent(overlayCanvas.transform, false);
+        RectTransform finalLogoRect = finalLogoObject.AddComponent<RectTransform>();
+        finalLogoRect.anchorMin = finalLogoRect.anchorMax = new Vector2(0.5f, 0.5f);
+        finalLogoRect.pivot = new Vector2(0.5f, 0.5f);
+        finalLogoRect.anchoredPosition = Vector2.zero;
+        finalLogoRect.sizeDelta = new Vector2(720f, 360f);
+        finalLogoImage = finalLogoObject.AddComponent<Image>();
+        finalLogoImage.sprite = finalLogoSprite;
+        finalLogoImage.preserveAspect = true;
+        finalLogoImage.color = finalLogoSprite ? Color.white : Color.clear;
+        finalLogoObject.SetActive(false);
     }
 
     RawImage CreateLanternGlow(string name, Vector2 anchoredPosition)
@@ -267,6 +321,12 @@ public class EndingSequenceDirector : MonoBehaviour
 
     IEnumerator PlayGlitch()
     {
+        if (glitchVideoClip)
+        {
+            yield return PlayGlitchVideo();
+            yield break;
+        }
+
         Texture2D texture = new Texture2D(64, 64, TextureFormat.RGBA32, false);
         texture.filterMode = FilterMode.Point;
         glitchImage.texture = texture;
@@ -284,6 +344,44 @@ public class EndingSequenceDirector : MonoBehaviour
 
         glitchGroup.alpha = 0f;
         Destroy(texture);
+    }
+
+    IEnumerator PlayGlitchVideo()
+    {
+        EnsureGlitchRenderTexture();
+        glitchVideoPlayer.clip = glitchVideoClip;
+        glitchVideoPlayer.targetTexture = glitchRenderTexture;
+        glitchImage.texture = glitchRenderTexture;
+        glitchImage.rectTransform.anchoredPosition = Vector2.zero;
+        glitchGroup.alpha = 1f;
+
+        glitchVideoPlayer.Prepare();
+        while (!glitchVideoPlayer.isPrepared)
+            yield return null;
+
+        glitchVideoPlayer.Play();
+
+        float fallbackDuration = Mathf.Max(0.1f, glitchDuration);
+        float duration = glitchVideoClip.length > 0.01 ? (float)glitchVideoClip.length : fallbackDuration;
+        float elapsed = 0f;
+
+        while (elapsed < duration && glitchVideoPlayer.isPlaying)
+        {
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        glitchVideoPlayer.Stop();
+        glitchGroup.alpha = 0f;
+    }
+
+    void EnsureGlitchRenderTexture()
+    {
+        if (glitchRenderTexture)
+            return;
+
+        glitchRenderTexture = new RenderTexture(1920, 1080, 0, RenderTextureFormat.ARGB32);
+        glitchRenderTexture.Create();
     }
 
     void FillGlitchTexture(Texture2D texture)
@@ -354,19 +452,81 @@ public class EndingSequenceDirector : MonoBehaviour
     IEnumerator RollCredits()
     {
         creditsRect.SetAsLastSibling();
-        creditsLabel.gameObject.SetActive(true);
-        Vector2 from = new Vector2(0f, -180f);
-        Vector2 to = new Vector2(0f, Screen.height + 180f);
+        creditsGroup.alpha = 1f;
+        creditsImage.gameObject.SetActive(creditsSprite);
+        creditsLabel.gameObject.SetActive(!creditsSprite);
+
+        float creditHeight = 900f;
+        if (creditsSprite)
+        {
+            float screenWidth = overlayCanvas ? overlayCanvas.pixelRect.width : Screen.width;
+            if (screenWidth <= 0f)
+                screenWidth = 1920f;
+
+            float aspect = creditsSprite.rect.height / Mathf.Max(1f, creditsSprite.rect.width);
+            creditHeight = screenWidth * aspect;
+
+            creditsRect.anchorMin = new Vector2(0f, 0f);
+            creditsRect.anchorMax = new Vector2(1f, 0f);
+            creditsRect.sizeDelta = new Vector2(0f, creditHeight);
+        }
+
+        Vector2 from = new Vector2(0f, -creditHeight);
+        Vector2 to = new Vector2(0f, Screen.height + creditHeight);
         float elapsed = 0f;
 
         while (elapsed < creditsScrollDuration)
         {
             elapsed += Time.deltaTime;
             creditsRect.anchoredPosition = Vector2.Lerp(from, to, Mathf.Clamp01(elapsed / creditsScrollDuration));
+
+            if (finalLogoCoroutine == null && creditsScrollDuration - elapsed <= finalLogoStartBeforeCreditsEnd)
+                finalLogoCoroutine = StartCoroutine(ShowFinalLogo(0f));
+
             yield return null;
         }
 
         creditsRect.anchoredPosition = to;
+
+        if (finalLogoCoroutine == null)
+            finalLogoCoroutine = StartCoroutine(ShowFinalLogo(0f));
+    }
+
+    IEnumerator ShowFinalLogo(float delay)
+    {
+        if (!finalLogoImage || !finalLogoSprite)
+            yield break;
+
+        if (delay > 0f)
+            yield return new WaitForSeconds(delay);
+
+        finalLogoImage.transform.SetAsLastSibling();
+        finalLogoImage.gameObject.SetActive(true);
+        Color color = finalLogoImage.color;
+        finalLogoImage.color = new Color(color.r, color.g, color.b, 0f);
+
+        float fadeDuration = Mathf.Max(0.05f, finalLogoFadeDuration);
+        float elapsed = 0f;
+        while (elapsed < fadeDuration)
+        {
+            elapsed += Time.deltaTime;
+            float alpha = Mathf.Clamp01(elapsed / fadeDuration);
+            finalLogoImage.color = new Color(color.r, color.g, color.b, alpha);
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(finalLogoHoldDuration);
+
+        elapsed = 0f;
+        while (elapsed < fadeDuration)
+        {
+            elapsed += Time.deltaTime;
+            float alpha = 1f - Mathf.Clamp01(elapsed / fadeDuration);
+            finalLogoImage.color = new Color(color.r, color.g, color.b, alpha);
+            yield return null;
+        }
+
+        finalLogoImage.gameObject.SetActive(false);
     }
 
     IEnumerator FadeCredits(float targetAlpha, float duration)

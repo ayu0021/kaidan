@@ -53,6 +53,7 @@ public class WeakPoint : MonoBehaviour
     public Vector2 hpBarAnchoredPosition = new Vector2(0f, -46f);
     public Color hpBarFillColor = new Color(0.1f, 0.95f, 1f, 0.92f);
     public Color hpBarBackColor = new Color(0f, 0f, 0f, 0.56f);
+    public Color hpTextColor = Color.black;
 
     [Header("Events")]
     public UnityEvent onHit;
@@ -66,6 +67,7 @@ public class WeakPoint : MonoBehaviour
     float _lastHitTime = -999f;
     Vector3 _baseScale;
     GameObject _runtimeHpRoot;
+    RectTransform _runtimeHpFillRect;
     Image _runtimeHpFill;
     Text _runtimeHpText;
     Coroutine _hitRoutine;
@@ -440,16 +442,14 @@ public class WeakPoint : MonoBehaviour
 
         GameObject fillObj = new GameObject("Fill");
         fillObj.transform.SetParent(_runtimeHpRoot.transform, false);
-        RectTransform fillRt = fillObj.AddComponent<RectTransform>();
-        fillRt.anchorMin = new Vector2(0f, 0f);
-        fillRt.anchorMax = new Vector2(1f, 1f);
-        fillRt.offsetMin = new Vector2(4f, 4f);
-        fillRt.offsetMax = new Vector2(-4f, -4f);
+        _runtimeHpFillRect = fillObj.AddComponent<RectTransform>();
+        _runtimeHpFillRect.anchorMin = new Vector2(0f, 0f);
+        _runtimeHpFillRect.anchorMax = new Vector2(1f, 1f);
+        _runtimeHpFillRect.offsetMin = Vector2.zero;
+        _runtimeHpFillRect.offsetMax = Vector2.zero;
         _runtimeHpFill = fillObj.AddComponent<Image>();
         _runtimeHpFill.color = hpBarFillColor;
-        _runtimeHpFill.type = Image.Type.Filled;
-        _runtimeHpFill.fillMethod = Image.FillMethod.Horizontal;
-        _runtimeHpFill.fillOrigin = 0;
+        _runtimeHpFill.type = Image.Type.Simple;
 
         GameObject textObj = new GameObject("PercentText");
         textObj.transform.SetParent(_runtimeHpRoot.transform, false);
@@ -463,7 +463,7 @@ public class WeakPoint : MonoBehaviour
         _runtimeHpText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         _runtimeHpText.fontSize = 22;
         _runtimeHpText.fontStyle = FontStyle.Bold;
-        _runtimeHpText.color = Color.white;
+        _runtimeHpText.color = hpTextColor;
 
         RefreshPercentUI();
         _runtimeHpRoot.SetActive(canTakeDamage && !_dead);
@@ -477,10 +477,20 @@ public class WeakPoint : MonoBehaviour
         float ratio = Mathf.Clamp01(currentPercent / Mathf.Max(1f, maxPercent));
 
         if (_runtimeHpFill)
-            _runtimeHpFill.fillAmount = ratio;
+            _runtimeHpFill.color = hpBarFillColor;
+
+        if (_runtimeHpFillRect)
+        {
+            _runtimeHpFillRect.anchorMax = new Vector2(ratio, 1f);
+            _runtimeHpFillRect.offsetMin = Vector2.zero;
+            _runtimeHpFillRect.offsetMax = Vector2.zero;
+        }
 
         if (_runtimeHpText)
+        {
+            _runtimeHpText.color = hpTextColor;
             _runtimeHpText.text = $"{Mathf.CeilToInt(currentPercent)}%";
+        }
     }
 
     [ContextMenu("TEST/Damage 5%")]

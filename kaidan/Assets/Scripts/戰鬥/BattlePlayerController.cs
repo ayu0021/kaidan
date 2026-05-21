@@ -29,6 +29,13 @@ public class BattlePlayerController : MonoBehaviour
     [Header("Game Over")]
     public GameObject gameOverPanel;
 
+    [Header("第一次受傷對話")]
+    public DialogueManager firstDamageDialogueManager;
+    public DialogueAsset firstDamageDialogueAsset;
+    public DialogueUISkin firstDamageDialogueSkinOverride;
+    public bool lockMovementDuringFirstDamageDialogue = true;
+    public bool immuneDuringFirstDamageDialogue = true;
+
     [Header("蠟燭暗時禁止移動")]
     public float forbiddenInputDeadZone = 0.15f;
     public float allowedDriftDistance = 0.03f;
@@ -50,12 +57,22 @@ public class BattlePlayerController : MonoBehaviour
     private bool movementLocked;
     private bool forbidMovementCheck;
     private Vector3 forbiddenStartPos;
+    private bool firstDamageDialoguePlayed;
+    private Coroutine firstDamageDialogueCoroutine;
+    private int lastObservedHP;
+    private bool immuneBeforeFirstDamageDialogue;
+    private bool movementLockedBeforeFirstDamageDialogue;
 
     private Color[] originalLifeColors;
     private MaterialPropertyBlock mpb;
 
     private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
     private static readonly int ColorId = Shader.PropertyToID("_Color");
+
+    private bool IsFirstDamageDialogueProtected =>
+        firstDamageDialoguePlayed &&
+        firstDamageDialogueCoroutine != null &&
+        immuneDuringFirstDamageDialogue;
 
     void Awake()
     {
@@ -88,6 +105,7 @@ public class BattlePlayerController : MonoBehaviour
 
         UpdateLifeUI();
         RestorePlayerColor();
+        lastObservedHP = currentHP;
     }
 
     void Update()
@@ -96,6 +114,11 @@ public class BattlePlayerController : MonoBehaviour
 
         if (invincibleTimer > 0f)
             invincibleTimer -= Time.deltaTime;
+
+        if (currentHP < lastObservedHP)
+            TryPlayFirstDamageDialogue();
+
+        lastObservedHP = currentHP;
 
         float rawH = Input.GetAxisRaw("Horizontal");
         float rawV = Input.GetAxisRaw("Vertical");
@@ -171,13 +194,22 @@ public class BattlePlayerController : MonoBehaviour
     public void TakeDamage(int damage)
     {
         if (isDead) return;
+        if (IsFirstDamageDialogueProtected) return;
         if (IsInvincible) return;
 
+        bool shouldProtectFirstHit = !firstDamageDialoguePlayed && firstDamageDialogueAsset && damage > 0;
         currentHP -= damage;
-        if (currentHP < 0) currentHP = 0;
+        if (shouldProtectFirstHit && currentHP <= 0)
+            currentHP = 1;
+        else if (currentHP < 0)
+            currentHP = 0;
+
+        lastObservedHP = Mathf.Min(lastObservedHP, currentHP);
 
         invincibleTimer = invincibleTime;
         UpdateLifeUI();
+
+        TryPlayFirstDamageDialogue();
 
         if (!isFlashing)
             StartCoroutine(HitFlashRoutine());
@@ -189,6 +221,17 @@ public class BattlePlayerController : MonoBehaviour
     public void DieImmediately()
     {
         if (isDead) return;
+        if (IsFirstDamageDialogueProtected) return;
+
+        if (!firstDamageDialoguePlayed && firstDamageDialogueAsset)
+        {
+            currentHP = Mathf.Max(1, currentHP);
+            lastObservedHP = currentHP;
+            invincibleTimer = invincibleTime;
+            UpdateLifeUI();
+            TryPlayFirstDamageDialogue();
+            return;
+        }
 
         currentHP = 0;
         UpdateLifeUI();
@@ -208,6 +251,76 @@ public class BattlePlayerController : MonoBehaviour
             gameOverPanel.SetActive(true);
 
         OnPlayerDied?.Invoke();
+    }
+
+    private void TryPlayFirstDamageDialogue()
+    {
+        if (firstDamageDialoguePlayed) return;
+        if (!firstDamageDialogueAsset) return;
+        if (currentHP <= 0) return;
+
+        if (!firstDamageDialogueManager)
+            firstDamageDialogueManager = ResolveDialogueManager();
+
+        if (!firstDamageDialogueManager)
+        {
+            Debug.LogWarning("[BattlePlayerController] 找不到 DialogueManager，無法播放第一次受傷對話。", this);
+            return;
+        }
+
+        firstDamageDialoguePlayed = true;
+
+        immuneBeforeFirstDamageDialogue = damageImmune;
+        movementLockedBeforeFirstDamageDialogue = movementLocked;
+
+        if (immuneDuringFirstDamageDialogue)
+            damageImmune = true;
+
+        if (lockMovementDuringFirstDamageDialogue)
+            SetMovementLocked(true);
+
+        Debug.Log("[BattlePlayerController] 第一次受傷，播放對話：戰鬥_受傷", this);
+        firstDamageDialogueManager.Play(firstDamageDialogueAsset, firstDamageDialogueSkinOverride);
+
+        if (firstDamageDialogueCoroutine != null)
+            StopCoroutine(firstDamageDialogueCoroutine);
+
+        firstDamageDialogueCoroutine = StartCoroutine(FirstDamageDialogueRoutine());
+    }
+
+    private IEnumerator FirstDamageDialogueRoutine()
+    {
+        yield return null;
+
+        while (firstDamageDialogueManager && firstDamageDialogueManager.IsPlaying && !isDead)
+            yield return null;
+
+        if (!isDead)
+        {
+            if (immuneDuringFirstDamageDialogue)
+                damageImmune = immuneBeforeFirstDamageDialogue;
+
+            if (lockMovementDuringFirstDamageDialogue)
+                SetMovementLocked(movementLockedBeforeFirstDamageDialogue);
+        }
+
+        firstDamageDialogueCoroutine = null;
+    }
+
+    private DialogueManager ResolveDialogueManager()
+    {
+        DialogueManager manager = FindObjectOfType<DialogueManager>();
+        if (manager) return manager;
+
+        DialogueManager[] managers = Resources.FindObjectsOfTypeAll<DialogueManager>();
+        foreach (DialogueManager candidate in managers)
+        {
+            if (!candidate) continue;
+            if (!candidate.gameObject.scene.IsValid()) continue;
+            return candidate;
+        }
+
+        return null;
     }
 
     private void UpdateLifeUI()
