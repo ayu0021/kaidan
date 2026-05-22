@@ -7,6 +7,8 @@ public class GameProgressState : MonoBehaviour
 {
     public static GameProgressState Instance { get; private set; }
 
+    const string ResetSceneName = "start";
+
     readonly HashSet<string> completedEvents = new HashSet<string>();
     readonly HashSet<string> collectedPickups = new HashSet<string>();
     readonly Dictionary<string, Vector3> scenePlayerPositions = new Dictionary<string, Vector3>();
@@ -66,6 +68,17 @@ public class GameProgressState : MonoBehaviour
     void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         currentSceneName = scene.name;
+
+        if (scene.name == ResetSceneName)
+        {
+            ResetAllProgress();
+
+            if (InventoryManager.Instance)
+                InventoryManager.Instance.ClearAllItems();
+
+            return;
+        }
+
         StartCoroutine(RestorePlayerPositionNextFrame(scene.name));
     }
 
