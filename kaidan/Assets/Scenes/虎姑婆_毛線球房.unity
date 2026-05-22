@@ -973,6 +973,17 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.117844015, y: 0.13838169, z: 0.23977198}
   m_Center: {x: -0.022264387, y: 0.07681401, z: 0.09873215}
+--- !u!114 &374658468 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2243303178201519898, guid: 4efb887c947395f4dac83a10361d63b4, type: 3}
+  m_PrefabInstance: {fileID: 828736646}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4da28ba9366ed49ec9f4d268b27f1f51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &484015683
 GameObject:
   m_ObjectHideFlags: 0
@@ -4429,7 +4440,7 @@ MonoBehaviour:
   promptText: "\u6309 F \u4E92\u52D5"
   billboardToCamera: 1
   activationRadius: 1.3
-  dialogueManager: {fileID: 0}
+  dialogueManager: {fileID: 374658468}
   chairDialogue: {fileID: 11400000, guid: a1939ee017c1e412dacf52f080fef30d, type: 2}
   leaveDialogue: {fileID: 11400000, guid: 558592e4dd160447aad46fcb31beddea, type: 2}
   skinOverride: {fileID: 0}
