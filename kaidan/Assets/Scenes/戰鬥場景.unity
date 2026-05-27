@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028326, g: 0.22571333, b: 0.30692202, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -5292,8 +5292,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bossShell: {fileID: 1016105452}
-  objectiveSprite: {fileID: 21300000, guid: 1e526ee00985e4261a12e0225642ffe0, type: 3}
-  remainingSprite: {fileID: 21300000, guid: 3d29323165f584a19bf8a957ff107918, type: 3}
+  objectiveSprite: {fileID: 21300000, guid: 466eeafd8abcd9a4a92398e08b9a87cf, type: 3}
+  remainingSprite: {fileID: 21300000, guid: 49ba8157a060bb743a10b6fa35ca92f3, type: 3}
   fontAsset: {fileID: 11400000, guid: e27a8b93fe4a845908475a260cc89e09, type: 2}
   titleText: "\u4E3B\u8981\u4EFB\u52D9\uFF1A\u64CA\u6557\u864E\u59D1\u5A46"
   breakShellFormat: "\u64CA\u7834\u788E\u7247\uFF1A\u5269\u9918 {0} \u7247"
@@ -9410,6 +9410,18 @@ PrefabInstance:
       value: 0.353
       objectReference: {fileID: 0}
     - target: {fileID: -1777802079952281896, guid: 0bf1456431662406d9654c244e4c4c3c, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2.41196
+      objectReference: {fileID: 0}
+    - target: {fileID: -1777802079952281896, guid: 0bf1456431662406d9654c244e4c4c3c, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.9811223
+      objectReference: {fileID: 0}
+    - target: {fileID: -1777802079952281896, guid: 0bf1456431662406d9654c244e4c4c3c, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.4596424
+      objectReference: {fileID: 0}
+    - target: {fileID: -1777802079952281896, guid: 0bf1456431662406d9654c244e4c4c3c, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.017
       objectReference: {fileID: 0}
@@ -9419,7 +9431,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -1777802079952281896, guid: 0bf1456431662406d9654c244e4c4c3c, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0
+      value: -0.064
       objectReference: {fileID: 0}
     - target: {fileID: -1199834403034118319, guid: 0bf1456431662406d9654c244e4c4c3c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -10928,6 +10940,65 @@ Transform:
   m_Children: []
   m_Father: {fileID: 541021284}
   m_LocalEulerAnglesHint: {x: 89.952, y: 0, z: 17.872}
+--- !u!1 &2005270010
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2005270011}
+  - component: {fileID: 2005270012}
+  m_Layer: 0
+  m_Name: "\u8001\u864E\u80CC\u5F8C\u7684\u7DDA_\u52D5\u756B\u63A7\u5236\u5668"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2005270011
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2005270010}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 23.3, z: 47.4}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2005270012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2005270010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed16a67ca57d49c18af7eda8d6460b42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sheetTexture: {fileID: 2800000, guid: ef0631b73500547639fbfe880c778169, type: 3}
+  columns: 12
+  rows: 5
+  framesPerSecond: 6.45
+  pixelsPerUnit: 100
+  playOnAwake: 1
+  loop: 1
+  rootName: "\u8001\u864E\u6230\u9B25_\u900F\u660E\u4FEE\u6B63_v2"
+  parentName: "\u80CC\u666F"
+  animatedObjectName: "\u8001\u864E\u80CC\u5F8C\u7684\u7DDA_\u52D5\u756B"
+  localPosition: {x: 0, y: 0.02, z: -0.02}
+  localEulerAngles: {x: 0, y: 0, z: 0}
+  localScale: {x: 7.51, y: 7.57, z: 0.12}
+  sortingOrder: 1
+  color: {r: 1, g: 1, b: 1, a: 0.48235294}
 --- !u!1 &2012217167
 GameObject:
   m_ObjectHideFlags: 0
@@ -11611,3 +11682,4 @@ SceneRoots:
   - {fileID: 1345008718}
   - {fileID: 541021284}
   - {fileID: 1537471089}
+  - {fileID: 2005270011}
